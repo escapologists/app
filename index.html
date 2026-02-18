@@ -8,7 +8,7 @@
     <style>
         :root { 
             --primary: #20258C; 
-            --bg-petrol: #0a1118; /* Bleu pétrole presque noir */
+            --bg-petrol: #0a1118; 
             --card: #0f1922; 
             --text: #e0e0e0; 
             --halo: rgba(32, 37, 140, 0.4);
@@ -21,11 +21,7 @@
         .screen { display: none; flex-direction: column; height: 100%; padding: 25px; box-sizing: border-box; animation: fadeIn 0.4s ease; }
         .screen.active { display: flex; }
 
-        /* Splash Screen */
-        #screen-splash { justify-content: center; align-items: center; text-align: center; }
-        .logo-image { width: 220px; height: auto; border-radius: 10px; margin-bottom: 25px; }
-
-        /* Titre avec Cadre Arrondi et Halo */
+        /* Header Mission */
         .mission-header {
             border: 2px solid var(--primary);
             border-radius: 20px;
@@ -39,34 +35,53 @@
 
         h1 { color: #fff; text-align: center; font-size: 1.3rem; text-transform: uppercase; margin: 0; letter-spacing: 3px; }
 
-        /* Positionnement des boutons Missions plus haut */
+        /* Menu principal */
         #screen-missions .menu-list { justify-content: flex-start; margin-top: 50px; }
-
-        /* Grands boutons du Menu Principal */
-        .main-menu-btn { 
-            padding: 30px 20px !important; /* Agrandissement significatif */
-            font-size: 1.1rem !important;
-            margin-bottom: 5px;
-        }
-
+        .main-menu-btn { padding: 30px 20px !important; font-size: 1.1rem !important; margin-bottom: 5px; }
         .menu-list { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; }
         
         button { padding: 18px; border: none; border-radius: 15px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         button:active { transform: scale(0.96); opacity: 0.9; }
         button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: auto; }
 
-        select { padding: 14px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 12px; font-size: 0.95rem; width: 100%; }
+        select { padding: 14px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 12px; font-size: 0.95rem; width: 100%; outline: none; }
         label { font-size: 0.7rem; color: #3498db; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; display: block; margin-left: 5px; }
 
         .result-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #1a2a36; min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.4; font-size: 0.95rem; }
 
-        /* Machine à Énigme */
-        .code-container { display: flex; justify-content: space-between; margin: 15px 0; gap: 8px; }
-        .select-color { width: 75px; height: 75px; border: 3px solid rgba(255,255,255,0.8); border-radius: 15px; font-size: 2rem; font-weight: bold; text-align: center; cursor: pointer; appearance: none; -webkit-appearance: none; text-align-last: center; }
-        .c-yellow { background-color: #f1c40f; color: #000; }
-        .c-blue { background-color: #2980b9; color: #fff; }
-        .c-green { background-color: #27ae60; color: #fff; }
-        .c-red { background-color: #c0392b; color: #fff; }
+        /* --- STYLE ROUE CRANTÉE --- */
+        .code-container { display: flex; justify-content: space-between; margin: 20px 0; gap: 10px; }
+        
+        .wheel-wrapper { position: relative; width: 75px; height: 90px; }
+        
+        .select-color { 
+            width: 100%; height: 100%; border-radius: 10px; 
+            font-size: 2.2rem; font-weight: 900; 
+            cursor: pointer; appearance: none; -webkit-appearance: none; 
+            text-align-last: center; border: none;
+            /* Effet de texture crantée (rayures) */
+            background-image: linear-gradient(90deg, transparent 45%, rgba(0,0,0,0.1) 50%, transparent 55%);
+            background-size: 10px 100%;
+            /* Effet de courbure cylindrique */
+            box-shadow: 
+                inset 0 15px 15px rgba(0,0,0,0.5), 
+                inset 0 -15px 15px rgba(0,0,0,0.5),
+                0 5px 15px rgba(0,0,0,0.4);
+            transition: transform 0.1s;
+        }
+
+        .c-yellow { background-color: #f1c40f; color: #333; border: 2px solid #d4ac0d; }
+        .c-blue { background-color: #2980b9; color: #fff; border: 2px solid #1a5276; }
+        .c-green { background-color: #27ae60; color: #fff; border: 2px solid #196f3d; }
+        .c-red { background-color: #c0392b; color: #fff; border: 2px solid #7b241c; }
+
+        /* Décoration crans extérieurs */
+        .wheel-wrapper::before, .wheel-wrapper::after {
+            content: ""; position: absolute; left: 10%; width: 80%; height: 4px;
+            background: rgba(255,255,255,0.3); z-index: 2; pointer-events: none;
+        }
+        .wheel-wrapper::before { top: 15px; }
+        .wheel-wrapper::after { bottom: 15px; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -103,7 +118,7 @@
         <label>Agent</label><select id="sel-p" onchange="updateA()"></select>
         <label>Action</label><select id="sel-a"></select>
         <label>Cible</label><select id="sel-c-perso"></select>
-        <div id="res-perso" class="result-box">...</div>
+        <div id="res-perso" class="result-box">En attente d'ordres...</div>
         <button onclick="runActionPerso()">Appliquer</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
@@ -112,21 +127,21 @@
         <h1>Combinaison</h1>
         <label>Élément 1</label><select id="sel-obj-a"></select>
         <label>Élément 2</label><select id="sel-obj-b"></select>
-        <div id="res-objet" class="result-box">...</div>
+        <div id="res-objet" class="result-box">Combinez deux objets.</div>
         <button onclick="runInteractionObjet()">Utiliser</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 
     <div id="screen-enigme" class="screen">
         <h1>Énigme</h1>
-        <label>Choisir l'épreuve</label><select id="sel-eni"></select>
+        <label>Épreuve sélectionnée</label><select id="sel-eni"></select>
         <div class="code-container">
-            <select id="eni-1" class="select-color c-yellow"></select>
-            <select id="eni-2" class="select-color c-blue"></select>
-            <select id="eni-3" class="select-color c-green"></select>
-            <select id="eni-4" class="select-color c-red"></select>
+            <div class="wheel-wrapper"><select id="eni-1" class="select-color c-yellow"></select></div>
+            <div class="wheel-wrapper"><select id="eni-2" class="select-color c-blue"></select></div>
+            <div class="wheel-wrapper"><select id="eni-3" class="select-color c-green"></select></div>
+            <div class="wheel-wrapper"><select id="eni-4" class="select-color c-red"></select></div>
         </div>
-        <div id="res-enigme" class="result-box">Réglez le code couleur.</div>
+        <div id="res-enigme" class="result-box">Réglez les roues.</div>
         <button onclick="runEnigme()">Tester le code</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
@@ -174,7 +189,7 @@
             res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
             document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
             initMenus(); show('screen-menu');
-        }).catch(() => alert("Erreur fichiers."));
+        }).catch(() => alert("Erreur fichiers mission."));
     }
 
     function initMenus() {
@@ -243,7 +258,7 @@
         const codeAttendu = grilleENI[idx][1].toString().trim();
         const codeSucces = grilleENI[idx][2].toString().trim();
         if (codeSaisi === codeAttendu) res.innerHTML = sols[codeSucces] || "Code correct !";
-        else res.innerHTML = "<span style='color:#e74c3c'>Code erroné.</span>";
+        else res.innerHTML = "<span style='color:#e74c3c'>Combinaison erronée.</span>";
     }
 
     function show(id) {
