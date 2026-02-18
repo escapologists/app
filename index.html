@@ -6,53 +6,92 @@
     <title>Escapologists App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        :root { --primary: #e74c3c; --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #3498db; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .app-container { width: 100%; max-width: 380px; height: 640px; background: var(--card); border-radius: 30px; border: 2px solid #333; display: flex; flex-direction: column; padding: 25px; box-sizing: border-box; }
-        .screen { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.3s; }
+        :root { 
+            --primary: #e74c3c; 
+            --bg: #121212; 
+            --card: #1e1e1e; 
+            --text: #e0e0e0; 
+            --accent: #3498db; 
+        }
+        
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        
+        .app-container { width: 100%; max-width: 380px; height: 640px; background: var(--card); border-radius: 30px; border: 2px solid #333; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+
+        /* Écrans */
+        .screen { display: none; flex-direction: column; height: 100%; padding: 25px; box-sizing: border-box; animation: fadeIn 0.5s ease; }
         .screen.active { display: flex; }
-        h1 { color: var(--primary); text-align: center; font-size: 1.4rem; }
-        label { font-size: 0.8rem; margin-top: 10px; color: var(--accent); }
-        select, input { padding: 10px; border-radius: 8px; border: 1px solid #444; background: #2d2d2d; color: white; margin-bottom: 10px; }
-        button { padding: 15px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .secondary { background: #333; margin-top: auto; }
-        .result-box { background: #000; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid var(--primary); min-height: 80px; font-size: 0.9rem; }
+
+        /* Splash Screen */
+        #splash { background: #000; justify-content: center; align-items: center; text-align: center; }
+        .logo-box { border: 3px solid var(--primary); padding: 20px; display: inline-block; }
+        .logo-text { font-size: 1.8rem; font-weight: bold; letter-spacing: 5px; color: white; text-transform: uppercase; }
+
+        /* Titres et Textes */
+        h1 { color: var(--primary); text-align: center; font-size: 1.4rem; text-transform: uppercase; margin-top: 0; }
+        .subtitle { text-align: center; opacity: 0.6; font-size: 0.9rem; margin-bottom: 30px; }
+
+        /* Menus et Boutons */
+        .menu-list { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; justify-content: center; }
+        button { padding: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        button:active { transform: scale(0.95); }
+        button.secondary { background: #333; margin-top: auto; }
+        button.locked { background: #222; color: #555; cursor: not-allowed; }
+
+        /* Formulaires */
+        select { padding: 12px; border-radius: 8px; background: #2d2d2d; color: white; border: 1px solid #444; margin-bottom: 12px; font-size: 1rem; }
+        label { font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+
+        .result-box { background: #000; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid var(--primary); min-height: 100px; display: flex; align-items: center; justify-content: center; text-align: center; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div id="loading" class="screen active"><h1>Chargement...</h1></div>
-
-    <div id="menu" class="screen">
-        <h1>Escapologists</h1>
-        <button onclick="show('action')">Action Personnage</button>
-        <button onclick="show('objets')">Code Objet / Enigme</button>
-        <button class="secondary" onclick="location.reload()">Reset</button>
+    
+    <div id="screen-splash" class="screen active">
+        <div class="logo-box">
+            <div class="logo-text">Escapologists</div>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.8rem; letter-spacing: 2px; color: var(--accent);">INITIALISATION...</p>
     </div>
 
-    <div id="action" class="screen">
+    <div id="screen-missions" class="screen">
+        <h1>Missions</h1>
+        <p class="subtitle">Sélectionnez votre objectif</p>
+        <div class="menu-list">
+            <button onclick="chargerMission('M1')">Mission 1 : L'Entrepôt</button>
+            <button class="locked">Mission 2 : Le Bunker (Bientôt)</button>
+            <button class="locked">Mission 3 : Le Labo (Bientôt)</button>
+        </div>
+    </div>
+
+    <div id="screen-menu" class="screen">
+        <h1 id="mission-title">Mission 1</h1>
+        <div class="menu-list">
+            <button onclick="show('screen-action')">Action Personnage</button>
+            <button onclick="alert('Indice MJ : Fouillez la zone 05')">Demander un Indice</button>
+        </div>
+        <button class="secondary" onclick="show('screen-missions')">Changer Mission</button>
+    </div>
+
+    <div id="screen-action" class="screen">
         <h1>Action</h1>
-        <label>Personnage :</label>
-        <select id="p" onchange="updateA()"></select>
-        <label>Action :</label>
-        <select id="a"></select>
-        <label>Cible :</label>
-        <select id="c"></select>
-        <div id="res-a" class="result-box">Prêt.</div>
-        <button onclick="runA()">Valider</button>
-        <button class="secondary" onclick="show('menu')">Retour</button>
+        <label>Personnage</label>
+        <select id="sel-p" onchange="updateA()"></select>
+        <label>Action</label>
+        <select id="sel-a"></select>
+        <label>Cible</label>
+        <select id="sel-c"></select>
+        
+        <div id="res-a" class="result-box">En attente d'ordre...</div>
+        
+        <button onclick="runA()">Exécuter</button>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 
-    <div id="objets" class="screen">
-        <h1>Code Direct</h1>
-        <label>Entrez le code (4 chiffres) :</label>
-        <input type="number" id="code-input" placeholder="Ex: 1234">
-        <div id="res-o" class="result-box">Entrez un code pour voir le résultat.</div>
-        <button onclick="runO()">Vérifier</button>
-        <button class="secondary" onclick="show('menu')">Retour</button>
-    </div>
 </div>
 
 <script>
@@ -66,62 +105,60 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
+    // Au démarrage : Splash Screen de 3 secondes
     window.onload = () => {
-        Papa.parse("grille.csv", { download: true, complete: (r1) => {
-            grille = r1.data;
-            Papa.parse("solutions.csv", { download: true, complete: (r2) => {
-                r2.data.forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
-                init();
-            }});
-        }});
+        setTimeout(() => {
+            show('screen-missions');
+        }, 3000);
     };
 
-function init() {
-        // 1. Remplir les personnages
-        const sp = document.getElementById('p');
+    // Charger les données de la mission
+    function chargerMission(id) {
+        if(id === 'M1') {
+            document.getElementById('screen-splash').classList.add('active'); // Petit écran de chargement
+            
+            // Chargement Grille
+            Papa.parse("grille.csv", {
+                download: true,
+                complete: (r1) => {
+                    grille = r1.data;
+                    // Chargement Solutions
+                    Papa.parse("solutions.csv", {
+                        download: true,
+                        complete: (r2) => {
+                            r2.data.forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
+                            initActionMenu();
+                            show('screen-menu');
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    function initActionMenu() {
+        const sp = document.getElementById('sel-p');
         sp.innerHTML = '<option value="">-- Personnage --</option>';
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
 
-        // 2. Remplir les cibles
-        const sc = document.getElementById('c');
+        const sc = document.getElementById('sel-c');
         sc.innerHTML = '<option value="">-- Cible --</option>';
-        
-        // On boucle sur TOUTES les lignes du fichier
         grille.forEach((ligne, index) => {
-            // On ignore les deux premières lignes (titres)
             if (index < 2) return;
-
-            // On vérifie que la ligne existe et que la première case n'est pas vide
             if (ligne && ligne[0] && ligne[0].trim() !== "") {
-                let valeurBrute = ligne[0].trim();
-                let texteAffiché = valeurBrute;
-
-                // LOGIQUE DE NOMMAGE :
-                // Si c'est un nombre pur (ex: 01, 25), on ajoute "Objet "
-                if (!isNaN(valeurBrute) && valeurBrute !== "") {
-                    texteAffiché = "Objet " + valeurBrute;
-                } 
-                // Si ça commence par P (ex: P12), on peut écrire "Porte"
-                else if (valeurBrute.startsWith('P')) {
-                    texteAffiché = "Porte " + valeurBrute.substring(1);
-                }
-                // Si ça commence par T (ex: T01), on peut écrire "Token"
-                else if (valeurBrute.startsWith('T')) {
-                    texteAffiché = "Token " + valeurBrute.substring(1);
-                }
-
-                sc.innerHTML += `<option value="${index}">${texteAffiché}</option>`;
+                let val = ligne[0].trim();
+                let txt = val;
+                if (!isNaN(val)) txt = "Objet " + val;
+                else if (val.startsWith('P')) txt = "Porte " + val.substring(1);
+                else if (val.startsWith('T')) txt = "Token " + val.substring(1);
+                sc.innerHTML += `<option value="${index}">${txt}</option>`;
             }
         });
-        
-        // Petit message de vérification dans la console du navigateur (F12)
-        console.log("Nombre de lignes chargées : " + (grille.length - 2));
-        show('menu');
     }
 
     function updateA() {
-        const p = document.getElementById('p').value;
-        const sa = document.getElementById('a');
+        const p = document.getElementById('sel-p').value;
+        const sa = document.getElementById('sel-a');
         sa.innerHTML = "";
         if(!p) return;
         mapping[p].forEach((act, i) => {
@@ -131,14 +168,13 @@ function init() {
     }
 
     function runA() {
-        const l = document.getElementById('c').value, c = document.getElementById('a').value;
-        const code = grille[l][c] ? grille[l][c].trim() : "";
-        document.getElementById('res-a').innerHTML = sols[code] ? `<strong>[${code}]</strong><br>${sols[code]}` : "Rien ne se passe.";
-    }
+        const l = document.getElementById('sel-c').value;
+        const c = document.getElementById('sel-a').value;
+        const res = document.getElementById('res-a');
+        if(!l || !c) { res.innerHTML = "Sélection incomplète."; return; }
 
-    function runO() {
-        const val = document.getElementById('code-input').value;
-        document.getElementById('res-o').innerHTML = sols[val] ? `<strong>[${val}]</strong><br>${sols[val]}` : "Code inconnu.";
+        const code = grille[l][c] ? grille[l][c].trim() : "";
+        res.innerHTML = sols[code] ? `<strong>[CODE ${code}]</strong><br>${sols[code]}` : "Rien ne se passe.";
     }
 
     function show(id) {
@@ -147,6 +183,4 @@ function init() {
     }
 </script>
 </body>
-
 </html>
-
