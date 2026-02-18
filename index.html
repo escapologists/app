@@ -6,52 +6,30 @@
     <title>Escapologists App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        :root { 
-            --primary: #20258C; 
-            --bg: #000000; 
-            --card: #121212; 
-            --text: #e0e0e0; 
-            --accent: #3498db; 
-        }
-        
+        :root { --primary: #20258C; --bg: #000; --card: #121212; --text: #e0e0e0; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        
         .app-container { width: 100%; max-width: 380px; height: 660px; background: var(--card); border-radius: 35px; border: 2px solid #333; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
-
         .screen { display: none; flex-direction: column; height: 100%; padding: 30px; box-sizing: border-box; animation: fadeIn 0.4s ease; }
         .screen.active { display: flex; }
-
         #screen-splash { justify-content: center; align-items: center; text-align: center; }
         .logo-image { width: 250px; height: auto; border-radius: 10px; margin-bottom: 25px; }
-
-        h1 { color: var(--primary); text-align: center; font-size: 1.5rem; text-transform: uppercase; margin-top: 0; letter-spacing: 2px; }
-        .subtitle { text-align: center; opacity: 0.6; font-size: 0.9rem; margin-bottom: 30px; }
-
+        h1 { color: var(--primary); text-align: center; font-size: 1.5rem; text-transform: uppercase; margin: 0 0 20px 0; letter-spacing: 2px; }
         .menu-list { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; justify-content: center; }
-        
-        button { padding: 18px; border: none; border-radius: 15px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        button { padding: 18px; border: none; border-radius: 15px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 0.9rem; transition: 0.2s; text-transform: uppercase; }
         button:active { transform: scale(0.98); opacity: 0.9; }
         button.secondary { background: #222; border: 1px solid #444; margin-top: auto; }
-
-        select { padding: 14px; border-radius: 10px; background: #1e1e1e; color: white; border: 1px solid #333; margin-bottom: 15px; font-size: 1rem; width: 100%; }
-        label { font-size: 0.7rem; color: var(--primary); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; margin-left: 5px; }
-
-        .result-box { 
-            background: #000; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--primary); 
-            min-height: 130px; display: flex; align-items: center; justify-content: center; text-align: center; 
-            line-height: 1.6; font-size: 1rem;
-        }
-
+        select { padding: 14px; border-radius: 10px; background: #1e1e1e; color: white; border: 1px solid #333; margin-bottom: 12px; font-size: 0.9rem; width: 100%; }
+        label { font-size: 0.7rem; color: var(--primary); font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: block; }
+        .result-box { background: #000; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--primary); min-height: 100px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.5; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    
     <div id="screen-splash" class="screen active">
-        <img src="logo.jpg" alt="Escapologists" class="logo-image">
-        <p style="letter-spacing: 4px; color: var(--primary); font-size: 0.7rem; font-weight: bold; margin-top: 10px;">INITIALISATION...</p>
+        <img src="logo.jpg" class="logo-image">
+        <p style="letter-spacing: 4px; color: var(--primary); font-size: 0.7rem; font-weight: bold;">INITIALISATION...</p>
     </div>
 
     <div id="screen-missions" class="screen">
@@ -66,33 +44,34 @@
     <div id="screen-menu" class="screen">
         <h1 id="mission-title">MISSION</h1>
         <div class="menu-list">
-            <button onclick="ouvrirAction('perso')">Action Personnage</button>
-            <button onclick="ouvrirAction('objet')">Interaction Objet</button>
+            <button onclick="show('screen-action-perso')">Action Personnage</button>
+            <button onclick="show('screen-interaction-objet')">Interaction Objet</button>
         </div>
         <button class="secondary" onclick="show('screen-missions')">Quitter</button>
     </div>
 
-    <div id="screen-action" class="screen">
-        <h1>Action</h1>
-        <div id="container-selectors">
-            <label id="lbl-p">Agent</label>
-            <select id="sel-p" onchange="updateA()"></select>
-            <label id="lbl-a">Compétence</label>
-            <select id="sel-a"></select>
-        </div>
-        <label>Cible</label>
-        <select id="sel-c"></select>
-        
-        <div id="res-a" class="result-box">Prêt pour l'ordre.</div>
-        
-        <button onclick="runA()">Confirmer</button>
+    <div id="screen-action-perso" class="screen">
+        <h1>Compétence</h1>
+        <label>Agent</label><select id="sel-p" onchange="updateA()"></select>
+        <label>Action</label><select id="sel-a"></select>
+        <label>Cible</label><select id="sel-c-perso"></select>
+        <div id="res-perso" class="result-box">En attente...</div>
+        <button onclick="runActionPerso()">Appliquer</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 
+    <div id="screen-interaction-objet" class="screen">
+        <h1>Combinaison</h1>
+        <label>Élément 1</label><select id="sel-obj-a"></select>
+        <label>Élément 2</label><select id="sel-obj-b"></select>
+        <div id="res-objet" class="result-box">Combinez deux objets.</div>
+        <button onclick="runInteractionObjet()">Utiliser</button>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
+    </div>
 </div>
 
 <script>
-    let grille = [], sols = {};
+    let grille = [], grilleAC = [], sols = {};
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
     const mapping = {
         "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
@@ -102,89 +81,88 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
-    window.onload = () => {
-        setTimeout(() => { show('screen-missions'); }, 2500);
-    };
+    window.onload = () => { setTimeout(() => { show('screen-missions'); }, 2500); };
 
-    function chargerMission(id) {
-        sols = {}; 
-        Papa.parse("grille.csv", {
-            download: true,
-            complete: (r1) => {
-                grille = r1.data;
-                Papa.parse(`solutions_${id}.csv`, {
-                    download: true,
-                    complete: (r2) => {
-                        r2.data.forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
-                        document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
-                        initActionMenu();
-                        show('screen-menu');
-                    },
-                    error: () => alert(`Fichier solutions_${id}.csv introuvable.`)
-                });
-            }
+    function fetchCSV(url) {
+        return new Promise((resolve, reject) => {
+            Papa.parse(url, { download: true, complete: (r) => resolve(r.data), error: (e) => reject(e) });
         });
     }
 
-    function initActionMenu() {
-        const sp = document.getElementById('sel-p');
+    function chargerMission(id) {
+        Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`solutions_${id}.csv`)])
+        .then(res => {
+            grille = res[0]; grilleAC = res[1]; sols = {};
+            res[2].forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
+            document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
+            initMenus(); show('screen-menu');
+        }).catch(() => alert("Erreur fichiers CSV."));
+    }
+
+    function initMenus() {
+        const sp = document.getElementById('sel-p'), scP = document.getElementById('sel-c-perso');
+        const sobA = document.getElementById('sel-obj-a'), sobB = document.getElementById('sel-obj-b');
+        
         sp.innerHTML = '<option value="">-- Agent --</option>';
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
 
-        const sc = document.getElementById('sel-c');
-        sc.innerHTML = '<option value="">-- Cible --</option>';
-        grille.forEach((ligne, index) => {
-            if (index < 2 || !ligne[0]) return;
-            let val = ligne[0].trim();
-            let txt = isNaN(val) ? val : "Objet " + val;
-            if (val.startsWith('P')) txt = "Porte " + val.substring(1);
-            if (val.startsWith('T')) txt = "Token " + val.substring(1);
-            sc.innerHTML += `<option value="${index}">${txt}</option>`;
+        let optC = '<option value="">-- Cible --</option>';
+        grille.forEach((l, i) => { if(i >= 2 && l[0]) optC += `<option value="${i}">${formaterNom(l[0])}</option>`; });
+        scP.innerHTML = optC;
+
+        // On remplit les DEUX menus de combinaison uniquement avec la première colonne de grille_ac.csv
+        let optObjets = '<option value="">-- Choisir --</option>';
+        grilleAC.forEach((l, i) => { 
+            if(i > 0 && l[0]) optObjets += `<option value="${i}">${formaterNom(l[0])}</option>`; 
         });
+        sobA.innerHTML = optObjets;
+        sobB.innerHTML = optObjets;
     }
 
-    function ouvrirAction(type) {
-        const res = document.getElementById('res-a');
-        const sp = document.getElementById('sel-p');
-        const sa = document.getElementById('sel-a');
-        const container = document.getElementById('container-selectors');
-
-        if (type === 'objet') {
-            // Pour l'interaction objet, on masque les sélecteurs Agent/Compétence
-            // pour ne pas embrouiller le joueur, et on force la colonne 1 (regarder)
-            container.style.display = "none";
-            sp.value = "Banks"; 
-            updateA();
-            sa.value = "1"; 
-            res.innerHTML = "Sélectionnez l'objet à examiner.";
-        } else {
-            // Mode normal : on affiche tout
-            container.style.display = "block";
-            sp.value = "";
-            sa.innerHTML = '<option value="">-- Compétence --</option>';
-            res.innerHTML = "Choisissez un agent et une compétence.";
-        }
-        show('screen-action');
+    function formaterNom(v) {
+        v = v.trim(); if(!isNaN(v)) return "Objet " + v;
+        if(v.startsWith('P')) return "Porte " + v.substring(1);
+        return v;
     }
 
     function updateA() {
-        const p = document.getElementById('sel-p').value;
-        const sa = document.getElementById('sel-a');
-        sa.innerHTML = "";
-        if(!p) return;
+        const p = document.getElementById('sel-p').value, sa = document.getElementById('sel-a');
+        sa.innerHTML = ""; if(!p) return;
         mapping[p].forEach((act, i) => {
             let col = 1 + (persos.indexOf(p) * 4) + i;
             sa.innerHTML += `<option value="${col}">${act}</option>`;
         });
     }
 
-    function runA() {
-        const l = document.getElementById('sel-c').value;
-        const c = document.getElementById('sel-a').value;
-        const res = document.getElementById('res-a');
+    function runActionPerso() {
+        const l = document.getElementById('sel-c-perso').value, c = document.getElementById('sel-a').value;
+        const r = document.getElementById('res-perso');
         if(!l || !c) return;
         const code = grille[l][c] ? grille[l][c].trim() : "";
-        res.innerHTML = sols[code] ? sols[code] : "Rien ne se passe.";
+        r.innerHTML = sols[code] || "Rien ne se passe.";
+    }
+
+    function runInteractionObjet() {
+        const idxA = document.getElementById('sel-obj-a').value; // Index ligne pour Objet A
+        const idxB = document.getElementById('sel-obj-b').value; // Index ligne pour Objet B
+        const res = document.getElementById('res-objet');
+        if(!idxA || !idxB) return;
+
+        const nomA = grilleAC[idxA][0].trim();
+        const nomB = grilleAC[idxB][0].trim();
+
+        // 1. Trouver la colonne correspondant au nom de l'objet B
+        const colB = grilleAC[0].findIndex(c => c && c.trim() === nomB);
+        let code = (colB !== -1 && grilleAC[idxA][colB]) ? grilleAC[idxA][colB].trim() : "";
+
+        // 2. Si vide ou colonne non trouvée, on permute : ligne de B, colonne de A
+        if (!code || code === "") {
+            const colA = grilleAC[0].findIndex(c => c && c.trim() === nomA);
+            const ligneB = idxB; // Puisque l'index de ligne est déjà idxB
+            code = (colA !== -1 && grilleAC[ligneB][colA]) ? grilleAC[ligneB][colA].trim() : "";
+        }
+
+        res.innerHTML = sols[code] || "Ces objets ne semblent pas interagir ensemble.";
     }
 
     function show(id) {
