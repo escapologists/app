@@ -23,12 +23,12 @@
         .result-box { background: #000; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid var(--primary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.4; font-size: 0.95rem; }
 
         /* Style Machine à Énigme */
-        .code-container { display: flex; justify-content: space-between; margin: 15px 0; }
-        .input-color { width: 65px; height: 65px; border: 3px solid #fff; border-radius: 10px; font-size: 2rem; font-weight: bold; color: #fff; text-align: center; background: transparent; outline: none; }
-        .c-yellow { background-color: #f1c40f; color: #000; }
-        .c-blue { background-color: #2980b9; }
-        .c-green { background-color: #27ae60; }
-        .c-red { background-color: #c0392b; }
+        .code-container { display: flex; justify-content: space-between; margin: 15px 0; gap: 8px; }
+        .select-color { width: 75px; height: 75px; border: 2px solid #fff; border-radius: 12px; font-size: 1.8rem; font-weight: bold; text-align: center; cursor: pointer; appearance: none; -webkit-appearance: none; padding: 0 !important; text-align-last: center; }
+        .c-yellow { background-color: #f1c40f; color: #000; border-color: #d4ac0d; }
+        .c-blue { background-color: #2980b9; color: #fff; border-color: #1a5276; }
+        .c-green { background-color: #27ae60; color: #fff; border-color: #196f3d; }
+        .c-red { background-color: #c0392b; color: #fff; border-color: #7b241c; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -83,12 +83,12 @@
         <h1>Énigme</h1>
         <label>Choisir l'épreuve</label><select id="sel-eni"></select>
         <div class="code-container">
-            <input type="number" id="eni-1" class="input-color c-yellow" min="0" max="9" placeholder="0">
-            <input type="number" id="eni-2" class="input-color c-blue" min="0" max="9" placeholder="0">
-            <input type="number" id="eni-3" class="input-color c-green" min="0" max="9" placeholder="0">
-            <input type="number" id="eni-4" class="input-color c-red" min="0" max="9" placeholder="0">
+            <select id="eni-1" class="select-color c-yellow"></select>
+            <select id="eni-2" class="select-color c-blue"></select>
+            <select id="eni-3" class="select-color c-green"></select>
+            <select id="eni-4" class="select-color c-red"></select>
         </div>
-        <div id="res-enigme" class="result-box">Entrez le code couleur.</div>
+        <div id="res-enigme" class="result-box">Réglez le code couleur.</div>
         <button onclick="runEnigme()">Tester le code</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
@@ -105,111 +105,6 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
-    window.onload = () => { setTimeout(() => { show('screen-missions'); }, 2500); };
-
-    function fetchCSV(url) {
-        return new Promise((resolve, reject) => {
-            Papa.parse(url, { download: true, complete: (r) => resolve(r.data), error: (e) => reject(e) });
-        });
-    }
-
-    function chargerMission(id) {
-        Promise.all([
-            fetchCSV("grille.csv"), 
-            fetchCSV("grille_ac.csv"), 
-            fetchCSV(`grille_eni_${id}.csv`),
-            fetchCSV(`solutions_${id}.csv`)
-        ])
-        .then(res => {
-            grille = res[0]; grilleAC = res[1]; grilleENI = res[2]; sols = {};
-            res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
-            document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
-            initMenus(); show('screen-menu');
-        }).catch(() => alert("Erreur de chargement. Vérifiez les fichiers."));
-    }
-
-    function initMenus() {
-        const sp = document.getElementById('sel-p'), scP = document.getElementById('sel-c-perso');
-        const sobA = document.getElementById('sel-obj-a'), sobB = document.getElementById('sel-obj-b');
-        const sen = document.getElementById('sel-eni');
-        
-        sp.innerHTML = '<option value="">-- Agent --</option>';
-        persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
-
-        let optC = '<option value="">-- Cible --</option>';
-        grille.forEach((l, i) => { if(i >= 2 && l[0]) optC += `<option value="${i}">${formaterNom(l[0])}</option>`; });
-        scP.innerHTML = optC;
-
-        let optObj = '<option value="">-- Choisir --</option>';
-        grilleAC.forEach((l, i) => { if(i > 0 && l[0]) optObj += `<option value="${i}">${formaterNom(l[0])}</option>`; });
-        sobA.innerHTML = optObj; sobB.innerHTML = optObj;
-
-        let optEni = '<option value="">-- Énigme --</option>';
-        grilleENI.forEach((l, i) => { if(l[0]) optEni += `<option value="${i}">${l[0]}</option>`; });
-        sen.innerHTML = optEni;
-    }
-
-    function formaterNom(v) {
-        v = v.trim(); if(!isNaN(v)) return "Objet " + v;
-        if(v.startsWith('P')) return "Porte " + v.substring(1);
-        return v;
-    }
-
-    function updateA() {
-        const p = document.getElementById('sel-p').value, sa = document.getElementById('sel-a');
-        sa.innerHTML = ""; if(!p) return;
-        mapping[p].forEach((act, i) => {
-            let col = 1 + (persos.indexOf(p) * 4) + i;
-            sa.innerHTML += `<option value="${col}">${act}</option>`;
-        });
-    }
-
-    function runActionPerso() {
-        const l = document.getElementById('sel-c-perso').value, c = document.getElementById('sel-a').value;
-        const r = document.getElementById('res-perso');
-        if(!l || !c) return;
-        const code = grille[l][c] ? grille[l][c].trim() : "";
-        r.innerHTML = sols[code] || "Rien ne se passe.";
-    }
-
-    function runInteractionObjet() {
-        const iA = document.getElementById('sel-obj-a').value, iB = document.getElementById('sel-obj-b').value;
-        const res = document.getElementById('res-objet');
-        if(!iA || !iB) return;
-        const nomA = grilleAC[iA][0].trim(), nomB = grilleAC[iB][0].trim();
-        const colB = grilleAC[0].findIndex(c => c && c.trim() === nomB);
-        let code = (colB !== -1 && grilleAC[iA][colB]) ? grilleAC[iA][colB].trim() : "";
-        if (!code) {
-            const colA = grilleAC[0].findIndex(c => c && c.trim() === nomA);
-            code = (colA !== -1 && grilleAC[iB][colA]) ? grilleAC[iB][colA].trim() : "";
-        }
-        res.innerHTML = sols[code] || "Aucune interaction.";
-    }
-
-    function runEnigme() {
-        const idx = document.getElementById('sel-eni').value;
-        const res = document.getElementById('res-enigme');
-        if(idx === "") return;
-
-        const codeSaisi = document.getElementById('eni-1').value + 
-                           document.getElementById('eni-2').value + 
-                           document.getElementById('eni-3').value + 
-                           document.getElementById('eni-4').value;
-
-        const codeAttendu = grilleENI[idx][1].trim();
-        const codeSucces = grilleENI[idx][2].trim();
-
-        if (codeSaisi === codeAttendu) {
-            res.innerHTML = sols[codeSucces] || "Code correct !";
-        } else {
-            res.innerHTML = "<span style='color:#e74c3c'>Code erroné. Réessayez.</span>";
-        }
-    }
-
-    function show(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-</script>
-</body>
-</html>
+    window.onload = () => { 
+        initCodeDropdowns();
+        setTimeout(() => { show('screen-missions'); }, 2500);
