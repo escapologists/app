@@ -21,7 +21,6 @@
         .screen { display: none; flex-direction: column; height: 100%; padding: 30px; box-sizing: border-box; animation: fadeIn 0.4s ease; }
         .screen.active { display: flex; }
 
-        /* Splash Screen */
         #screen-splash { justify-content: center; align-items: center; text-align: center; }
         .logo-image { width: 250px; height: auto; border-radius: 10px; margin-bottom: 25px; }
 
@@ -70,15 +69,17 @@
             <button onclick="ouvrirAction('perso')">Action Personnage</button>
             <button onclick="ouvrirAction('objet')">Interaction Objet</button>
         </div>
-        <button class="secondary" onclick="location.reload()">Quitter</button>
+        <button class="secondary" onclick="show('screen-missions')">Quitter</button>
     </div>
 
     <div id="screen-action" class="screen">
         <h1>Action</h1>
-        <label id="label-p">Agent</label>
-        <select id="sel-p" onchange="updateA()"></select>
-        <label id="label-a">Compétence</label>
-        <select id="sel-a"></select>
+        <div id="container-selectors">
+            <label id="lbl-p">Agent</label>
+            <select id="sel-p" onchange="updateA()"></select>
+            <label id="lbl-a">Compétence</label>
+            <select id="sel-a"></select>
+        </div>
         <label>Cible</label>
         <select id="sel-c"></select>
         
@@ -146,13 +147,19 @@
         const res = document.getElementById('res-a');
         const sp = document.getElementById('sel-p');
         const sa = document.getElementById('sel-a');
+        const container = document.getElementById('container-selectors');
 
         if (type === 'objet') {
-            sp.value = "Banks"; // Défaut interne pour l'interaction directe
+            // Pour l'interaction objet, on masque les sélecteurs Agent/Compétence
+            // pour ne pas embrouiller le joueur, et on force la colonne 1 (regarder)
+            container.style.display = "none";
+            sp.value = "Banks"; 
             updateA();
-            sa.value = "1"; // Force "regarder" (colonne 1)
+            sa.value = "1"; 
             res.innerHTML = "Sélectionnez l'objet à examiner.";
         } else {
+            // Mode normal : on affiche tout
+            container.style.display = "block";
             sp.value = "";
             sa.innerHTML = '<option value="">-- Compétence --</option>';
             res.innerHTML = "Choisissez un agent et une compétence.";
