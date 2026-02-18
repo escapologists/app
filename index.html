@@ -82,25 +82,40 @@ function init() {
         sp.innerHTML = '<option value="">-- Personnage --</option>';
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
 
-        // 2. Remplir les cibles (Objets / Portes / Tokens)
+        // 2. Remplir les cibles
         const sc = document.getElementById('c');
         sc.innerHTML = '<option value="">-- Cible --</option>';
         
-        // On parcourt le fichier grille.csv à partir de la ligne 2 (où commencent les données)
-        for(let i = 2; i < grille.length; i++) {
-            if(grille[i] && grille[i][0]) {
-                let valeurBrute = grille[i][0].trim();
+        // On boucle sur TOUTES les lignes du fichier
+        grille.forEach((ligne, index) => {
+            // On ignore les deux premières lignes (titres)
+            if (index < 2) return;
+
+            // On vérifie que la ligne existe et que la première case n'est pas vide
+            if (ligne && ligne[0] && ligne[0].trim() !== "") {
+                let valeurBrute = ligne[0].trim();
                 let texteAffiché = valeurBrute;
 
-                // Si c'est juste un chiffre (ex: 01, 02), on ajoute "Objet" devant
-                if (!isNaN(valeurBrute)) {
+                // LOGIQUE DE NOMMAGE :
+                // Si c'est un nombre pur (ex: 01, 25), on ajoute "Objet "
+                if (!isNaN(valeurBrute) && valeurBrute !== "") {
                     texteAffiché = "Objet " + valeurBrute;
+                } 
+                // Si ça commence par P (ex: P12), on peut écrire "Porte"
+                else if (valeurBrute.startsWith('P')) {
+                    texteAffiché = "Porte " + valeurBrute.substring(1);
                 }
-                
-                // On ajoute l'option au menu déroulant
-                sc.innerHTML += `<option value="${i}">${texteAffiché}</option>`;
+                // Si ça commence par T (ex: T01), on peut écrire "Token"
+                else if (valeurBrute.startsWith('T')) {
+                    texteAffiché = "Token " + valeurBrute.substring(1);
+                }
+
+                sc.innerHTML += `<option value="${index}">${texteAffiché}</option>`;
             }
-        }
+        });
+        
+        // Petit message de vérification dans la console du navigateur (F12)
+        console.log("Nombre de lignes chargées : " + (grille.length - 2));
         show('menu');
     }
 
@@ -134,3 +149,4 @@ function init() {
 </body>
 
 </html>
+
