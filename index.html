@@ -6,44 +6,23 @@
     <title>Escapologists App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        :root { 
-            --primary: #e74c3c; 
-            --bg: #121212; 
-            --card: #1e1e1e; 
-            --text: #e0e0e0; 
-            --accent: #3498db; 
-        }
-        
+        :root { --primary: #e74c3c; --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #3498db; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        
         .app-container { width: 100%; max-width: 380px; height: 640px; background: var(--card); border-radius: 30px; border: 2px solid #333; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-
-        /* Écrans */
         .screen { display: none; flex-direction: column; height: 100%; padding: 25px; box-sizing: border-box; animation: fadeIn 0.5s ease; }
         .screen.active { display: flex; }
-
-        /* Splash Screen */
         #splash { background: #000; justify-content: center; align-items: center; text-align: center; }
         .logo-box { border: 3px solid var(--primary); padding: 20px; display: inline-block; }
         .logo-text { font-size: 1.8rem; font-weight: bold; letter-spacing: 5px; color: white; text-transform: uppercase; }
-
-        /* Titres et Textes */
         h1 { color: var(--primary); text-align: center; font-size: 1.4rem; text-transform: uppercase; margin-top: 0; }
         .subtitle { text-align: center; opacity: 0.6; font-size: 0.9rem; margin-bottom: 30px; }
-
-        /* Menus et Boutons */
         .menu-list { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; justify-content: center; }
         button { padding: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; }
         button:active { transform: scale(0.95); }
         button.secondary { background: #333; margin-top: auto; }
-        button.locked { background: #222; color: #555; cursor: not-allowed; }
-
-        /* Formulaires */
         select { padding: 12px; border-radius: 8px; background: #2d2d2d; color: white; border: 1px solid #444; margin-bottom: 12px; font-size: 1rem; }
         label { font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
-
         .result-box { background: #000; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid var(--primary); min-height: 100px; display: flex; align-items: center; justify-content: center; text-align: center; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -62,19 +41,19 @@
         <h1>Missions</h1>
         <p class="subtitle">Sélectionnez votre objectif</p>
         <div class="menu-list">
-            <button onclick="chargerMission('M1')">Mission 1 : L'Entrepôt</button>
-            <button class="locked">Mission 2 : Le Bunker (Bientôt)</button>
-            <button class="locked">Mission 3 : Le Labo (Bientôt)</button>
+            <button onclick="chargerDonnees('M1', 'L\'Entrepôt')">Mission 1 : L'Entrepôt</button>
+            <button onclick="chargerDonnees('M2', 'Le Bunker')">Mission 2 : Le Bunker</button>
+            <button onclick="chargerDonnees('M3', 'Le Labo')">Mission 3 : Le Labo</button>
         </div>
     </div>
 
     <div id="screen-menu" class="screen">
-        <h1 id="mission-title">Mission 1</h1>
+        <h1 id="mission-title">Mission</h1>
         <div class="menu-list">
             <button onclick="show('screen-action')">Action Personnage</button>
-            <button onclick="alert('Indice MJ : Fouillez la zone 05')">Demander un Indice</button>
+            <button onclick="show('screen-missions')">Changer Mission</button>
         </div>
-        <button class="secondary" onclick="show('screen-missions')">Changer Mission</button>
+        <button class="secondary" onclick="location.reload()">Quitter</button>
     </div>
 
     <div id="screen-action" class="screen">
@@ -85,10 +64,8 @@
         <select id="sel-a"></select>
         <label>Cible</label>
         <select id="sel-c"></select>
-        
-        <div id="res-a" class="result-box">En attente d'ordre...</div>
-        
-        <button onclick="runA()">Exécuter</button>
+        <div id="res-a" class="result-box">En attente...</div>
+        <button onclick="runA()">Valider</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 
@@ -105,54 +82,49 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
-    // Au démarrage : Splash Screen de 3 secondes
     window.onload = () => {
-        setTimeout(() => {
-            show('screen-missions');
-        }, 3000);
+        setTimeout(() => { show('screen-missions'); }, 2500);
     };
 
-    // Charger les données de la mission
-    function chargerMission(id) {
-        if(id === 'M1') {
-            document.getElementById('screen-splash').classList.add('active'); // Petit écran de chargement
-            
-            // Chargement Grille
-            Papa.parse("grille.csv", {
-                download: true,
-                complete: (r1) => {
-                    grille = r1.data;
-                    // Chargement Solutions
-                    Papa.parse("solutions.csv", {
-                        download: true,
-                        complete: (r2) => {
-                            r2.data.forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
-                            initActionMenu();
-                            show('screen-menu');
-                        }
-                    });
-                }
-            });
-        }
+    function chargerDonnees(id, nomMission) {
+        sols = {}; // On vide les solutions précédentes
+        
+        // 1. Charger la grille commune
+        Papa.parse("grille.csv", {
+            download: true,
+            complete: (r1) => {
+                grille = r1.data;
+                
+                // 2. Charger les solutions spécifiques
+                Papa.parse(`solutions_${id}.csv`, {
+                    download: true,
+                    complete: (r2) => {
+                        r2.data.forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
+                        document.getElementById('mission-title').innerText = nomMission;
+                        initActionMenu();
+                        show('screen-menu');
+                    },
+                    error: () => alert(`Erreur: solutions_${id}.csv manquant.`)
+                });
+            }
+        });
     }
 
     function initActionMenu() {
         const sp = document.getElementById('sel-p');
-        sp.innerHTML = '<option value="">-- Personnage --</option>';
+        sp.innerHTML = '<option value="">-- Qui ? --</option>';
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
 
         const sc = document.getElementById('sel-c');
         sc.innerHTML = '<option value="">-- Cible --</option>';
         grille.forEach((ligne, index) => {
-            if (index < 2) return;
-            if (ligne && ligne[0] && ligne[0].trim() !== "") {
-                let val = ligne[0].trim();
-                let txt = val;
-                if (!isNaN(val)) txt = "Objet " + val;
-                else if (val.startsWith('P')) txt = "Porte " + val.substring(1);
-                else if (val.startsWith('T')) txt = "Token " + val.substring(1);
-                sc.innerHTML += `<option value="${index}">${txt}</option>`;
-            }
+            if (index < 2 || !ligne[0]) return;
+            let val = ligne[0].trim();
+            let txt = val;
+            if (!isNaN(val)) txt = "Objet " + val;
+            else if (val.startsWith('P')) txt = "Porte " + val.substring(1);
+            else if (val.startsWith('T')) txt = "Token " + val.substring(1);
+            sc.innerHTML += `<option value="${index}">${txt}</option>`;
         });
     }
 
@@ -171,8 +143,7 @@
         const l = document.getElementById('sel-c').value;
         const c = document.getElementById('sel-a').value;
         const res = document.getElementById('res-a');
-        if(!l || !c) { res.innerHTML = "Sélection incomplète."; return; }
-
+        if(!l || !c) return;
         const code = grille[l][c] ? grille[l][c].trim() : "";
         res.innerHTML = sols[code] ? `<strong>[CODE ${code}]</strong><br>${sols[code]}` : "Rien ne se passe.";
     }
