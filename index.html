@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escapologists App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        :root { --primary: #e74c3c; --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #3498db; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .app-container { width: 100%; max-width: 380px; height: 640px; background: var(--card); border-radius: 30px; border: 2px solid #333; display: flex; flex-direction: column; padding: 25px; box-sizing: border-box; }
+        .screen { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.3s; }
+        .screen.active { display: flex; }
+        h1 { color: var(--primary); text-align: center; font-size: 1.4rem; }
+        label { font-size: 0.8rem; margin-top: 10px; color: var(--accent); }
+        select, input { padding: 10px; border-radius: 8px; border: 1px solid #444; background: #2d2d2d; color: white; margin-bottom: 10px; }
+        button { padding: 15px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .secondary { background: #333; margin-top: auto; }
+        .result-box { background: #000; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid var(--primary); min-height: 80px; font-size: 0.9rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="loading" class="screen active"><h1>Chargement...</h1></div>
+
+    <div id="menu" class="screen">
+        <h1>Escapologists</h1>
+        <button onclick="show('action')">Action Personnage</button>
+        <button onclick="show('objets')">Code Objet / Enigme</button>
+        <button class="secondary" onclick="location.reload()">Reset</button>
+    </div>
+
+    <div id="action" class="screen">
+        <h1>Action</h1>
+        <label>Personnage :</label>
+        <select id="p" onchange="updateA()"></select>
+        <label>Action :</label>
+        <select id="a"></select>
+        <label>Cible :</label>
+        <select id="c"></select>
+        <div id="res-a" class="result-box">Prêt.</div>
+        <button onclick="runA()">Valider</button>
+        <button class="secondary" onclick="show('menu')">Retour</button>
+    </div>
+
+    <div id="objets" class="screen">
+        <h1>Code Direct</h1>
+        <label>Entrez le code (4 chiffres) :</label>
+        <input type="number" id="code-input" placeholder="Ex: 1234">
+        <div id="res-o" class="result-box">Entrez un code pour voir le résultat.</div>
+        <button onclick="runO()">Vérifier</button>
+        <button class="secondary" onclick="show('menu')">Retour</button>
+    </div>
+</div>
+
+<script>
+    let grille = [], sols = {};
+    const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
+    const mapping = {
+        "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
+        "Julia": ["regarder", "Manipuler", "faufiler", "deverouiller"],
+        "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
+        "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
+        "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
+    };
+
+    window.onload = () => {
+        Papa.parse("grille.csv", { download: true, complete: (r1) => {
+            grille = r1.data;
+            Papa.parse("solutions.csv", { download: true, complete: (r2) => {
+                r2.data.forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
+                init();
+            }});
+        }});
+    };
+
+    function init() {
+        const sp = document.getElementById('p');
+        sp.innerHTML = '<option value="">-- Qui ? --</option>';
+        persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+        const sc = document.getElementById('c');
+        sc.innerHTML = '<option value="">-- Cible --</option>';
+        for(let i=2; i<grille.length; i++) { if(grille[i][0]) sc.innerHTML += `<option value="${i}">${grille[i][0]}</option>`; }
+        show('menu');
+    }
+
+    function updateA() {
+        const p = document.getElementById('p').value;
+        const sa = document.getElementById('a');
+        sa.innerHTML = "";
+        if(!p) return;
+        mapping[p].forEach((act, i) => {
+            let col = 1 + (persos.indexOf(p) * 4) + i;
+            sa.innerHTML += `<option value="${col}">${act}</option>`;
+        });
+    }
+
+    function runA() {
+        const l = document.getElementById('c').value, c = document.getElementById('a').value;
+        const code = grille[l][c] ? grille[l][c].trim() : "";
+        document.getElementById('res-a').innerHTML = sols[code] ? `<strong>[${code}]</strong><br>${sols[code]}` : "Rien ne se passe.";
+    }
+
+    function runO() {
+        const val = document.getElementById('code-input').value;
+        document.getElementById('res-o').innerHTML = sols[val] ? `<strong>[${val}]</strong><br>${sols[val]}` : "Code inconnu.";
+    }
+
+    function show(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+</script>
+</body>
+</html>
