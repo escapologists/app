@@ -76,13 +76,31 @@
         }});
     };
 
-    function init() {
+function init() {
+        // 1. Remplir les personnages
         const sp = document.getElementById('p');
-        sp.innerHTML = '<option value="">-- Qui ? --</option>';
+        sp.innerHTML = '<option value="">-- Personnage --</option>';
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+
+        // 2. Remplir les cibles (Objets / Portes / Tokens)
         const sc = document.getElementById('c');
         sc.innerHTML = '<option value="">-- Cible --</option>';
-        for(let i=2; i<grille.length; i++) { if(grille[i][0]) sc.innerHTML += `<option value="${i}">${grille[i][0]}</option>`; }
+        
+        // On parcourt le fichier grille.csv à partir de la ligne 2 (où commencent les données)
+        for(let i = 2; i < grille.length; i++) {
+            if(grille[i] && grille[i][0]) {
+                let valeurBrute = grille[i][0].trim();
+                let texteAffiché = valeurBrute;
+
+                // Si c'est juste un chiffre (ex: 01, 02), on ajoute "Objet" devant
+                if (!isNaN(valeurBrute)) {
+                    texteAffiché = "Objet " + valeurBrute;
+                }
+                
+                // On ajoute l'option au menu déroulant
+                sc.innerHTML += `<option value="${i}">${texteAffiché}</option>`;
+            }
+        }
         show('menu');
     }
 
@@ -114,4 +132,5 @@
     }
 </script>
 </body>
+
 </html>
