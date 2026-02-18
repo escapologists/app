@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escapologists - Game App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #e74c3c;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --input-bg: #2d2d2d;
+            --text: #e0e0e0;
+            --accent: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 380px;
+            height: 640px;
+            background: var(--card);
+            border-radius: 30px;
+            border: 2px solid #333;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            box-sizing: border-box;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .screen { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.3s ease-out; }
+        .screen.active { display: flex; }
+
+        h1 { font-size: 1.5rem; text-align: center; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; }
+        .subtitle { text-align: center; font-size: 0.8rem; margin-bottom: 20px; opacity: 0.6; }
+
+        label { font-size: 0.8rem; margin-top: 10px; color: var(--accent); font-weight: bold; text-transform: uppercase; }
+
+        select, input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: var(--input-bg);
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        button:active { transform: scale(0.98); }
+        .secondary-btn { background: #333; margin-top: auto; }
+
+        .result-box {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid var(--primary);
+            font-size: 0.95rem;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div id="screen-loading" class="screen active">
+        <h1>Initialisation</h1>
+        <p style="text-align:center; margin-top:50px;">Chargement des données...</p>
+    </div>
+
+    <div id="screen-menu" class="screen">
+        <h1>Escapologists</h1>
+        <p class="subtitle">Interface d'Opérations</p>
+        <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; gap:15px;">
+            <button onclick="showScreen('screen-action')">Action Personnage</button>
+            <button onclick="alert('Fonctionnalité Interaction Objet bientôt disponible')">Interaction Objets</button>
+            <button onclick="alert('Fonctionnalité Enigme bientôt disponible')">Machine à énigmes</button>
+        </div>
+        <button class="secondary-btn" onclick="location.reload()">Réinitialiser</button>
+    </div>
+
+    <div id="screen-action" class="screen">
+        <h1>Action</h1>
+        
+        <label>Personnage :</label>
+        <select id="sel-perso" onchange="majActions()"></select>
+
+        <label>Action :</label>
+        <select id="sel-action"></select>
+
+        <label>Cible :</label>
+        <select id="sel-cible"></select>
+        
+        <div id="resultat" class="result-box">Prêt pour l'action.</div>
+        
+        <button onclick="lancerRecherche()">Exécuter l'action</button>
+        <button class="secondary-btn" onclick="showScreen('screen-menu')">Retour</button>
+    </div>
+
+</div>
+
+<script>
+    let dataGrille = [];
+    let dataSolutions = {}; // On stocke sous forme d'objet { "code": "texte" }
+
+    const personnages = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
+    const actionsMapping = {
+        "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
+        "Julia": ["regarder", "Manipuler", "faufiler", "deverouiller"],
+        "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
+        "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
+        "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
+    };
+
+    // 1. Charger les deux fichiers CSV au démarrage
+    window.onload = function() {
+        // Charger la grille
+        Papa.parse("grille.csv", {
+            download: true,
+            complete: function(resGrille) {
+                dataGrille = resGrille.data;
+                
+                // Charger les solutions ensuite
+                Papa.parse("solutions.csv", {
+                    download: true,
+                    complete: function(resSols) {
+                        // On transforme le tableau des solutions en objet pour une recherche ultra-rapide
+                        resSols.data.forEach(row => {
+                            if(row[0]) dataSolutions[row[0].trim()] = row[1];
+                        });
+                        initApp();
+                    }
+                });
+            }
+        });
+    };
+
+    function initApp() {
+        const selP = document.getElementById('sel-perso');
+        selP.innerHTML = '<option value="">-- Qui ? --</option>';
+        personnages.forEach(p => selP.innerHTML += `<option value="${p}">${p}</option>`);
+
+        const selC = document.getElementById('sel-cible');
+        selC.innerHTML = '<option value="">-- Cible --</option>';
+        // On commence à la ligne 2 car ligne 0=noms, ligne 1=compétences
+        for(let i = 2; i < dataGrille.length; i++) {
+            let label = dataGrille[i][0];
+            if(label && label.trim() !== "") {
+                selC.innerHTML += `<option value="${i}">${label}</option>`;
+            }
+        }
+        showScreen('screen-menu');
+    }
+
+    function majActions() {
+        const p = document.getElementById('sel-perso').value;
+        const selA = document.getElementById('sel-action');
+        selA.innerHTML = "";
+        if(!p) return;
+
+        actionsMapping[p].forEach((act, index) => {
+            // Index de colonne : 1 + (perso * 4) + index_action
+            let colIndex = 1 + (personnages.indexOf(p) * 4) + index;
+            selA.innerHTML += `<option value="${colIndex}">${act}</option>`;
+        });
+    }
+
+    function lancerRecherche() {
+        const ligneIdx = document.getElementById('sel-cible').value;
+        const colIdx = document.getElementById('sel-action').value;
+        const resBox = document.getElementById('resultat');
+
+        if(!ligneIdx || !colIdx) {
+            resBox.innerHTML = "⚠️ Sélectionnez le personnage et la cible.";
+            return;
+        }
+
+        const codeTrouve = dataGrille[ligneIdx][colIdx] ? dataGrille[ligneIdx][colIdx].trim() : "";
+
+        if(!codeTrouve || codeTrouve === "") {
+            resBox.style.borderLeftColor = "#f39c12";
+            resBox.innerHTML = "Aucune interaction possible pour ce personnage ici.";
+        } else {
+            // Recherche dans le dictionnaire des solutions
+            const texteFinal = dataSolutions[codeTrouve];
+            if(texteFinal) {
+                resBox.style.borderLeftColor = "#2ecc71";
+                resBox.innerHTML = `<strong>[Code ${codeTrouve}]</strong><br>${texteFinal}`;
+            } else {
+                resBox.style.borderLeftColor = "#e74c3c";
+                resBox.innerHTML = `Code ${codeTrouve} trouvé, mais aucune description n'existe dans le fichier solutions.`;
+            }
+        }
+    }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+</script>
+
+</body>
+</html>
