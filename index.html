@@ -34,4 +34,156 @@
         button:active { transform: scale(0.98); opacity: 0.9; }
         button.secondary { background: #222; border: 1px solid #444; margin-top: auto; }
 
-        select { padding: 14px; border-radius: 10
+        select { padding: 14px; border-radius: 10px; background: #1e1e1e; color: white; border: 1px solid #333; margin-bottom: 15px; font-size: 1rem; width: 100%; }
+        label { font-size: 0.7rem; color: var(--primary); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; margin-left: 5px; }
+
+        .result-box { 
+            background: #000; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--primary); 
+            min-height: 130px; display: flex; align-items: center; justify-content: center; text-align: center; 
+            line-height: 1.6; font-size: 1rem;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div id="screen-splash" class="screen active">
+        <img src="logo.jpg" alt="Escapologists" class="logo-image">
+        <p style="letter-spacing: 4px; color: var(--primary); font-size: 0.7rem; font-weight: bold; margin-top: 10px;">INITIALISATION...</p>
+    </div>
+
+    <div id="screen-missions" class="screen">
+        <h1>Missions</h1>
+        <div class="menu-list">
+            <button onclick="chargerMission('M1')">MISSION 1</button>
+            <button onclick="chargerMission('M2')">MISSION 2</button>
+            <button onclick="chargerMission('M3')">MISSION 3</button>
+        </div>
+    </div>
+
+    <div id="screen-menu" class="screen">
+        <h1 id="mission-title">MISSION</h1>
+        <div class="menu-list">
+            <button onclick="ouvrirAction('perso')">Action Personnage</button>
+            <button onclick="ouvrirAction('objet')">Interaction Objet</button>
+        </div>
+        <button class="secondary" onclick="location.reload()">Quitter</button>
+    </div>
+
+    <div id="screen-action" class="screen">
+        <h1>Action</h1>
+        <label id="label-p">Agent</label>
+        <select id="sel-p" onchange="updateA()"></select>
+        <label id="label-a">Compétence</label>
+        <select id="sel-a"></select>
+        <label>Cible</label>
+        <select id="sel-c"></select>
+        
+        <div id="res-a" class="result-box">Prêt pour l'ordre.</div>
+        
+        <button onclick="runA()">Confirmer</button>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
+    </div>
+
+</div>
+
+<script>
+    let grille = [], sols = {};
+    const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
+    const mapping = {
+        "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
+        "Julia": ["regarder", "Manipuler", "faufiler", "deverouiller"],
+        "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
+        "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
+        "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
+    };
+
+    window.onload = () => {
+        setTimeout(() => { show('screen-missions'); }, 2500);
+    };
+
+    function chargerMission(id) {
+        sols = {}; 
+        Papa.parse("grille.csv", {
+            download: true,
+            complete: (r1) => {
+                grille = r1.data;
+                Papa.parse(`solutions_${id}.csv`, {
+                    download: true,
+                    complete: (r2) => {
+                        r2.data.forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
+                        document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
+                        initActionMenu();
+                        show('screen-menu');
+                    },
+                    error: () => alert(`Fichier solutions_${id}.csv introuvable.`)
+                });
+            }
+        });
+    }
+
+    function initActionMenu() {
+        const sp = document.getElementById('sel-p');
+        sp.innerHTML = '<option value="">-- Agent --</option>';
+        persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+
+        const sc = document.getElementById('sel-c');
+        sc.innerHTML = '<option value="">-- Cible --</option>';
+        grille.forEach((ligne, index) => {
+            if (index < 2 || !ligne[0]) return;
+            let val = ligne[0].trim();
+            let txt = isNaN(val) ? val : "Objet " + val;
+            if (val.startsWith('P')) txt = "Porte " + val.substring(1);
+            if (val.startsWith('T')) txt = "Token " + val.substring(1);
+            sc.innerHTML += `<option value="${index}">${txt}</option>`;
+        });
+    }
+
+    function ouvrirAction(type) {
+        const res = document.getElementById('res-a');
+        const sp = document.getElementById('sel-p');
+        const sa = document.getElementById('sel-a');
+
+        if (type === 'objet') {
+            sp.value = "Banks"; // Défaut interne pour l'interaction directe
+            updateA();
+            sa.value = "1"; // Force "regarder" (colonne 1)
+            res.innerHTML = "Sélectionnez l'objet à examiner.";
+        } else {
+            sp.value = "";
+            sa.innerHTML = '<option value="">-- Compétence --</option>';
+            res.innerHTML = "Choisissez un agent et une compétence.";
+        }
+        show('screen-action');
+    }
+
+    function updateA() {
+        const p = document.getElementById('sel-p').value;
+        const sa = document.getElementById('sel-a');
+        sa.innerHTML = "";
+        if(!p) return;
+        mapping[p].forEach((act, i) => {
+            let col = 1 + (persos.indexOf(p) * 4) + i;
+            sa.innerHTML += `<option value="${col}">${act}</option>`;
+        });
+    }
+
+    function runA() {
+        const l = document.getElementById('sel-c').value;
+        const c = document.getElementById('sel-a').value;
+        const res = document.getElementById('res-a');
+        if(!l || !c) return;
+        const code = grille[l][c] ? grille[l][c].trim() : "";
+        res.innerHTML = sols[code] ? sols[code] : "Rien ne se passe.";
+    }
+
+    function show(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+</script>
+</body>
+</html>
