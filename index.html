@@ -11,8 +11,8 @@
             --bg-petrol: #0a1118; 
             --card: #0f1922; 
             --text: #e0e0e0; 
-            --halo: rgba(32, 37, 140, 0.4);
-            /* Nouvelles Teintes */
+            --halo: rgba(32, 37, 140, 0.5);
+            /* Couleurs Énigmes */
             --eni-yellow: #EBF099;
             --eni-blue: #2076B3;
             --eni-green: #23991F;
@@ -26,61 +26,72 @@
         .screen { display: none; flex-direction: column; height: 100%; padding: 25px; box-sizing: border-box; animation: fadeIn 0.4s ease; }
         .screen.active { display: flex; }
 
+        /* Titre encadré avec Halo */
         .mission-header {
             border: 2px solid var(--primary);
             border-radius: 20px;
             padding: 10px 20px;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 25px auto;
             box-shadow: 0 0 15px var(--halo);
             background: rgba(32, 37, 140, 0.1);
             display: inline-block;
             align-self: center;
         }
+        h1 { color: #fff; text-align: center; font-size: 1.2rem; text-transform: uppercase; margin: 0; letter-spacing: 3px; }
 
-        h1 { color: #fff; text-align: center; font-size: 1.3rem; text-transform: uppercase; margin: 0; letter-spacing: 3px; }
-
-        #screen-missions .menu-list { justify-content: flex-start; margin-top: 50px; }
-        .main-menu-btn { padding: 30px 20px !important; font-size: 1.1rem !important; margin-bottom: 5px; }
-        .menu-list { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; }
+        /* Menu Principal : Boutons Graphiques */
+        .menu-list { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
         
-        button { padding: 18px; border: none; border-radius: 15px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        button:active { transform: scale(0.96); opacity: 0.9; }
+        .btn-graphic {
+            width: 100%;
+            height: 110px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: 0.3s;
+            background-color: transparent;
+        }
+
+        .btn-graphic:hover, .btn-graphic:active {
+            transform: scale(0.97);
+            box-shadow: 0 0 20px var(--halo);
+            border: 1px solid var(--primary);
+            filter: brightness(1.1);
+        }
+
+        /* Boutons Classiques */
+        button { padding: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; transition: 0.2s; }
         button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: auto; }
-
-        select { padding: 14px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 12px; font-size: 0.95rem; width: 100%; outline: none; }
-        label { font-size: 0.7rem; color: #3498db; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; display: block; margin-left: 5px; }
-
-        .result-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #1a2a36; min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.4; font-size: 0.95rem; }
-
-        /* --- STYLE ROUE CRANTÉE MISE À JOUR --- */
-        .code-container { display: flex; justify-content: space-between; margin: 20px 0; gap: 10px; }
-        .wheel-wrapper { position: relative; width: 75px; height: 90px; }
         
+        /* Formulaires */
+        select { padding: 12px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 10px; font-size: 0.9rem; width: 100%; outline: none; }
+        label { font-size: 0.65rem; color: #3498db; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: block; margin-left: 5px; }
+
+        .result-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #1a2a36; min-height: 70px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.9rem; }
+
+        /* Roues Crantées Machine */
+        .code-container { display: flex; justify-content: space-between; margin: 15px 0; gap: 8px; }
+        .wheel-wrapper { position: relative; width: 75px; height: 90px; }
         .select-color { 
-            width: 100%; height: 100%; border-radius: 10px; 
-            font-size: 2.2rem; font-weight: 900; 
-            cursor: pointer; appearance: none; -webkit-appearance: none; 
-            text-align-last: center; border: none;
+            width: 100%; height: 100%; border-radius: 12px; font-size: 2.2rem; font-weight: 900; 
+            cursor: pointer; appearance: none; -webkit-appearance: none; text-align-last: center; border: none;
             background-image: linear-gradient(90deg, transparent 45%, rgba(0,0,0,0.1) 50%, transparent 55%);
             background-size: 10px 100%;
-            box-shadow: 
-                inset 0 15px 15px rgba(0,0,0,0.4), 
-                inset 0 -15px 15px rgba(0,0,0,0.4),
-                0 5px 15px rgba(0,0,0,0.4);
+            box-shadow: inset 0 15px 15px rgba(0,0,0,0.4), inset 0 -15px 15px rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.3);
         }
-
-        /* Couleurs personnalisées */
-        .c-yellow { background-color: var(--eni-yellow); color: #2c3e50; border: 2px solid #d4d98a; }
-        .c-blue { background-color: var(--eni-blue); color: #fff; border: 2px solid #1a5e8f; }
-        .c-green { background-color: var(--eni-green); color: #fff; border: 2px solid #1b7a18; }
-        .c-red { background-color: var(--eni-red); color: #fff; border: 2px solid #a0280d; }
+        .c-yellow { background-color: var(--eni-yellow); color: #2c3e50; }
+        .c-blue { background-color: var(--eni-blue); color: #fff; }
+        .c-green { background-color: var(--eni-green); color: #fff; }
+        .c-red { background-color: var(--eni-red); color: #fff; }
 
         .wheel-wrapper::before, .wheel-wrapper::after {
-            content: ""; position: absolute; left: 10%; width: 80%; height: 4px;
-            background: rgba(255,255,255,0.2); z-index: 2; pointer-events: none;
+            content: ""; position: absolute; left: 10%; width: 80%; height: 3px; background: rgba(255,255,255,0.2); z-index: 2; pointer-events: none;
         }
-        .wheel-wrapper::before { top: 15px; }
-        .wheel-wrapper::after { bottom: 15px; }
+        .wheel-wrapper::before { top: 18px; }
+        .wheel-wrapper::after { bottom: 18px; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -89,13 +100,13 @@
 
 <div class="app-container">
     <div id="screen-splash" class="screen active">
-        <img src="logo.jpg" class="logo-image">
-        <p style="letter-spacing: 4px; color: #3498db; font-size: 0.7rem; font-weight: bold;">INITIALISATION...</p>
+        <img src="logo.jpg" class="logo-image" style="width: 200px;">
+        <p style="letter-spacing: 4px; color: #3498db; font-size: 0.7rem; font-weight: bold;">CHARGEMENT...</p>
     </div>
 
     <div id="screen-missions" class="screen">
         <div class="mission-header"><h1>Missions</h1></div>
-        <div class="menu-list">
+        <div class="menu-list" style="justify-content: flex-start; margin-top: 20px;">
             <button onclick="chargerMission('M1')">MISSION 1</button>
             <button onclick="chargerMission('M2')">MISSION 2</button>
             <button onclick="chargerMission('M3')">MISSION 3</button>
@@ -105,9 +116,9 @@
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1 id="mission-title">MISSION</h1></div>
         <div class="menu-list">
-            <button class="main-menu-btn" onclick="show('screen-action-perso')">Action Personnage</button>
-            <button class="main-menu-btn" onclick="show('screen-interaction-objet')">Interaction Objet</button>
-            <button class="main-menu-btn" onclick="show('screen-enigme')">Machine à Énigmes</button>
+            <button class="btn-graphic" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')"></button>
+            <button class="btn-graphic" style="background-image: url('bouton_enigma.jpg');" onclick="show('screen-enigme')"></button>
+            <button class="btn-graphic" style="background-image: url('bouton_association.jpg');" onclick="show('screen-interaction-objet')"></button>
         </div>
         <button class="secondary" onclick="show('screen-missions')">Quitter</button>
     </div>
@@ -133,15 +144,15 @@
 
     <div id="screen-enigme" class="screen">
         <h1>Énigme</h1>
-        <label>Épreuve</label><select id="sel-eni"></select>
+        <label>Sélectionner l'épreuve</label><select id="sel-eni"></select>
         <div class="code-container">
             <div class="wheel-wrapper"><select id="eni-1" class="select-color c-yellow"></select></div>
             <div class="wheel-wrapper"><select id="eni-2" class="select-color c-blue"></select></div>
             <div class="wheel-wrapper"><select id="eni-3" class="select-color c-green"></select></div>
             <div class="wheel-wrapper"><select id="eni-4" class="select-color c-red"></select></div>
         </div>
-        <div id="res-enigme" class="result-box">Alignez les chiffres.</div>
-        <button onclick="runEnigme()">Valider le code</button>
+        <div id="res-enigme" class="result-box">Réglez la machine.</div>
+        <button onclick="runEnigme()">Valider</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 </div>
@@ -188,7 +199,7 @@
             res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
             document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
             initMenus(); show('screen-menu');
-        }).catch(() => alert("Erreur : Fichiers mission manquants."));
+        }).catch(() => alert("Erreur de chargement des fichiers."));
     }
 
     function initMenus() {
@@ -257,7 +268,7 @@
         const codeAttendu = grilleENI[idx][1].toString().trim();
         const codeSucces = grilleENI[idx][2].toString().trim();
         if (codeSaisi === codeAttendu) res.innerHTML = sols[codeSucces] || "Code correct !";
-        else res.innerHTML = "<span style='color:#C93110; font-weight:bold;'>Combinaison erronée.</span>";
+        else res.innerHTML = "<span style='color:var(--eni-red); font-weight:bold;'>Combinaison erronée.</span>";
     }
 
     function show(id) {
