@@ -26,8 +26,8 @@
         .screen.active { display: flex; }
 
         /* Correction Centrage Splash Screen */
-        #screen-splash { justify-content: center; align-items: center; text-align: center; height: 100%; }
-        .logo-image { width: 220px; height: auto; border-radius: 15px; margin: auto; display: block; }
+        #screen-splash { justify-content: center; align-items: center; text-align: center; }
+        .logo-image { width: 220px; height: auto; border-radius: 15px; margin-bottom: 20px; }
 
         .mission-header {
             border: 2px solid var(--primary);
@@ -43,6 +43,7 @@
 
         .menu-list { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
         
+        /* Boutons Graphiques avec Glow */
         .btn-graphic {
             width: 100%;
             height: 110px;
@@ -71,6 +72,7 @@
 
         .result-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #1a2a36; min-height: 70px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.9rem; }
 
+        /* Roues de la machine */
         .code-container { display: flex; justify-content: space-between; margin: 15px 0; gap: 8px; }
         .wheel-wrapper { position: relative; width: 75px; height: 90px; }
         .select-color { 
@@ -98,10 +100,10 @@
 
 <div class="app-container">
     <div id="screen-splash" class="screen active">
-        <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <img src="logo.jpg" class="logo-image">
+            <p style="letter-spacing: 4px; color: #3498db; font-size: 0.7rem; font-weight: bold;">INITIALISATION...</p>
         </div>
-        <p style="letter-spacing: 4px; color: #3498db; font-size: 0.7rem; font-weight: bold; margin-bottom: 40px;">INITIALISATION EN COURS...</p>
     </div>
 
     <div id="screen-missions" class="screen">
@@ -117,9 +119,7 @@
         <div class="mission-header"><h1 id="mission-title">MISSION</h1></div>
         <div class="menu-list">
             <button class="btn-graphic" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')"></button>
-            
             <button class="btn-graphic" style="background-image: url('bouton_association.jpg');" onclick="show('screen-interaction-objet')"></button>
-            
             <button class="btn-graphic" style="background-image: url('bouton_enigma.jpg');" onclick="show('screen-enigme')"></button>
         </div>
         <button class="secondary" onclick="show('screen-missions')">Quitter</button>
@@ -146,7 +146,7 @@
 
     <div id="screen-enigme" class="screen">
         <h1>Énigme</h1>
-        <label>Sélectionner l'épreuve</label><select id="sel-eni"></select>
+        <label>Épreuve</label><select id="sel-eni"></select>
         <div class="code-container">
             <div class="wheel-wrapper"><select id="eni-1" class="select-color c-yellow"></select></div>
             <div class="wheel-wrapper"><select id="eni-2" class="select-color c-blue"></select></div>
@@ -170,6 +170,16 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
+    // Audio Setup
+    const sndSuccess = new Audio('success.wav');
+    const sndError = new Audio('error.wav');
+    const sndClick = new Audio('click.wav');
+
+    function playSnd(s) { 
+        s.currentTime = 0; 
+        s.play().catch(() => {}); 
+    }
+
     window.onload = () => { 
         initCodeDropdowns();
         setTimeout(() => { show('screen-missions'); }, 2500); 
@@ -178,6 +188,7 @@
     function initCodeDropdowns() {
         ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
             const s = document.getElementById(id);
+            s.onchange = () => playSnd(sndClick);
             for(let i=0; i<=9; i++) {
                 let opt = document.createElement('option');
                 opt.value = i; opt.text = i;
@@ -187,21 +198,20 @@
     }
 
     function fetchCSV(url) {
-        return new Promise((resolve, reject) => {
-            Papa.parse(url, { download: true, complete: (r) => resolve(r.data), error: (e) => reject(e) });
+        return new Promise((resolve) => {
+            Papa.parse(url, { download: true, complete: (r) => resolve(r.data), error: () => resolve([]) });
         });
     }
 
-    function chargerMission(id) {
-        Promise.all([
+    async function chargerMission(id) {
+        const res = await Promise.all([
             fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
             fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`)
-        ]).then(res => {
-            grille = res[0]; grilleAC = res[1]; grilleENI = res[2]; sols = {};
-            res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
-            document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
-            initMenus(); show('screen-menu');
-        }).catch(() => alert("Erreur fichiers."));
+        ]);
+        grille = res[0]; grilleAC = res[1]; grilleENI = res[2]; sols = {};
+        res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
+        document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
+        initMenus(); show('screen-menu');
     }
 
     function initMenus() {
@@ -213,70 +223,4 @@
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
 
         let optC = '<option value="">-- Cible --</option>';
-        grille.forEach((l, i) => { if(i >= 2 && l[0]) optC += `<option value="${i}">${formaterNom(l[0])}</option>`; });
-        scP.innerHTML = optC;
-
-        let optObj = '<option value="">-- Choisir --</option>';
-        grilleAC.forEach((l, i) => { if(i > 0 && l[0]) optObj += `<option value="${i}">${formaterNom(l[0])}</option>`; });
-        sobA.innerHTML = optObj; sobB.innerHTML = optObj;
-
-        let optEni = '<option value="">-- Énigme --</option>';
-        grilleENI.forEach((l, i) => { if(l[0]) optEni += `<option value="${i}">${l[0]}</option>`; });
-        sen.innerHTML = optEni;
-    }
-
-    function formaterNom(v) {
-        v = v.trim(); if(!isNaN(v)) return "Objet " + v;
-        if(v.startsWith('P')) return "Porte " + v.substring(1);
-        return v;
-    }
-
-    function updateA() {
-        const p = document.getElementById('sel-p').value, sa = document.getElementById('sel-a');
-        sa.innerHTML = ""; if(!p) return;
-        mapping[p].forEach((act, i) => {
-            let col = 1 + (persos.indexOf(p) * 4) + i;
-            sa.innerHTML += `<option value="${col}">${act}</option>`;
-        });
-    }
-
-    function runActionPerso() {
-        const l = document.getElementById('sel-c-perso').value, c = document.getElementById('sel-a').value;
-        const r = document.getElementById('res-perso');
-        if(!l || !c) return;
-        const code = (grille[l] && grille[l][c]) ? grille[l][c].trim() : "";
-        r.innerHTML = sols[code] || "Rien ne se passe.";
-    }
-
-    function runInteractionObjet() {
-        const iA = document.getElementById('sel-obj-a').value, iB = document.getElementById('sel-obj-b').value;
-        const res = document.getElementById('res-objet');
-        if(!iA || !iB) return;
-        const nomA = grilleAC[iA][0].trim(), nomB = grilleAC[iB][0].trim();
-        const colB = grilleAC[0].findIndex(c => c && c.trim() === nomB);
-        let code = (colB !== -1 && grilleAC[iA][colB]) ? grilleAC[iA][colB].trim() : "";
-        if (!code) {
-            const colA = grilleAC[0].findIndex(c => c && c.trim() === nomA);
-            code = (colA !== -1 && grilleAC[iB][colA]) ? grilleAC[iB][colA].trim() : "";
-        }
-        res.innerHTML = sols[code] || "Aucune interaction.";
-    }
-
-    function runEnigme() {
-        const idx = document.getElementById('sel-eni').value;
-        const res = document.getElementById('res-enigme');
-        if(idx === "") return;
-        const codeSaisi = document.getElementById('eni-1').value + document.getElementById('eni-2').value + document.getElementById('eni-3').value + document.getElementById('eni-4').value;
-        const codeAttendu = grilleENI[idx][1].toString().trim();
-        const codeSucces = grilleENI[idx][2].toString().trim();
-        if (codeSaisi === codeAttendu) res.innerHTML = sols[codeSucces] || "Code correct !";
-        else res.innerHTML = "<span style='color:var(--eni-red); font-weight:bold;'>Combinaison erronée.</span>";
-    }
-
-    function show(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-</script>
-</body>
-</html>
+        grille.forEach((l, i) =>
