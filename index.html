@@ -12,7 +12,6 @@
             --card: #0f1922; 
             --text: #e0e0e0; 
             --halo: rgba(32, 37, 140, 0.5);
-            /* Couleurs Énigmes */
             --eni-yellow: #EBF099;
             --eni-blue: #2076B3;
             --eni-green: #23991F;
@@ -26,7 +25,10 @@
         .screen { display: none; flex-direction: column; height: 100%; padding: 25px; box-sizing: border-box; animation: fadeIn 0.4s ease; }
         .screen.active { display: flex; }
 
-        /* Titre encadré avec Halo */
+        /* Correction Centrage Splash Screen */
+        #screen-splash { justify-content: center; align-items: center; text-align: center; height: 100%; }
+        .logo-image { width: 220px; height: auto; border-radius: 15px; margin: auto; display: block; }
+
         .mission-header {
             border: 2px solid var(--primary);
             border-radius: 20px;
@@ -39,7 +41,6 @@
         }
         h1 { color: #fff; text-align: center; font-size: 1.2rem; text-transform: uppercase; margin: 0; letter-spacing: 3px; }
 
-        /* Menu Principal : Boutons Graphiques */
         .menu-list { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
         
         .btn-graphic {
@@ -55,24 +56,21 @@
             background-color: transparent;
         }
 
-        .btn-graphic:hover, .btn-graphic:active {
+        .btn-graphic:active {
             transform: scale(0.97);
             box-shadow: 0 0 20px var(--halo);
             border: 1px solid var(--primary);
             filter: brightness(1.1);
         }
 
-        /* Boutons Classiques */
-        button { padding: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; transition: 0.2s; }
+        button { padding: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; }
         button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: auto; }
         
-        /* Formulaires */
         select { padding: 12px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 10px; font-size: 0.9rem; width: 100%; outline: none; }
         label { font-size: 0.65rem; color: #3498db; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: block; margin-left: 5px; }
 
         .result-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #1a2a36; min-height: 70px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.9rem; }
 
-        /* Roues Crantées Machine */
         .code-container { display: flex; justify-content: space-between; margin: 15px 0; gap: 8px; }
         .wheel-wrapper { position: relative; width: 75px; height: 90px; }
         .select-color { 
@@ -100,8 +98,10 @@
 
 <div class="app-container">
     <div id="screen-splash" class="screen active">
-        <img src="logo.jpg" class="logo-image" style="width: 200px;">
-        <p style="letter-spacing: 4px; color: #3498db; font-size: 0.7rem; font-weight: bold;">CHARGEMENT...</p>
+        <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+            <img src="logo.jpg" class="logo-image">
+        </div>
+        <p style="letter-spacing: 4px; color: #3498db; font-size: 0.7rem; font-weight: bold; margin-bottom: 40px;">INITIALISATION EN COURS...</p>
     </div>
 
     <div id="screen-missions" class="screen">
@@ -117,8 +117,10 @@
         <div class="mission-header"><h1 id="mission-title">MISSION</h1></div>
         <div class="menu-list">
             <button class="btn-graphic" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')"></button>
-            <button class="btn-graphic" style="background-image: url('bouton_enigma.jpg');" onclick="show('screen-enigme')"></button>
+            
             <button class="btn-graphic" style="background-image: url('bouton_association.jpg');" onclick="show('screen-interaction-objet')"></button>
+            
+            <button class="btn-graphic" style="background-image: url('bouton_enigma.jpg');" onclick="show('screen-enigme')"></button>
         </div>
         <button class="secondary" onclick="show('screen-missions')">Quitter</button>
     </div>
@@ -199,7 +201,7 @@
             res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = row[1]; });
             document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
             initMenus(); show('screen-menu');
-        }).catch(() => alert("Erreur de chargement des fichiers."));
+        }).catch(() => alert("Erreur fichiers."));
     }
 
     function initMenus() {
