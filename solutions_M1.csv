@@ -1,6 +1,8 @@
 1234,,Cette porte est verrouillée electroniquement
 1235,,Rien à manipuler
+1236,,C'est un médecin qui devrait manipuler ça....
 1237,,Il s'agit d'un antidote contre les medicaments provoquant un coma
+1240,,Une très belle tondeuse à gazon
 1256,,Une ampoule d'adrénaline
 1257,,Ce chariot contient des médicaments
 1264,,Aucun effet
@@ -23,6 +25,7 @@
 1725,,Le conduit semble accessible a une personne fine et souple...
 1726,,C'est de l'engrais.
 1728,,Stacy doit pouvoir bricoler un truc avec ça
+1729,,Une très belle tondeuse à gazon
 2134,,La porte est trop robuste pour être forcée.
 2135,,Le manche se demonte. Jeter la carte 1 et prenait la carte objet 20.
 2136,,Julia déverrouille la porte 32. Retirer la porte du jeu.
@@ -47,11 +50,9 @@
 2612,,C'est un bricolage qui ressemble à un détonateur
 2613,,Ce chariot contient des médicaments
 2614,,Un joli transplantoir pour planter des plantes.
+2614,,C'est un médecin qui devrait manipuler ça....
 2617,,Seule Stacy peut manipuler un truc comme ça
 2713,,C'est un médecin qui devrait manipuler ça....
-2614,,C'est un médecin qui devrait manipuler ça....
-1236,,C'est un médecin qui devrait manipuler ça....
-4183,,C'est un médecin qui devrait manipuler ça....
 2714,,Ce chariot contient des médicaments
 2816,,C'est un mélange eplosif
 2912,,Rien de particulier
@@ -122,6 +123,7 @@
 4178,,elle peut bricoler un truc avec un autre objet
 4180,,Le manche du balai à l'air bien solide. On doit pouvoir faire quelque chose avec.
 4182,,Le conduit semble accessible a une personne fine et souple...
+4183,,C'est un médecin qui devrait manipuler ça....
 4185,,Seule Stacy peut manipuler un truc comme ça
 4186,,Seule Stacy peut manipuler un truc comme ça
 4189,,La porte est verrouillée par un code. Prendre la carte Enigme 4
@@ -142,6 +144,7 @@
 4253,,Pas grand-chose à faire avec…
 4256,,Le manche du balai à l'air bien solide. On doit pouvoir faire quelque chose avec.
 4257,,C'est un bricolage qui ressemble à un détonateur
+4258,,Une très belle tondeuse à gazon
 4259,,La grille de ce conduit n'a pas l'air bien fixée.
 4260,,C'est un mélange eplosif
 4263,,Le conduit semble accessible a une personne fine et souple...
@@ -159,16 +162,13 @@
 4318,,Seule Stacy peut manipuler un truc comme ça
 4319,,La porte est verrouillée par un code.
 4325,,Une très belle tondeuse à gazon
-1240,,Une très belle tondeuse à gazon
-1729,,Une très belle tondeuse à gazon
-4503,,Une très belle tondeuse à gazon
-4258,,Une très belle tondeuse à gazon
 4326,,"Il s'agit d'une simple barre de fer, rien de plus à faire..."
 4327,,il n'y a rien à manipuler
 4328,,C'est un outil de voleuse pour forcer les serrures
 4329,,Rien de particulier
 4501,,Banks a récupéré une barre en fer solide; un bon outil
 4502,,Cette seringue peut être utile pour préparer un traitement
+4503,,Une très belle tondeuse à gazon
 4506,,Elle doit pouvoir bricoler un truc avec un autre objet
 4507,,Pas grand-chose à faire avec…
 4508,,Une ampoule d'adrénaline
@@ -203,7 +203,7 @@
 5085,,Inefficace
 5086,,Stacy doit pouvoir faire quelque chose avec ces objets
 5092,,Carrement inutile
-5094,,Murphy doit pouvoir manipuler ces éléments
+5094,M,Jeter le cartes 9 et 21. Prenez la carte 18
 5096,,Pas de franc succès
 5097,,Carrement inutile
 5102,,Nul
