@@ -66,9 +66,9 @@
         <h1>Compétence</h1>
         <label>Agent</label><select id="sel-p" onchange="updateA()"></select>
         <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
-        <label>Cible</label><select id="sel-c-perso"></select>
+        <label>Cible</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
         <div id="container-item" style="display:none;">
-            <label>Objet utilisé</label><select id="sel-item-used"></select>
+            <label>Associé à l'objet :</label><select id="sel-item-used"></select>
         </div>
         <div id="res-perso" class="result-box">...</div>
         <button onclick="runActionPerso()">Appliquer</button>
@@ -123,11 +123,8 @@
         Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`)]).then(res => {
             grille = res[0]; grilleAC = res[1]; grilleENI = res[2]; sols = {};
             res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = { expert: row[1] ? row[1].trim().toUpperCase() : "", texte: row[2] ? row[2].trim() : "" }; });
-            
-            // Mise à jour du titre de mission basé sur l'ID
             const missionNames = { "M1": "Le jardinier Armé", "M2": "L'amateur Rouge", "M3": "ft. Belzebuth" };
             document.getElementById('mission-title').innerText = missionNames[id] || "MISSION";
-            
             initMenus(); show('screen-menu');
         });
     }
@@ -170,6 +167,7 @@
         }
         sa.selectedIndex = indexToSelect;
         if (lastCibleValue) sc.value = lastCibleValue;
+        resetItemUsed(); // Reset l'objet associé quand on change d'agent
         toggleItemSelect();
     }
 
@@ -181,6 +179,11 @@
         }
     }
 
+    function resetItemUsed() {
+        const siu = document.getElementById('sel-item-used');
+        siu.selectedIndex = 0; // Remet sur "-- Aucun objet --"
+    }
+
     function runActionPerso() {
         const agentName = document.getElementById('sel-p').value;
         const targetIdx = document.getElementById('sel-c-perso').value;
@@ -190,6 +193,8 @@
         if(!agentName || !targetIdx || !actionCol) return;
         const actionLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex].text;
         let code = "";
+
+        // Si Manipuler est choisi ET qu'un objet est sélectionné
         if(actionLabel === "Manipuler" && itemIdx !== "") {
             const targetName = grille[targetIdx][0].trim();
             const itemName = grilleAC[itemIdx][0].trim();
@@ -201,9 +206,13 @@
                 let rowB = grilleAC.findIndex(r => r[0] && r[0].trim() === itemName);
                 if(rowB !== -1 && colB !== -1 && grilleAC[rowB][colB]) code = grilleAC[rowB][colB].trim();
             }
-        } else {
+        } 
+        
+        // Si aucune combinaison n'est trouvée (ou si ce n'est pas Manipuler, ou si Aucun Objet est mis)
+        if (!code || code === "") {
             code = (grille[targetIdx] && grille[targetIdx][actionCol]) ? grille[targetIdx][actionCol].trim() : "";
         }
+
         const solution = sols[code];
         if(!solution || code === "") { resBox.innerHTML = "Rien ne se passe."; return; }
         const initiales = { "Banks": "B", "Murphy": "M", "Stacy": "S", "Kim": "K", "Julia": "J" };
