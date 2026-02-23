@@ -1,6 +1,7 @@
 1234,,Cette porte est verrouillée electroniquement
 1235,,Rien à manipuler
 1237,,Il s'agit d'un antidote contre les medicaments provoquant un coma
+1256,,Une ampoule d'adrénaline
 1257,,Ce chariot contient des médicaments
 1264,,Aucun effet
 1325,,il n'y a rien à manipuler
@@ -47,6 +48,10 @@
 2613,,Ce chariot contient des médicaments
 2614,,Un joli transplantoir pour planter des plantes.
 2617,,Seule Stacy peut manipuler un truc comme ça
+2713,,C'est un médecin qui devrait manipuler ça....
+2614,,C'est un médecin qui devrait manipuler ça....
+1236,,C'est un médecin qui devrait manipuler ça....
+4183,,C'est un médecin qui devrait manipuler ça....
 2714,,Ce chariot contient des médicaments
 2816,,C'est un mélange eplosif
 2912,,Rien de particulier
@@ -64,6 +69,7 @@
 3219,,Rien de particulier
 3412,,Murphy peut injecter ce traitement à quelqu'un dans le coma
 3415,,Seule Stacy peut manipuler un truc comme ça
+3416,,L'adrénaline doit être injecté pour agir...
 3417,,C'est un bricolage qui ressemble à un détonateur
 3418,,elle peut bricoler un truc avec un autre objet
 3419,,Seule Stacy peut manipuler un truc comme ça
@@ -77,6 +83,7 @@
 3621,,Julia ne sait pas quoi faire de cet engrais.
 3623,,Il n'en a pas besoin
 3625,,Une injection prête. Murphy doit savoir quoi faire avec
+3627,,Une ampoule d'adrénaline
 3628,,Stacy doit pouvoir bricoler un truc avec ça
 3642,,C'est de l'engrais.
 3645,,C'est de l'engrais.
@@ -86,6 +93,7 @@
 3714,,Stacy sait que l'on peut l'utiliser pour faire des bombes
 3715,,Cette porte est verrouillée electroniquement
 3716,,La porte est verrouillée par un code. Prendre la carte Enigme 1
+3718,,Une ampoule d'adrénaline
 3719,,Une injection prête. Murphy doit savoir quoi faire avec
 3812,,Il ne manque qu'un détonateur pour faire une bombe
 3815,,Il faut l'associer à l'objet ciblé
@@ -101,6 +109,7 @@
 4153,,Le conduit semble accessible a une personne fine et souple...
 4156,,Seule Stacy peut manipuler un truc comme ça
 4157,,La grille ne tient pas bien mais il faudrait un outil et un peu de force.
+4159,,C'est de l'engrais.
 4162,,Seule Stacy peut manipuler un truc comme ça
 4163,,C'est une jolie plante verte.
 4165,,Peut-être mais il faut le préparer et seul Murphy sait le faire
@@ -123,6 +132,7 @@
 4207,,C'est un mélange eplosif
 4208,,Stacy doit pouvoir bricoler un truc avec ça
 4209,,Rien de particulier
+4215,,Une ampoule d'adrénaline
 4216,,Seule Stacy peut manipuler un truc comme ça
 4230,,Cette porte n'est pas crochetable. Prendre la carte Enigme 3
 4235,,Peut-être mais il faut le préparer et seul Murphy sait le faire
@@ -156,6 +166,7 @@
 4502,,Cette seringue peut être utile pour préparer un traitement
 4506,,Elle doit pouvoir bricoler un truc avec un autre objet
 4507,,Pas grand-chose à faire avec…
+4508,,Une ampoule d'adrénaline
 4509,,Stacy doit pouvoir bricoler un truc avec ça
 4510,,Une injection prête. Murphy doit savoir quoi faire avec
 4512,,Stacy doit pouvoir bricoler un truc avec ça
