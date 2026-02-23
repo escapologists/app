@@ -74,4 +74,191 @@
         </div>
 
         <div id="res-perso" class="result-box">...</div>
-        <button onclick="runActionPerso()">Appliquer</button
+        <button onclick="runActionPerso()">Appliquer</button>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
+    </div>
+
+    <div id="screen-enigme" class="screen">
+        <h1>Machine à énigmes</h1>
+        <label>Sélectionner l'énigme</label><select id="sel-eni"></select>
+        <div class="code-container">
+            <div class="wheel-wrapper"><select id="eni-1" class="select-color c-yellow"></select></div>
+            <div class="wheel-wrapper"><select id="eni-2" class="select-color c-blue"></select></div>
+            <div class="wheel-wrapper"><select id="eni-3" class="select-color c-green"></select></div>
+            <div class="wheel-wrapper"><select id="eni-4" class="select-color c-red"></select></div>
+        </div>
+        <div id="res-enigme" class="result-box">Réglez la machine.</div>
+        <button onclick="runEnigme()">Valider</button>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
+    </div>
+</div>
+
+<script>
+    let grille = [], grilleAC = [], grilleENI = [], sols = {};
+    const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
+    const mapping = {
+        "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
+        "Julia": ["regarder", "Manipuler", "faufiler", "deverouiller"],
+        "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
+        "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
+        "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
+    };
+
+    const sndClick = new Audio('click.wav'), sndSuccess = new Audio('success.wav'), sndError = new Audio('error.wav');
+    function playSnd(s) { s.currentTime = 0; s.play().catch(() => {}); }
+
+    window.onload = () => { initCodeDropdowns(); setTimeout(() => { show('screen-missions'); }, 2000); };
+
+    function initCodeDropdowns() {
+        ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
+            const s = document.getElementById(id);
+            s.onchange = () => playSnd(sndClick);
+            for(let i=0; i<=9; i++) {
+                let opt = document.createElement('option');
+                opt.value = i; opt.text = i; s.appendChild(opt);
+            }
+        });
+    }
+
+    function fetchCSV(url) { return new Promise((resolve) => { Papa.parse(url, { download: true, complete: (r) => resolve(r.data), error: () => resolve([]) }); }); }
+
+    function chargerMission(id) {
+        Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`)]).then(res => {
+            grille = res[0]; grilleAC = res[1]; grilleENI = res[2]; sols = {};
+            res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = { expert: row[1] ? row[1].trim().toUpperCase() : "", texte: row[2] ? row[2].trim() : "" }; });
+            document.getElementById('mission-title').innerText = "MISSION " + id.replace('M', '');
+            initMenus(); show('screen-menu');
+        });
+    }
+
+    function initMenus() {
+        const sp = document.getElementById('sel-p'), scP = document.getElementById('sel-c-perso'), siu = document.getElementById('sel-item-used'), sen = document.getElementById('sel-eni');
+        
+        sp.innerHTML = '<option value="">-- Agent --</option>';
+        persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+        
+        let optC = '<option value="">-- Cible --</option>';
+        grille.forEach((l, i) => { if(i >= 2 && l[0]) optC += `<option value="${i}">${formaterNom(l[0])}</option>`; });
+        scP.innerHTML = optC;
+        
+        let optObj = '<option value="">-- Aucun objet --</option>';
+        grilleAC.forEach((l, i) => { if(i > 0 && l[0]) optObj += `<option value="${i}">${formaterNom(l[0])}</option>`; });
+        siu.innerHTML = optObj;
+
+        let optEni = '<option value="">-- Choisir l\'énigme --</option>';
+        grilleENI.forEach((l, i) => { if(l[0]) optEni += `<option value="${i}">${l[0]}</option>`; });
+        sen.innerHTML = optEni;
+    }
+
+    function formaterNom(v) {
+        v = v.trim(); if(!isNaN(v)) return "Objet " + v;
+        if(v.startsWith('P')) return "Porte " + v.substring(1);
+        return v;
+    }
+
+    function updateA() {
+        const p = document.getElementById('sel-p').value;
+        const sa = document.getElementById('sel-a');
+        const sc = document.getElementById('sel-c-perso');
+        
+        if(!p) return;
+
+        // Mémorisation de l'action et de la cible actuelle
+        const lastActionName = sa.options[sa.selectedIndex] ? sa.options[sa.selectedIndex].text : "regarder";
+        const lastCibleValue = sc.value;
+
+        // Mise à jour de la liste d'actions pour le nouvel agent
+        sa.innerHTML = '';
+        mapping[p].forEach((act, i) => {
+            let col = 1 + (persos.indexOf(p) * 4) + i;
+            let opt = document.createElement('option');
+            opt.value = col;
+            opt.text = act;
+            sa.appendChild(opt);
+        });
+
+        // Tenter de resélectionner l'ancienne action
+        let indexToSelect = 0;
+        for (let i = 0; i < sa.options.length; i++) {
+            if (sa.options[i].text === lastActionName) { indexToSelect = i; break; }
+        }
+        sa.selectedIndex = indexToSelect;
+
+        // Tenter de garder la même cible
+        if (lastCibleValue) {
+            sc.value = lastCibleValue;
+        }
+
+        toggleItemSelect();
+    }
+
+    function toggleItemSelect() {
+        const sa = document.getElementById('sel-a');
+        const container = document.getElementById('container-item');
+        if (sa.options[sa.selectedIndex]) {
+            container.style.display = (sa.options[sa.selectedIndex].text === "Manipuler") ? "block" : "none";
+        }
+    }
+
+    function runActionPerso() {
+        const agentName = document.getElementById('sel-p').value;
+        const targetIdx = document.getElementById('sel-c-perso').value;
+        const actionCol = document.getElementById('sel-a').value;
+        const itemIdx = document.getElementById('sel-item-used').value;
+        const resBox = document.getElementById('res-perso');
+        
+        if(!agentName || !targetIdx || !actionCol) {
+            resBox.innerHTML = "Sélection incomplète.";
+            return;
+        }
+
+        const actionLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex].text;
+        let code = "";
+
+        if(actionLabel === "Manipuler" && itemIdx !== "") {
+            const targetName = grille[targetIdx][0].trim();
+            const itemName = grilleAC[itemIdx][0].trim();
+            
+            // Recherche symétrique
+            let colA = grilleAC[0].findIndex(c => c && c.trim() === itemName);
+            let rowA = grilleAC.findIndex(r => r[0] && r[0].trim() === targetName);
+            if(rowA !== -1 && colA !== -1 && grilleAC[rowA][colA]) code = grilleAC[rowA][colA].trim();
+
+            if(!code || code === "") {
+                let colB = grilleAC[0].findIndex(c => c && c.trim() === targetName);
+                let rowB = grilleAC.findIndex(r => r[0] && r[0].trim() === itemName);
+                if(rowB !== -1 && colB !== -1 && grilleAC[rowB][colB]) code = grilleAC[rowB][colB].trim();
+            }
+        } else {
+            code = (grille[targetIdx] && grille[targetIdx][actionCol]) ? grille[targetIdx][actionCol].trim() : "";
+        }
+
+        const solution = sols[code];
+        if(!solution || code === "") { resBox.innerHTML = "Rien ne se passe."; return; }
+
+        const initiales = { "Banks": "B", "Murphy": "M", "Stacy": "S", "Kim": "K", "Julia": "J" };
+        if(solution.expert === "" || solution.expert === initiales[agentName]) {
+            resBox.innerHTML = solution.texte; playSnd(sndSuccess);
+        } else {
+            resBox.innerHTML = "<span style='color:#C93110; font-weight:bold;'>Cet agent n'a pas la compétence requise pour ce résultat.</span>"; playSnd(sndError);
+        }
+    }
+
+    function runEnigme() {
+        const idx = document.getElementById('sel-eni').value;
+        const res = document.getElementById('res-enigme');
+        if(idx === "") return;
+        const saisi = document.getElementById('eni-1').value + document.getElementById('eni-2').value + document.getElementById('eni-3').value + document.getElementById('eni-4').value;
+        const attendu = grilleENI[idx][1].toString().trim();
+        const succes = grilleENI[idx][2].toString().trim();
+        if (saisi === attendu) { res.innerHTML = sols[succes] ? sols[succes].texte : "Code correct !"; playSnd(sndSuccess); }
+        else { res.innerHTML = "<span style='color:var(--eni-red); font-weight:bold;'>Erreur de code.</span>"; playSnd(sndError); }
+    }
+
+    function show(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+</script>
+</body>
+</html>
