@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escapologists App - Flexible Mode</title>
+    <title>Escapologists App - Symétrie</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { 
@@ -69,7 +69,7 @@
         <label>Cible</label><select id="sel-c-perso"></select>
         
         <div id="container-item" style="display:none;">
-            <label>Objet utilisé (Optionnel)</label>
+            <label>Objet utilisé</label>
             <select id="sel-item-used"></select>
         </div>
 
@@ -178,30 +178,36 @@
         const resBox = document.getElementById('res-perso');
         const actionLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex].text;
 
-        if(!agentName || !targetIdx || !actionCol) {
-            resBox.innerHTML = "Sélection incomplète.";
-            return;
-        }
+        if(!agentName || !targetIdx || !actionCol) return;
 
         let code = "";
 
-        // LOGIQUE : Si Manipuler ET un objet est sélectionné -> GRILLE_AC
         if(actionLabel === "Manipuler" && itemIdx !== "") {
             const targetName = grille[targetIdx][0].trim();
             const itemName = grilleAC[itemIdx][0].trim();
-            const colItem = grilleAC[0].findIndex(c => c && c.trim() === itemName);
-            const rowTargetIdx = grilleAC.findIndex(r => r[0] && r[0].trim() === targetName);
             
-            if(rowTargetIdx !== -1 && colItem !== -1) {
-                code = grilleAC[rowTargetIdx][colItem] ? grilleAC[rowTargetIdx][colItem].trim() : "";
+            // 1. RECHERCHE DIRECTE : Cible (Ligne) + Objet (Colonne)
+            let colItem = grilleAC[0].findIndex(c => c && c.trim() === itemName);
+            let rowTargetIdx = grilleAC.findIndex(r => r[0] && r[0].trim() === targetName);
+            
+            if(rowTargetIdx !== -1 && colItem !== -1 && grilleAC[rowTargetIdx][colItem]) {
+                code = grilleAC[rowTargetIdx][colItem].trim();
+            }
+
+            // 2. RECHERCHE SYMÉTRIQUE : Si vide, on inverse Cible et Objet
+            if(!code || code === "") {
+                let colItemInv = grilleAC[0].findIndex(c => c && c.trim() === targetName);
+                let rowTargetIdxInv = grilleAC.findIndex(r => r[0] && r[0].trim() === itemName);
+                if(rowTargetIdxInv !== -1 && colItemInv !== -1 && grilleAC[rowTargetIdxInv][colItemInv]) {
+                    code = grilleAC[rowTargetIdxInv][colItemInv].trim();
+                }
             }
         } else {
-            // SINON (Action simple OU Manipuler sans objet) -> GRILLE.CSV
             code = (grille[targetIdx] && grille[targetIdx][actionCol]) ? grille[targetIdx][actionCol].trim() : "";
         }
 
         const solution = sols[code];
-        if(!solution) { resBox.innerHTML = "Rien ne se passe."; return; }
+        if(!solution || code === "") { resBox.innerHTML = "Rien ne se passe."; return; }
 
         const initiales = { "Banks": "B", "Murphy": "M", "Stacy": "S", "Kim": "K", "Julia": "J" };
         if(solution.expert === "" || solution.expert === initiales[agentName]) {
