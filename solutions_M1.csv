@@ -203,7 +203,7 @@
 5138,,Pas efficace
 5142,,Non
 5143,,Inutile
-5146,,Seul Julia peut utiliser le rossignol. Enlever la porte 32
+5146,J,Julia utilise son rossignol. Enlever la porte 32
 5160,,Inutile
 5162,,Cette porte s'ouvre avec un code pas une clé.
 5163,,Aucune efficacité dans ce choix
@@ -216,7 +216,7 @@
 5183,,Inefficace
 5184,,ça ne fait rien. Et ce n'est pas étonnant
 5186,,C'est improductif
-5192,,Banks arrive à faire sauter la grille. Jeter la carte 2 et prenait la carte 19.
+5192,B,Banks arrive à faire sauter la grille. Jeter la carte 2 et prenait la carte 19.
 5193,,Pas possible
 5194,,Rien de rien
 5196,,Stacy doit savoir que faire de ces produits
@@ -260,7 +260,7 @@
 5290,,Carrement inutile
 5291,,N'importe quoi
 5297,,C'est improductif
-5301,,Jeter les cartes 10 et 14. Prenez la carte 17
+5301,S,Jeter les cartes 10 et 14. Prenez la carte 17
 5302,,inefficace
 5304,,Aucun effet
 5307,,Aucun interêt
@@ -326,7 +326,7 @@
 5610,,Pas efficace
 5613,,Aucun effet
 5623,,Aucun effet
-5631,,Jeter les cartes 3 et 7. Prenez la carte 10.
+5631,S,Jeter les cartes 3 et 7. Prenez la carte 10.
 5632,,Malheureusement la barre est inefficace sur cette porte
 5637,,Aucun effet
 5639,,Aucun effet
@@ -420,8 +420,8 @@
 5849,,L'interrupteur dévérouille la porte 33. Vous pouvez la retirer
 5861,,Aucun interêt
 5862,,"Non, pas possible"
-5863,S,"Si Stacy possede l'élément 17, consulter 5867"
-5867,,La bombe fait sauter la porte 15 qui s'ouvre sur un couloir (sol 4) et une porte (20)
+5863,S,Stacy doit pouvoir le faire
+5867,S,La bombe fait sauter la porte 15 qui s'ouvre sur un couloir (sol 4) et une porte (20)
 5869,,"Non, rien"
 5870,,La porte semble lourdement vérouillée
 5871,,Pas d'observation possible à travers la porte
