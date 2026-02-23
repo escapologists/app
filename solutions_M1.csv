@@ -14,7 +14,7 @@
 1524,,Seule Stacy peut manipuler un truc comme ça
 1526,,Rien de particulier
 1527,,Rien de particulier
-1528,,Elle bricole la moitié d'un objet…voir 56xx
+1528,,Elle doit pouvoir bricoler un truc avec un autre objet
 1637,,Murphy ne sait pas quoi faire de cet engrais.
 1638,,La grille de ce conduit n'a pas l'air bien fixée.
 1639,,Un conduit d'aération mais obturé par une grille
@@ -65,7 +65,7 @@
 3412,,Murphy peut injecter ce traitement à quelqu'un dans le coma
 3415,,Seule Stacy peut manipuler un truc comme ça
 3417,,C'est un bricolage qui ressemble à un détonateur
-3418,,Elle bricole la moitié d'un objet…voir xx92
+3418,,elle peut bricoler un truc avec un autre objet
 3419,,Seule Stacy peut manipuler un truc comme ça
 3501,,Retirer la porte 17 du jeu. Prenez la carte mission 1 étape 3.
 3512,,"ça ressemble à un détonateur, il ne manque plus q'un explosif"
@@ -82,6 +82,7 @@
 3645,,C'est de l'engrais.
 3647,,La grille ne tient pas bien mais il faudrait un outil et un peu de force.
 3649,,Rien de particulier
+3712,,Stacy sait que l'on peut l'utiliser pour faire des bombes
 3714,,Stacy sait que l'on peut l'utiliser pour faire des bombes
 3715,,Cette porte est verrouillée electroniquement
 3716,,La porte est verrouillée par un code. Prendre la carte Enigme 1
@@ -93,8 +94,8 @@
 4123,,C'est un bricolage qui ressemble à un détonateur
 4126,,Seule Stacy peut manipuler un truc comme ça
 4127,,L'injection d'antidote reveille Stacy. Enlevez-lui le statut COMA et jeter la carte 18
-4128,,Il peut préparer un traitement et assemble la moitié d'un objet voir xx82
-4132,,Il peut préparer un traitement et assemble la moitié d'un objet voir 57xx
+4128,,Il peut préparer un traitement mais avec quelle produit ?
+4132,,Comment le préparer ?
 4136,,Il faut l'associer à l'objet ciblé
 4138,,Cette porte est verrouillée electroniquement
 4153,,Le conduit semble accessible a une personne fine et souple...
@@ -109,7 +110,7 @@
 4173,,Elle pourrait passer mais a grille gène
 4175,,Peut-être mais il faut le préparer et seul Murphy sait le faire
 4176,,Cette porte est verrouillée electroniquement
-4178,,Elle bricole la moitié d'un objet…voir 57xx
+4178,,elle peut bricoler un truc avec un autre objet
 4180,,Le manche du balai à l'air bien solide. On doit pouvoir faire quelque chose avec.
 4182,,Le conduit semble accessible a une personne fine et souple...
 4185,,Seule Stacy peut manipuler un truc comme ça
@@ -153,7 +154,7 @@
 4329,,Rien de particulier
 4501,,Banks a récupéré une barre en fer solide; un bon outil
 4502,,Cette seringue peut être utile pour préparer un traitement
-4506,,Elle bricole la moitié d'un objet…voir xx31
+4506,,Elle doit pouvoir bricoler un truc avec un autre objet
 4507,,Pas grand-chose à faire avec…
 4509,,Stacy doit pouvoir bricoler un truc avec ça
 4510,,Une injection prête. Murphy doit savoir quoi faire avec
@@ -219,7 +220,7 @@
 5192,B,Banks arrive à faire sauter la grille. Jeter la carte 2 et prenait la carte 19.
 5193,,Pas possible
 5194,,Rien de rien
-5196,,Stacy doit savoir que faire de ces produits
+5196,S,Jeter les cartes 3 et 7. Prenez la carte 10.
 5197,,ça ne donne rien
 5198,,Inutile
 5201,,Inefficace
