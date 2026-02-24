@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escapologists App - Indices & Pénalités</title>
+    <title>Escapologists App - Final Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { 
             --primary: #20258C; --bg-petrol: #0a1118; --card: #0f1922; --text: #e0e0e0; 
             --halo: rgba(32, 37, 140, 0.5); --eni-yellow: #EBF099; --eni-blue: #2076B3; 
-            --eni-green: #23991F; --eni-red: #C93110;
+            --eni-green: #23991F; --eni-red: #C93110; --hint-color: #419096;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
         .app-container { width: 100%; max-width: 380px; height: 660px; background: var(--card); border-radius: 35px; border: 2px solid #1a2a36; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
@@ -30,11 +30,11 @@
         .menu-list { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
         .btn-graphic { width: 100%; height: 120px; background-size: cover; background-position: center; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
         button { padding: 14px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
-        button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: auto; }
+        button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: 10px; }
         
         /* INDICES */
-        .btn-hint { background: #d35400; font-size: 0.7rem; margin-top: 5px; }
-        .hint-text { font-style: italic; color: #f39c12; font-size: 0.8rem; margin-top: 10px; border-left: 2px solid #d35400; padding-left: 10px; }
+        .btn-hint { background: var(--hint-color); font-size: 0.7rem; margin-top: auto; color: white; }
+        .hint-text { color: var(--hint-color); font-size: 0.85rem; margin-top: 10px; border-left: 2px solid var(--hint-color); padding-left: 10px; overflow-y: auto; max-height: 120px; }
 
         select { padding: 12px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 10px; width: 100%; outline: none; }
         label { font-size: 0.6rem; color: #3498db; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: block; }
@@ -95,7 +95,7 @@
             <label>Associé à l'objet :</label><select id="sel-item-used"></select>
         </div>
         <div id="res-perso" class="result-box">...</div>
-        <button onclick="runActionPerso()">Appliquer</button>
+        <button onclick="runActionPerso()" style="margin-top:15px;">Appliquer</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 
@@ -109,11 +109,11 @@
             <div class="wheel-wrapper"><select id="eni-4" class="select-color c-red"></select></div>
         </div>
         <div id="res-enigme" class="result-box">Entrez le code.</div>
-        <button onclick="runEnigme()">Valider</button>
+        <button onclick="runEnigme()" style="margin-top:10px;">Valider</button>
         
-        <button id="btn-reveal-hint" class="btn-hint" onclick="revealNextHint()">BESOIN D'AIDE ? (PÉNALITÉ)</button>
         <div id="hint-display" class="hint-text" style="display:none;"></div>
 
+        <button id="btn-reveal-hint" class="btn-hint" onclick="revealNextHint()">CHOISISSEZ UNE ÉNIGME</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 </div>
@@ -129,8 +129,7 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
-    let timeLeft = 3600, timerId = null, isPaused = true;
-    let currentHintLevel = 0; // Quel numéro d'indice on affiche (1, 2 ou 3)
+    let timeLeft = 3600, timerId = null, isPaused = true, currentHintLevel = 0;
 
     function updateTimerDisplay() {
         const display = document.getElementById('timer-display');
@@ -147,12 +146,11 @@
             isPaused = false; btn.innerText = "PAUSE";
             timerId = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft<=0) clearInterval(timerId); }, 1000);
         } else { isPaused = true; btn.innerText = "PLAY"; clearInterval(timerId); }
-        playSnd(sndClick);
     }
 
     function resetTimer() { clearInterval(timerId); isPaused = true; timeLeft = 3600; document.getElementById('btn-pause').innerText = "PLAY"; updateTimerDisplay(); }
 
-    const sndClick = new Audio('click.wav'), sndSuccess = new Audio('success.wav'), sndError = new Audio('error.wav'), sndHint = new Audio('hint.wav');
+    const sndClick = new Audio('click.wav'), sndSuccess = new Audio('success.wav'), sndError = new Audio('error.wav');
     function playSnd(s) { s.currentTime = 0; s.play().catch(() => {}); }
 
     window.onload = () => { initCodeDropdowns(); setTimeout(() => { show('screen-missions'); }, 2000); };
@@ -169,11 +167,7 @@
 
     function chargerMission(id) {
         Promise.all([
-            fetchCSV("grille.csv"), 
-            fetchCSV("grille_ac.csv"), 
-            fetchCSV(`grille_eni_${id}.csv`), 
-            fetchCSV(`solutions_${id}.csv`),
-            fetchCSV(`indice_${id}.csv`)
+            fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)
         ]).then(res => {
             grille = res[0]; grilleAC = res[1]; grilleENI = res[2]; sols = {}; indices = res[4];
             res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = { expert: row[1] ? row[1].trim().toUpperCase() : "", texte: row[2] ? row[2].trim() : "" }; });
@@ -229,42 +223,42 @@
 
     function resetItemUsed() { const siu = document.getElementById('sel-item-used'); if(siu) siu.selectedIndex = 0; }
 
+    /* LOGIQUE INDICES CUMULATIFS */
     function resetHintDisplay() {
         currentHintLevel = 0;
-        document.getElementById('hint-display').style.display = 'none';
-        document.getElementById('btn-reveal-hint').innerText = "BESOIN D'AIDE ? (PÉNALITÉ)";
+        const display = document.getElementById('hint-display');
+        display.innerHTML = "";
+        display.style.display = 'none';
+        updateHintButtonLabel();
+    }
+
+    function updateHintButtonLabel() {
+        const eniId = document.getElementById('sel-eni').value;
+        const btn = document.getElementById('btn-reveal-hint');
+        if (!eniId) { btn.innerText = "CHOISISSEZ UNE ÉNIGME"; return; }
+        const nextLevel = currentHintLevel + 1;
+        if (nextLevel > 3) { btn.innerText = "PLUS D'AIDE DISPONIBLE"; return; }
+        const nextHint = indices.find(r => r[0] == eniId && r[1] == nextLevel);
+        if (nextHint) {
+            btn.innerText = `BESOIN D'AIDE ${nextLevel} (-${nextHint[3] || 0}MN)`;
+        } else { btn.innerText = "AIDE INDISPONIBLE"; }
     }
 
     function revealNextHint() {
         const eniId = document.getElementById('sel-eni').value;
-        if (!eniId) return;
-        
+        if (!eniId || currentHintLevel >= 3) return;
         currentHintLevel++;
-        if (currentHintLevel > 3) return;
-
-        // Chercher l'indice correspondant dans le CSV (Col 0 = Num Enigme, Col 1 = Num Indice)
         const hintRow = indices.find(r => r[0] == eniId && r[1] == currentHintLevel);
-        
         if (hintRow) {
-            const hintText = hintRow[2];
-            const penaltyMin = parseInt(hintRow[3]) || 0;
-            
-            // Appliquer la pénalité
-            timeLeft -= (penaltyMin * 60);
+            timeLeft -= (parseInt(hintRow[3]) || 0) * 60;
             updateTimerDisplay();
-            
-            // Afficher l'indice
             const display = document.getElementById('hint-display');
-            display.innerHTML = `<strong>Indice ${currentHintLevel} :</strong><br>${hintText}`;
+            display.innerHTML += `<div style="margin-bottom:8px; border-bottom:1px dotted var(--hint-color); padding-bottom:5px;">
+                                    <strong>Aide ${currentHintLevel} :</strong><br>${hintRow[2]}
+                                  </div>`;
             display.style.display = 'block';
-            
-            if (currentHintLevel >= 3) {
-                document.getElementById('btn-reveal-hint').innerText = "PLUS D'INDICES DISPONIBLES";
-            } else {
-                document.getElementById('btn-reveal-hint').innerText = "INDICE SUIVANT (PÉNALITÉ)";
-            }
-            
-            playSnd(sndHint);
+            updateHintButtonLabel();
+            playSnd(sndClick);
         }
     }
 
@@ -277,29 +271,20 @@
         if(!agentName || !targetIdx || !actionCol) return;
         const actionLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex].text;
         let code = "";
-
         if(actionLabel === "Manipuler" && itemIdx !== "0" && itemIdx !== "") {
             const targetName = grille[targetIdx][0].trim();
             const itemName = grilleAC[itemIdx][0].trim();
             let colA = grilleAC[0].findIndex(c => c && c.trim() === itemName);
             let rowA = grilleAC.findIndex(r => r[0] && r[0].trim() === targetName);
             if(rowA !== -1 && colA !== -1 && grilleAC[rowA][colA]) code = grilleAC[rowA][colA].trim();
-            if(!code || code === "") {
-                let colB = grilleAC[0].findIndex(c => c && c.trim() === targetName);
-                let rowB = grilleAC.findIndex(r => r[0] && r[0].trim() === itemName);
-                if(rowB !== -1 && colB !== -1 && grilleAC[rowB][colB]) code = grilleAC[rowB][colB].trim();
-            }
         } 
         if (!code || code === "") code = (grille[targetIdx] && grille[targetIdx][actionCol]) ? grille[targetIdx][actionCol].trim() : "";
-
         const solution = sols[code];
         if(!solution || code === "") { resBox.innerHTML = "Rien ne se passe."; return; }
         const initiales = { "Banks": "B", "Murphy": "M", "Stacy": "S", "Kim": "K", "Julia": "J" };
         if(solution.expert === "" || solution.expert === initiales[agentName]) {
             resBox.innerHTML = solution.texte; playSnd(sndSuccess);
-        } else {
-            resBox.innerHTML = "<span style='color:var(--eni-red);'>Compétence insuffisante.</span>"; playSnd(sndError);
-        }
+        } else { resBox.innerHTML = "<span style='color:var(--eni-red);'>Compétence insuffisante.</span>"; playSnd(sndError); }
     }
 
     function runEnigme() {
@@ -307,14 +292,9 @@
         const res = document.getElementById('res-enigme');
         if(!eniId) return;
         const saisi = document.getElementById('eni-1').value + document.getElementById('eni-2').value + document.getElementById('eni-3').value + document.getElementById('eni-4').value;
-        
-        // Trouver la ligne dans grilleENI où Col 0 == eniId
         const eniRow = grilleENI.find(r => r[0] == eniId);
         if(!eniRow) return;
-
-        const attendu = eniRow[1].toString().trim();
-        const succesCode = eniRow[2].toString().trim();
-        if (saisi === attendu) { res.innerHTML = sols[succesCode] ? sols[succesCode].texte : "Code correct !"; playSnd(sndSuccess); }
+        if (saisi === eniRow[1].toString().trim()) { res.innerHTML = sols[eniRow[2].toString().trim()] ? sols[eniRow[2].toString().trim()].texte : "Code correct !"; playSnd(sndSuccess); }
         else { res.innerHTML = "<span style='color:var(--eni-red);'>Erreur de code.</span>"; playSnd(sndError); }
     }
 
