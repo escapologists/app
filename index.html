@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escapologists App - Stable Version</title>
+    <title>Escapologists App - Chrono Tactique</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { 
@@ -13,6 +13,14 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
         .app-container { width: 100%; max-width: 380px; height: 660px; background: var(--card); border-radius: 35px; border: 2px solid #1a2a36; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
+        
+        /* CHRONOMETRE STYLE */
+        .timer-bar { background: rgba(0,0,0,0.4); padding: 10px; display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a2a36; }
+        #timer-display { font-family: monospace; font-size: 1.4rem; color: #3498db; font-weight: bold; letter-spacing: 2px; }
+        #timer-display.danger { color: var(--eni-red); text-shadow: 0 0 10px var(--eni-red); animation: blink 1s infinite; }
+        .timer-controls { display: flex; gap: 8px; }
+        .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 4px 10px; border-radius: 5px; cursor: pointer; font-size: 0.7rem; }
+        
         .screen { display: none; flex-direction: column; height: 100%; padding: 25px; box-sizing: border-box; animation: fadeIn 0.4s ease; }
         .screen.active { display: flex; }
         #screen-splash { justify-content: center; align-items: center; }
@@ -26,6 +34,7 @@
         select { padding: 12px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 10px; width: 100%; outline: none; }
         label { font-size: 0.65rem; color: #3498db; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: block; }
         .result-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #1a2a36; min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.95rem; }
+        
         .code-container { display: flex; justify-content: space-between; margin: 15px 0; gap: 8px; }
         .wheel-wrapper { position: relative; width: 75px; height: 90px; }
         .select-color { width: 100%; height: 100%; border-radius: 12px; font-size: 2.2rem; font-weight: 900; appearance: none; text-align-last: center; border: none; }
@@ -33,12 +42,22 @@
         .c-blue { background-color: var(--eni-blue); color: #fff; }
         .c-green { background-color: var(--eni-green); color: #fff; }
         .c-red { background-color: var(--eni-red); color: #fff; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="app-container">
+    <div id="mission-timer" class="timer-bar">
+        <div id="timer-display">60:00</div>
+        <div class="timer-controls">
+            <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
+            <button class="timer-btn" onclick="resetTimer()">RESET</button>
+        </div>
+    </div>
+
     <div id="screen-splash" class="screen active">
         <img src="logo.jpg" class="logo-image">
         <p style="letter-spacing: 4px; color: #3498db; font-size: 0.7rem; font-weight: bold; margin-top: 20px;">INITIALISATION...</p>
@@ -63,7 +82,7 @@
     </div>
 
     <div id="screen-action-perso" class="screen">
-        <h1>Compétence</h1>
+        <h1>Action de personnage</h1>
         <label>Agent</label><select id="sel-p" onchange="updateA()"></select>
         <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
         <label>Cible</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
@@ -101,6 +120,54 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
+    // LOGIQUE CHRONOMETRE
+    let timeLeft = 3600; // 60 minutes en secondes
+    let timerId = null;
+    let isPaused = true;
+
+    function updateTimerDisplay() {
+        const display = document.getElementById('timer-display');
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        display.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        if (timeLeft < 300) display.classList.add('danger');
+        else display.classList.remove('danger');
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
+            display.innerText = "MISSION ÉCHOUÉE";
+        }
+    }
+
+    function toggleTimer() {
+        const btn = document.getElementById('btn-pause');
+        if (isPaused) {
+            isPaused = false;
+            btn.innerText = "PAUSE";
+            timerId = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) clearInterval(timerId);
+            }, 1000);
+        } else {
+            isPaused = true;
+            btn.innerText = "PLAY";
+            clearInterval(timerId);
+        }
+        playSnd(sndClick);
+    }
+
+    function resetTimer() {
+        clearInterval(timerId);
+        isPaused = true;
+        timeLeft = 3600;
+        document.getElementById('btn-pause').innerText = "PLAY";
+        updateTimerDisplay();
+        playSnd(sndClick);
+    }
+
+    // LE RESTE DU CODE
     const sndClick = new Audio('click.wav'), sndSuccess = new Audio('success.wav'), sndError = new Audio('error.wav');
     function playSnd(s) { s.currentTime = 0; s.play().catch(() => {}); }
 
@@ -125,7 +192,8 @@
             res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = { expert: row[1] ? row[1].trim().toUpperCase() : "", texte: row[2] ? row[2].trim() : "" }; });
             const missionNames = { "M1": "Le jardinier Armé", "M2": "L'amateur Rouge", "M3": "ft. Belzebuth" };
             document.getElementById('mission-title').innerText = missionNames[id] || "MISSION";
-            initMenus(); show('screen-menu');
+            initMenus(); 
+            show('screen-menu');
         });
     }
 
@@ -167,7 +235,7 @@
         }
         sa.selectedIndex = indexToSelect;
         if (lastCibleValue) sc.value = lastCibleValue;
-        resetItemUsed(); // Reset l'objet associé quand on change d'agent
+        resetItemUsed();
         toggleItemSelect();
     }
 
@@ -181,7 +249,7 @@
 
     function resetItemUsed() {
         const siu = document.getElementById('sel-item-used');
-        siu.selectedIndex = 0; // Remet sur "-- Aucun objet --"
+        if(siu) siu.selectedIndex = 0;
     }
 
     function runActionPerso() {
@@ -194,8 +262,7 @@
         const actionLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex].text;
         let code = "";
 
-        // Si Manipuler est choisi ET qu'un objet est sélectionné
-        if(actionLabel === "Manipuler" && itemIdx !== "") {
+        if(actionLabel === "Manipuler" && itemIdx !== "0" && itemIdx !== "") {
             const targetName = grille[targetIdx][0].trim();
             const itemName = grilleAC[itemIdx][0].trim();
             let colA = grilleAC[0].findIndex(c => c && c.trim() === itemName);
@@ -208,7 +275,6 @@
             }
         } 
         
-        // Si aucune combinaison n'est trouvée (ou si ce n'est pas Manipuler, ou si Aucun Objet est mis)
         if (!code || code === "") {
             code = (grille[targetIdx] && grille[targetIdx][actionCol]) ? grille[targetIdx][actionCol].trim() : "";
         }
@@ -237,6 +303,11 @@
     function show(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        
+        // Afficher ou cacher la barre de chrono
+        const timerBar = document.getElementById('mission-timer');
+        if(id === 'screen-splash') timerBar.style.display = 'none';
+        else timerBar.style.display = 'flex';
     }
 </script>
 </body>
