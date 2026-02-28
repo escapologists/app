@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escapologists - Mission Control v3</title>
+    <title>Escapologists - Mission Control Final</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { 
@@ -14,14 +14,12 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
         .app-container { width: 100%; max-width: 380px; height: 660px; background: var(--card); border-radius: 35px; border: 2px solid #1a2a36; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
         
-        /* TIMER BAR */
         .timer-bar { background: rgba(0,0,0,0.4); padding: 10px; display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a2a36; }
         #timer-display { font-family: monospace; font-size: 1.4rem; color: #3498db; font-weight: bold; letter-spacing: 2px; }
         #timer-display.danger { color: var(--eni-red); text-shadow: 0 0 10px var(--eni-red); animation: blink 1s infinite; }
         .timer-controls { display: flex; gap: 8px; }
         .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 4px 10px; border-radius: 5px; cursor: pointer; font-size: 0.7rem; }
         
-        /* ECRANS */
         .screen { display: none; flex-direction: column; height: 100%; padding: 25px; box-sizing: border-box; animation: fadeIn 0.4s ease; }
         .screen.active { display: flex; }
         #screen-splash { justify-content: center; align-items: center; }
@@ -29,14 +27,12 @@
         .mission-header { border: 2px solid var(--primary); border-radius: 20px; padding: 10px 20px; margin: 0 auto 20px auto; box-shadow: 0 0 15px var(--halo); background: rgba(32, 37, 140, 0.1); align-self: center; }
         h1 { color: #fff; text-align: center; font-size: 1.1rem; text-transform: uppercase; margin: 0; letter-spacing: 3px; }
         
-        /* AVATAR & DIGITAL EFFECT */
         .agent-avatar-container { width: 90px; height: 90px; margin: 0 auto 10px auto; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 15px var(--halo); background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; }
         #agent-avatar { width: 100%; height: 100%; object-fit: cover; display: none; }
         .avatar-scan { animation: scanEffect 0.4s ease-out; }
         .placeholder-avatar { font-size: 3rem; color: #3498db; text-shadow: 0 0 10px #3498db; font-weight: bold; font-family: monospace; }
         @keyframes scanEffect { 0% { opacity: 0; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
 
-        /* FORMULAIRE */
         .menu-list { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
         .btn-graphic { width: 100%; height: 120px; background-size: cover; background-position: center; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
         button { padding: 14px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
@@ -45,7 +41,6 @@
         label { font-size: 0.6rem; color: #3498db; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: block; }
         .result-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #1a2a36; min-height: 60px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.9rem; }
         
-        /* ENIGMES */
         .code-container { display: flex; justify-content: space-between; margin: 10px 0; gap: 8px; }
         .wheel-wrapper { position: relative; width: 75px; height: 80px; }
         .select-color { width: 100%; height: 100%; border-radius: 12px; font-size: 2rem; font-weight: 900; appearance: none; text-align-last: center; border: none; }
@@ -102,9 +97,9 @@
         </div>
         <label>Agent</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
         <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
-        <label>Cible</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
+        <label>Objet 1</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
         <div id="container-item" style="display:none;">
-            <label>Avec l'objet :</label><select id="sel-item-used"></select>
+            <label>Objet 2</label><select id="sel-item-used"></select>
         </div>
         <div id="res-perso" class="result-box">...</div>
         <button onclick="runActionPerso()" style="margin-top:15px;">Appliquer</button>
@@ -112,15 +107,15 @@
     </div>
 
     <div id="screen-enigme" class="screen">
-        <h1>Énigmes</h1>
-        <label>Énigme ID</label><select id="sel-eni" onchange="resetHintDisplay()"></select>
+        <h1>Machine à énigmes</h1>
+        <label>ID Énigme</label><select id="sel-eni" onchange="resetHintDisplay()"></select>
         <div class="code-container">
             <div class="wheel-wrapper"><select id="eni-1" class="select-color c-yellow"></select></div>
             <div class="wheel-wrapper"><select id="eni-2" class="select-color c-blue"></select></div>
             <div class="wheel-wrapper"><select id="eni-3" class="select-color c-green"></select></div>
             <div class="wheel-wrapper"><select id="eni-4" class="select-color c-red"></select></div>
         </div>
-        <div id="res-enigme" class="result-box">Code requis.</div>
+        <div id="res-enigme" class="result-box">Entrez le code.</div>
         <button onclick="runEnigme()" style="margin-top:10px;">Valider</button>
         <div id="hint-display" class="hint-text" style="display:none;"></div>
         <button id="btn-reveal-hint" class="btn-hint" onclick="revealNextHint()">CHOISISSEZ UNE ÉNIGME</button>
@@ -138,8 +133,6 @@
         "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
-    
-    // Actions nécessitant la grille_ac (Cible + Objet)
     const actionsWithItems = ["Manipuler", "Forcer", "deverouiller", "lancer", "soigner", "dynamiter"];
 
     let timeLeft = 3600, timerId = null, isPaused = true, currentHintLevel = 0;
@@ -179,7 +172,6 @@
         ]).then(res => {
             grille = res[0]; grilleAC = res[1]; grilleENI = res[2]; indices = res[4];
             sols = [];
-            // Chargement structure 4 colonnes : Code | Expert | Action | Texte
             res[3].forEach(row => { 
                 if(row[0]) sols.push({ 
                     code: row[0].trim(), 
@@ -198,10 +190,10 @@
         const sp = document.getElementById('sel-p'), scP = document.getElementById('sel-c-perso'), siu = document.getElementById('sel-item-used'), sen = document.getElementById('sel-eni');
         sp.innerHTML = '<option value="">-- Agent --</option>';
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
-        let optC = '<option value="">-- Cible --</option>';
+        let optC = '<option value="">-- Objet 1 --</option>';
         grille.forEach((l, i) => { if(i >= 2 && l[0]) optC += `<option value="${i}">${formaterNom(l[0])}</option>`; });
         scP.innerHTML = optC;
-        let optObj = '<option value="">-- Choisir un objet --</option>';
+        let optObj = '<option value="">-- Aucun objet --</option>';
         grilleAC.forEach((l, i) => { if(i > 0 && l[0]) optObj += `<option value="${i}">${formaterNom(l[0])}</option>`; });
         siu.innerHTML = optObj;
         let optEni = '<option value="">-- Choisir l\'énigme --</option>';
@@ -241,29 +233,47 @@
 
     function runActionPerso() {
         const agentName = document.getElementById('sel-p').value;
-        const targetIdx = document.getElementById('sel-c-perso').value;
+        const obj1Idx = document.getElementById('sel-c-perso').value;
         const actionCol = document.getElementById('sel-a').value;
-        const itemIdx = document.getElementById('sel-item-used').value;
+        const obj2Idx = document.getElementById('sel-item-used').value;
         const resBox = document.getElementById('res-perso');
-        if(!agentName || !targetIdx || !actionCol) return;
+        if(!agentName || !obj1Idx || !actionCol) return;
         
         const actionLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex].text;
         let code = "";
-        
-        // Logique Cible + Objet
-        if(actionsWithItems.includes(actionLabel) && itemIdx !== "0" && itemIdx !== "") {
-            const targetName = grille[targetIdx][0].trim();
-            const itemName = grilleAC[itemIdx][0].trim();
-            let colA = grilleAC[0].findIndex(c => c && c.trim() === itemName);
-            let rowA = grilleAC.findIndex(r => r[0] && r[0].trim() === targetName);
-            if(rowA !== -1 && colA !== -1 && grilleAC[rowA][colA]) code = grilleAC[rowA][colA].trim();
+        let isCombinationAttempt = false;
+
+        // COMBINAISON (Permutation A+B / B+A)
+        if(actionsWithItems.includes(actionLabel) && obj2Idx !== "0" && obj2Idx !== "") {
+            isCombinationAttempt = true;
+            const name1 = grille[obj1Idx][0].trim();
+            const name2 = grilleAC[obj2Idx][0].trim();
+            
+            let colA = grilleAC[0].findIndex(c => c && c.trim() === name2);
+            let rowA = grilleAC.findIndex(r => r[0] && r[0].trim() === name1);
+            if(rowA !== -1 && colA !== -1 && grilleAC[rowA][colA] && grilleAC[rowA][colA].trim() !== "") {
+                code = grilleAC[rowA][colA].trim();
+            } 
+            if (!code || code === "") {
+                let colB = grilleAC[0].findIndex(c => c && c.trim() === name1);
+                let rowB = grilleAC.findIndex(r => r[0] && r[0].trim() === name2);
+                if(rowB !== -1 && colB !== -1 && grilleAC[rowB][colB] && grilleAC[rowB][colB].trim() !== "") {
+                    code = grilleAC[rowB][colB].trim();
+                }
+            }
         } 
-        // Logique Action seule
-        if (!code || code === "") code = (grille[targetIdx] && grille[targetIdx][actionCol]) ? grille[targetIdx][actionCol].trim() : "";
+
+        // ACTION SOLO (Uniquement si pas d'objet 2)
+        if (!isCombinationAttempt) {
+            code = (grille[obj1Idx] && grille[obj1Idx][actionCol]) ? grille[obj1Idx][actionCol].trim() : "";
+        }
+
+        if(!code || code === "") {
+            resBox.innerHTML = "Rien ne se passe."; playSnd(sndError); return;
+        }
 
         const agentInitial = { "Banks": "B", "Murphy": "M", "Stacy": "S", "Kim": "K", "Julia": "J" }[agentName];
 
-        // Recherche multi-conditions (Code + Expert + Action Spécifique)
         const match = sols.find(s => 
             s.code === code && 
             (s.expert === "" || s.expert === agentInitial) &&
@@ -271,7 +281,7 @@
         );
 
         if(match) { resBox.innerHTML = match.texte; playSnd(sndSuccess); }
-        else { resBox.innerHTML = "Aucun résultat pour cette action."; playSnd(sndError); }
+        else { resBox.innerHTML = "Rien ne se passe avec cette action spécifique."; playSnd(sndError); }
     }
 
     /* ENIGMES & HINTS */
