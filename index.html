@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escapologists App - Final Mission Control</title>
+    <title>Escapologists App - Mission Control</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { 
@@ -29,6 +29,17 @@
         .mission-header { border: 2px solid var(--primary); border-radius: 20px; padding: 10px 20px; margin: 0 auto 20px auto; box-shadow: 0 0 15px var(--halo); background: rgba(32, 37, 140, 0.1); align-self: center; }
         h1 { color: #fff; text-align: center; font-size: 1.1rem; text-transform: uppercase; margin: 0; letter-spacing: 3px; }
         
+        /* AVATARS AGENTS & EFFET DIGITAL */
+        .agent-avatar-container { width: 90px; height: 90px; margin: 0 auto 10px auto; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 15px var(--halo); background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; }
+        #agent-avatar { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .avatar-scan { animation: scanEffect 0.4s ease-out; }
+        .placeholder-avatar { font-size: 3rem; color: #3498db; text-shadow: 0 0 10px #3498db; font-weight: bold; font-family: monospace; }
+
+        @keyframes scanEffect {
+            0% { opacity: 0; transform: scale(1.2); filter: brightness(2) contrast(2); }
+            100% { opacity: 1; transform: scale(1); filter: brightness(1) contrast(1); }
+        }
+
         /* BOUTONS & INPUTS */
         .menu-list { display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
         .btn-graphic { width: 100%; height: 120px; background-size: cover; background-position: center; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
@@ -38,11 +49,6 @@
         label { font-size: 0.6rem; color: #3498db; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: block; }
         .result-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #1a2a36; min-height: 60px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.9rem; }
         
-        /* AVATARS AGENTS */
-        .agent-avatar-container { width: 80px; height: 80px; margin: 0 auto 10px auto; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--halo); background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        #agent-avatar { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .placeholder-avatar { font-size: 2rem; color: var(--primary); opacity: 0.5; }
-
         /* MACHINE A ENIGMES */
         .code-container { display: flex; justify-content: space-between; margin: 10px 0; gap: 8px; }
         .wheel-wrapper { position: relative; width: 75px; height: 80px; }
@@ -140,13 +146,11 @@
     };
 
     let timeLeft = 3600, timerId = null, isPaused = true, currentHintLevel = 0;
-
     const sndClick = new Audio('click.wav'), sndSuccess = new Audio('success.wav'), sndError = new Audio('error.wav');
     function playSnd(s) { s.currentTime = 0; s.play().catch(() => {}); }
 
     window.onload = () => { initCodeDropdowns(); setTimeout(() => { show('screen-missions'); }, 2000); };
 
-    /* --- LOGIQUE CHRONO --- */
     function updateTimerDisplay() {
         const display = document.getElementById('timer-display');
         const m = Math.max(0, Math.floor(timeLeft / 60));
@@ -162,12 +166,10 @@
             isPaused = false; btn.innerText = "PAUSE";
             timerId = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft<=0) clearInterval(timerId); }, 1000);
         } else { isPaused = true; btn.innerText = "PLAY"; clearInterval(timerId); }
-        playSnd(sndClick);
     }
 
     function resetTimer() { clearInterval(timerId); isPaused = true; timeLeft = 3600; document.getElementById('btn-pause').innerText = "PLAY"; updateTimerDisplay(); }
 
-    /* --- INITIALISATION & CHARGEMENT --- */
     function initCodeDropdowns() {
         ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
             const s = document.getElementById(id);
@@ -210,13 +212,21 @@
         return v;
     }
 
-    /* --- GESTION AGENT & PHOTOS --- */
     function updateAgentVisuals() {
         const agentName = document.getElementById('sel-p').value;
         const img = document.getElementById('agent-avatar');
         const placeholder = document.getElementById('avatar-none');
-        if (agentName) { img.src = `${agentName}.png`; img.style.display = 'block'; placeholder.style.display = 'none'; }
-        else { img.style.display = 'none'; placeholder.style.display = 'block'; }
+        img.classList.remove('avatar-scan');
+        if (agentName && agentName !== "") {
+            img.src = `${agentName}.png`;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+            void img.offsetWidth; 
+            img.classList.add('avatar-scan');
+        } else {
+            img.style.display = 'none';
+            placeholder.style.display = 'block';
+        }
         updateA();
     }
 
@@ -245,7 +255,6 @@
 
     function resetItemUsed() { const siu = document.getElementById('sel-item-used'); if(siu) siu.selectedIndex = 0; }
 
-    /* --- LOGIQUE INDICES --- */
     function resetHintDisplay() {
         currentHintLevel = 0;
         const display = document.getElementById('hint-display');
@@ -282,7 +291,6 @@
         }
     }
 
-    /* --- EXÉCUTION ACTIONS & ENIGMES --- */
     function runActionPerso() {
         const agentName = document.getElementById('sel-p').value;
         const targetIdx = document.getElementById('sel-c-perso').value;
