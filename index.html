@@ -12,7 +12,7 @@
             --primary: #20258C; --bg-petrol: #0a1118; --card: #0f1922; --text: #e0e0e0; 
             --halo: rgba(32, 37, 140, 0.5); --eni-yellow: #EBF099; --eni-blue: #2076B3; 
             --eni-green: #23991F; --eni-red: #C93110; --hint-color: #419096;
-            --tactical-blue: #3498db; /* Nouvelle couleur pour le cadre */
+            --tactical-blue: #3498db;
         }
         
         body { 
@@ -22,11 +22,10 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            height: 100dvh; /* Hauteur dynamique iOS */
+            height: 100dvh; 
             margin: 0; 
             overflow: hidden; 
             width: 100vw;
-            /* Padding de sécurité pour les encoches d'iPhone modernes */
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             box-sizing: border-box;
         }
@@ -34,25 +33,25 @@
         .app-container { 
             width: 100%; 
             max-width: 380px; 
-            height: 100%; /* Prend toute la hauteur du body (dvh) */
+            height: 100%; 
             background: var(--card); 
             display: flex; 
             flex-direction: column; 
             position: relative; 
             overflow: hidden; 
             
-            /* AJOUT DU CADRE BLEU TACTIQUE AVEC GLOW */
+            /* CADRE BLEU AVEC ANGLES ARRONDIS */
             border: 2px solid var(--tactical-blue);
+            border-radius: 25px; /* Arrondissement des angles du cadre */
             box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
-            box-sizing: border-box; /* Important pour ne pas déborder */
+            box-sizing: border-box;
         }
 
-        /* Look "App" sur les écrans de bureau */
+        /* Ajustements pour les grands écrans */
         @media (min-height: 750px) and (min-width: 500px) {
             .app-container {
                 height: 92dvh;
-                border-radius: 35px;
-                /* On garde le cadre ici aussi */
+                border-radius: 35px; /* Arrondi légèrement plus grand sur grand écran */
             }
         }
 
@@ -64,7 +63,19 @@
             align-items: center; 
             border-bottom: 1px solid #1a2a36;
             flex-shrink: 0;
+            /* Pour que le fond du timer suive l'arrondi du cadre en haut */
+            border-top-left-radius: 23px;
+            border-top-right-radius: 23px;
         }
+        
+        /* Ajustement de l'arrondi du timer sur grand écran */
+        @media (min-height: 750px) and (min-width: 500px) {
+            .timer-bar {
+                border-top-left-radius: 33px;
+                border-top-right-radius: 33px;
+            }
+        }
+
         #timer-display { font-family: monospace; font-size: 1.4rem; color: #3498db; font-weight: bold; letter-spacing: 2px; }
         #timer-display.danger { color: var(--eni-red); text-shadow: 0 0 10px var(--eni-red); animation: blink 1s infinite; }
         
@@ -79,7 +90,7 @@
             box-sizing: border-box; 
             animation: fadeIn 0.4s ease;
             overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; /* Scroll fluide iOS */
+            -webkit-overflow-scrolling: touch;
         }
         .screen.active { display: flex; }
 
@@ -105,7 +116,6 @@
         button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: auto; margin-bottom: 5px; }
         
         select { padding: 10px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 6px; width: 100%; outline: none; font-size: 1rem; }
-        /* Empêche le zoom auto de Safari sur les selects */
         select:focus { font-size: 1rem; } 
         
         label { font-size: 0.6rem; color: #3498db; font-weight: bold; margin-bottom: 3px; text-transform: uppercase; display: block; }
