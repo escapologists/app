@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escapologists App - Stable Version</title>
+    <title>Escapologists - Tactical Hub</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root { 
@@ -95,7 +95,7 @@
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
     const mapping = {
         "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
-        "Julia": ["regarder", "Manipuler", "faufiler", "déverrouiller"], // Corrigé ici
+        "Julia": ["regarder", "Manipuler", "faufiler", "déverrouiller"],
         "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
         "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
@@ -122,7 +122,18 @@
     function chargerMission(id) {
         Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`)]).then(res => {
             grille = res[0]; grilleAC = res[1]; grilleENI = res[2]; sols = {};
-            res[3].forEach(row => { if(row[0]) sols[row[0].trim()] = { expert: row[1] ? row[1].trim().toUpperCase() : "", texte: row[2] ? row[2].trim() : "" }; });
+            
+            // ANALYSE STRUCTURE 4 COLONNES
+            res[3].forEach(row => { 
+                if(row[0]) {
+                    sols[row[0].trim()] = { 
+                        expert: row[1] ? row[1].trim().toUpperCase() : "", 
+                        action: row[2] ? row[2].trim().toLowerCase() : "", 
+                        texte:  row[3] ? row[3].trim() : ""
+                    }; 
+                }
+            });
+
             const missionNames = { "M1": "Le jardinier Armé", "M2": "L'amateur Rouge", "M3": "ft. Belzebuth" };
             document.getElementById('mission-title').innerText = missionNames[id] || "MISSION";
             initMenus(); show('screen-menu');
@@ -190,34 +201,42 @@
         const actionCol = document.getElementById('sel-a').value;
         const itemIdx = document.getElementById('sel-item-used').value;
         const resBox = document.getElementById('res-perso');
-        if(!agentName || !targetIdx || !actionCol) return;
-        const actionLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex].text;
-        let code = "";
 
-        if(actionLabel === "Manipuler" && itemIdx !== "0") {
+        if(!agentName || !targetIdx || !actionCol) return;
+
+        const actionSelect = document.getElementById('sel-a');
+        const actionLabel = actionSelect.options[actionSelect.selectedIndex].text.toLowerCase();
+        
+        let code = "";
+        // Logique Manipuler
+        if(actionLabel === "manipuler" && itemIdx !== "0") {
             const targetName = grille[targetIdx][0].trim();
             const itemName = grilleAC[itemIdx][0].trim();
             let colA = grilleAC[0].findIndex(c => c && c.trim() === itemName);
             let rowA = grilleAC.findIndex(r => r[0] && r[0].trim() === targetName);
             if(rowA !== -1 && colA !== -1 && grilleAC[rowA][colA]) code = grilleAC[rowA][colA].trim();
-            if(!code || code === "") {
+            if(!code) {
                 let colB = grilleAC[0].findIndex(c => c && c.trim() === targetName);
                 let rowB = grilleAC.findIndex(r => r[0] && r[0].trim() === itemName);
                 if(rowB !== -1 && colB !== -1 && grilleAC[rowB][colB]) code = grilleAC[rowB][colB].trim();
             }
         } 
-        
-        if (!code || code === "") {
-            code = (grille[targetIdx] && grille[targetIdx][actionCol]) ? grille[targetIdx][actionCol].trim() : "";
-        }
+        if (!code) code = (grille[targetIdx] && grille[targetIdx][actionCol]) ? grille[targetIdx][actionCol].trim() : "";
 
         const solution = sols[code];
         if(!solution || code === "") { resBox.innerHTML = "Rien ne se passe."; return; }
+
+        // VERIFICATION DOUBLE (EXPERT + ACTION)
         const initiales = { "Banks": "B", "Murphy": "M", "Stacy": "S", "Kim": "K", "Julia": "J" };
-        if(solution.expert === "" || solution.expert === initiales[agentName]) {
-            resBox.innerHTML = solution.texte; playSnd(sndSuccess);
+        const estBonExpert = (solution.expert === "" || solution.expert === initiales[agentName]);
+        const estBonneAction = (solution.action === "" || solution.action === actionLabel);
+
+        if(estBonExpert && estBonneAction) {
+            resBox.innerHTML = solution.texte;
+            playSnd(sndSuccess);
         } else {
-            resBox.innerHTML = "<span style='color:var(--eni-red); font-weight:bold;'>Compétence insuffisante.</span>"; playSnd(sndError);
+            resBox.innerHTML = "<span style='color:var(--eni-red); font-weight:bold;'>Action ou agent inadapté.</span>";
+            playSnd(sndError);
         }
     }
 
