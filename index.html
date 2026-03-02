@@ -99,7 +99,7 @@
         <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
         <label>Objet 1</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
         <div id="container-item" style="display:none;">
-            <label>Objet 2</label><select id="sel-item-used"></select>
+            <label>Associé à l'objet :</label><select id="sel-item-used"></select>
         </div>
         <div id="res-perso" class="result-box">...</div>
         <button onclick="runActionPerso()" style="margin-top:15px;">Appliquer</button>
@@ -128,12 +128,13 @@
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
     const mapping = {
         "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
-        "Julia": ["regarder", "Manipuler", "faufiler", "deverouiller"],
+        "Julia": ["regarder", "Manipuler", "faufiler", "déverrouiller"], // Corrigé ici
         "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
         "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
-    const actionsWithItems = ["Manipuler", "Forcer", "deverouiller", "lancer", "soigner", "dynamiter"];
+    // Mis à jour avec l'orthographe correcte
+    const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
 
     let timeLeft = 3600, timerId = null, isPaused = true, currentHintLevel = 0;
     const sndClick = new Audio('click.wav'), sndSuccess = new Audio('success.wav'), sndError = new Audio('error.wav');
@@ -212,7 +213,7 @@
     }
 
     function updateA() {
-        const p = document.getElementById('sel-p').value, sa = document.getElementById('sel-a'), sc = document.getElementById('sel-c-perso');
+        const p = document.getElementById('sel-p').value, sa = document.getElementById('sel-a');
         if(!p) return;
         const lastActionName = sa.options[sa.selectedIndex] ? sa.options[sa.selectedIndex].text : "regarder";
         sa.innerHTML = '';
@@ -229,6 +230,7 @@
         if (sa.options[sa.selectedIndex]) container.style.display = actionsWithItems.includes(sa.options[sa.selectedIndex].text) ? "block" : "none";
     }
 
+    // Sécurité de reset de l'objet 2
     function resetItemUsed() { const siu = document.getElementById('sel-item-used'); if(siu) siu.selectedIndex = 0; }
 
     function runActionPerso() {
@@ -311,4 +313,3 @@
 </script>
 </body>
 </html>
-
