@@ -39,48 +39,35 @@
             flex-direction: column; 
             position: relative; 
             overflow: hidden; 
-            
-            /* CADRE BLEU AVEC ANGLES ARRONDIS */
             border: 2px solid var(--tactical-blue);
-            border-radius: 25px; /* Arrondissement des angles du cadre */
+            border-radius: 25px;
             box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
             box-sizing: border-box;
         }
 
-        /* Ajustements pour les grands écrans */
         @media (min-height: 750px) and (min-width: 500px) {
-            .app-container {
-                height: 92dvh;
-                border-radius: 35px; /* Arrondi légèrement plus grand sur grand écran */
-            }
+            .app-container { height: 92dvh; border-radius: 35px; }
         }
 
         .timer-bar { 
-            background: rgba(0,0,0,0.4); 
-            padding: 10px 15px; 
+            background: rgba(0,0,0,0.6); 
+            padding: 10px 12px; 
             display: none; 
             justify-content: space-between; 
             align-items: center; 
             border-bottom: 1px solid #1a2a36;
             flex-shrink: 0;
-            /* Pour que le fond du timer suive l'arrondi du cadre en haut */
             border-top-left-radius: 23px;
             border-top-right-radius: 23px;
         }
-        
-        /* Ajustement de l'arrondi du timer sur grand écran */
-        @media (min-height: 750px) and (min-width: 500px) {
-            .timer-bar {
-                border-top-left-radius: 33px;
-                border-top-right-radius: 33px;
-            }
-        }
 
-        #timer-display { font-family: monospace; font-size: 1.4rem; color: #3498db; font-weight: bold; letter-spacing: 2px; }
+        #timer-display { font-family: monospace; font-size: 1.3rem; color: #3498db; font-weight: bold; letter-spacing: 1px; min-width: 75px; }
         #timer-display.danger { color: var(--eni-red); text-shadow: 0 0 10px var(--eni-red); animation: blink 1s infinite; }
+        #timer-display.alert-active { color: #ff9f43; text-shadow: 0 0 10px #ff9f43; }
         
-        .timer-controls { display: flex; gap: 8px; }
-        .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.7rem; }
+        .timer-controls { display: flex; gap: 5px; }
+        .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
+        .btn-alert-mode { border-color: var(--eni-red); color: var(--eni-red); }
 
         .screen { 
             display: none; 
@@ -116,8 +103,6 @@
         button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: auto; margin-bottom: 5px; }
         
         select { padding: 10px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 6px; width: 100%; outline: none; font-size: 1rem; }
-        select:focus { font-size: 1rem; } 
-        
         label { font-size: 0.6rem; color: #3498db; font-weight: bold; margin-bottom: 3px; text-transform: uppercase; display: block; }
         
         .result-box { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; margin-top: 8px; border: 1px solid #1a2a36; min-height: 55px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.85rem; flex-shrink: 0; color: #bdc3c7; }
@@ -147,6 +132,7 @@
     <div id="mission-timer" class="timer-bar">
         <div id="timer-display">60:00</div>
         <div class="timer-controls">
+            <button class="timer-btn btn-alert-mode" onclick="triggerAlertSequence()" id="btn-alert">ALERTE</button>
             <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
             <button class="timer-btn" onclick="resetTimer()">RESET</button>
         </div>
@@ -221,27 +207,93 @@
     };
     const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
 
+    // VARIABLES TIMER
     let timeLeft = 3600, timerId = null, isPaused = true, currentHintLevel = 0;
+    let savedMainTime = null; 
+    let isAlertActive = false;
+
     const sndClick = new Audio('click.wav'), sndSuccess = new Audio('success.wav'), sndError = new Audio('error.wav');
     function playSnd(s) { s.currentTime = 0; s.play().catch(() => {}); }
 
     window.onload = () => { initCodeDropdowns(); setTimeout(() => { show('screen-missions'); }, 2000); };
 
+    // LOGIQUE TIMER
     function updateTimerDisplay() {
         const display = document.getElementById('timer-display');
         const m = Math.max(0, Math.floor(timeLeft / 60)), s = Math.max(0, timeLeft % 60);
         display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        if (timeLeft < 300) display.classList.add('danger'); else display.classList.remove('danger');
+        
+        if (isAlertActive) {
+            display.className = "danger"; 
+        } else {
+            display.className = (timeLeft < 300) ? "danger" : "";
+        }
     }
 
     function toggleTimer() {
         const btn = document.getElementById('btn-pause');
-        if (isPaused) { isPaused = false; btn.innerText = "PAUSE"; timerId = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft<=0) clearInterval(timerId); }, 1000); }
-        else { isPaused = true; btn.innerText = "PLAY"; clearInterval(timerId); }
+        if (isPaused) { 
+            isPaused = false; 
+            btn.innerText = "PAUSE"; 
+            timerId = setInterval(() => { 
+                timeLeft--; 
+                updateTimerDisplay(); 
+                if(timeLeft <= 0) {
+                    if (isAlertActive) stopAlertSequence(); // Fin des 5mn -> retour auto
+                    else clearInterval(timerId); 
+                }
+            }, 1000); 
+        }
+        else { 
+            isPaused = true; 
+            btn.innerText = "PLAY"; 
+            clearInterval(timerId); 
+        }
     }
 
-    function resetTimer() { clearInterval(timerId); isPaused = true; timeLeft = 3600; updateTimerDisplay(); document.getElementById('btn-pause').innerText = "PLAY"; }
+    function triggerAlertSequence() {
+        const btn = document.getElementById('btn-alert');
+        if (!isAlertActive) {
+            // Démarrage de l'alerte
+            savedMainTime = timeLeft;
+            timeLeft = 300; // 5 minutes
+            isAlertActive = true;
+            btn.innerText = "STOP";
+            btn.style.background = "var(--eni-red)";
+            btn.style.color = "white";
+            if (isPaused) toggleTimer(); 
+        } else {
+            // Interruption manuelle (réussite)
+            stopAlertSequence();
+        }
+        updateTimerDisplay();
+    }
 
+    function stopAlertSequence() {
+        if (isAlertActive) {
+            timeLeft = savedMainTime;
+            isAlertActive = false;
+            savedMainTime = null;
+            const btn = document.getElementById('btn-alert');
+            btn.innerText = "ALERTE";
+            btn.style.background = "#16212b";
+            btn.style.color = "var(--eni-red)";
+            updateTimerDisplay();
+        }
+    }
+
+    function resetTimer() { 
+        clearInterval(timerId); 
+        isPaused = true; 
+        isAlertActive = false;
+        savedMainTime = null;
+        timeLeft = 3600; 
+        updateTimerDisplay(); 
+        document.getElementById('btn-pause').innerText = "PLAY"; 
+        document.getElementById('btn-alert').innerText = "ALERTE";
+    }
+
+    // LE RESTE DES FONCTIONS (CSV, UI, etc.)
     function initCodeDropdowns() {
         ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
             const s = document.getElementById(id);
