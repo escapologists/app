@@ -63,7 +63,6 @@
 
         #timer-display { font-family: monospace; font-size: 1.3rem; color: #3498db; font-weight: bold; letter-spacing: 1px; min-width: 75px; }
         #timer-display.danger { color: var(--eni-red); text-shadow: 0 0 10px var(--eni-red); animation: blink 1s infinite; }
-        #timer-display.alert-active { color: #ff9f43; text-shadow: 0 0 10px #ff9f43; }
         
         .timer-controls { display: flex; gap: 5px; }
         .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
@@ -207,7 +206,6 @@
     };
     const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
 
-    // VARIABLES TIMER
     let timeLeft = 3600, timerId = null, isPaused = true, currentHintLevel = 0;
     let savedMainTime = null; 
     let isAlertActive = false;
@@ -217,7 +215,6 @@
 
     window.onload = () => { initCodeDropdowns(); setTimeout(() => { show('screen-missions'); }, 2000); };
 
-    // LOGIQUE TIMER
     function updateTimerDisplay() {
         const display = document.getElementById('timer-display');
         const m = Math.max(0, Math.floor(timeLeft / 60)), s = Math.max(0, timeLeft % 60);
@@ -239,7 +236,7 @@
                 timeLeft--; 
                 updateTimerDisplay(); 
                 if(timeLeft <= 0) {
-                    if (isAlertActive) stopAlertSequence(); // Fin des 5mn -> retour auto
+                    if (isAlertActive) stopAlertSequence(); 
                     else clearInterval(timerId); 
                 }
             }, 1000); 
@@ -254,16 +251,14 @@
     function triggerAlertSequence() {
         const btn = document.getElementById('btn-alert');
         if (!isAlertActive) {
-            // Démarrage de l'alerte
             savedMainTime = timeLeft;
-            timeLeft = 300; // 5 minutes
+            timeLeft = 60; // ALERTE CHANGÉE À 1 MINUTE
             isAlertActive = true;
             btn.innerText = "STOP";
             btn.style.background = "var(--eni-red)";
             btn.style.color = "white";
             if (isPaused) toggleTimer(); 
         } else {
-            // Interruption manuelle (réussite)
             stopAlertSequence();
         }
         updateTimerDisplay();
@@ -293,7 +288,6 @@
         document.getElementById('btn-alert').innerText = "ALERTE";
     }
 
-    // LE RESTE DES FONCTIONS (CSV, UI, etc.)
     function initCodeDropdowns() {
         ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
             const s = document.getElementById(id);
