@@ -30,7 +30,7 @@
 
         .timer-controls { display: flex; gap: 5px; }
         .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 6px 8px; border-radius: 5px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
-        .timer-btn#btn-alert.active { background: var(--eni-red); border-color: white; color: white; animation: blink 0.5s infinite; }
+        .timer-btn#btn-alert.active { background: var(--eni-red); border-color: white; color: white; }
 
         .screen { display: none; flex-direction: column; height: 100%; padding: 15px 20px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
@@ -49,6 +49,15 @@
 
         .agent-avatar-container { width: 80px; height: 80px; margin: 0 auto 8px auto; border-radius: 50%; border: 2px solid var(--primary); background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; overflow: hidden; }
         #agent-avatar { width: 100%; height: 100%; object-fit: cover; display: none; }
+
+        /* --- STYLES ÉNIGME RÉTABLIS --- */
+        .code-container { display: flex; justify-content: space-between; margin: 10px 0; gap: 6px; flex-shrink: 0; }
+        .wheel-wrapper { position: relative; width: 68px; height: 75px; }
+        .select-color { width: 100%; height: 100%; border-radius: 12px; font-size: 1.8rem; font-weight: 900; appearance: none; text-align-last: center; border: none; cursor: pointer; }
+        .c-yellow { background-color: var(--eni-yellow); color: #2c3e50; }
+        .c-blue { background-color: var(--eni-blue); color: #fff; }
+        .c-green { background-color: var(--eni-green); color: #fff; }
+        .c-red { background-color: var(--eni-red); color: #fff; }
 
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
@@ -103,15 +112,21 @@
     <div id="screen-enigme" class="screen">
         <h1>Cryptographie</h1>
         <label>ID Énigme</label><select id="sel-eni"></select>
-        <input type="text" id="eni-val" style="width:100%; padding:12px; border-radius:10px; background:#000; color:#fff; border:1px solid #3498db; text-align:center; margin:10px 0; box-sizing:border-box;" placeholder="Séquence Code">
-        <div id="res-enigme" class="result-box">Prêt.</div>
+        
+        <div class="code-container">
+            <div class="wheel-wrapper"><select id="eni-1" class="select-color c-yellow"></select></div>
+            <div class="wheel-wrapper"><select id="eni-2" class="select-color c-blue"></select></div>
+            <div class="wheel-wrapper"><select id="eni-3" class="select-color c-green"></select></div>
+            <div class="wheel-wrapper"><select id="eni-4" class="select-color c-red"></select></div>
+        </div>
+
+        <div id="res-enigme" class="result-box">Saisissez la séquence.</div>
         <button onclick="runEnigme()" style="margin-top:8px;">Décoder</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 </div>
 
 <script>
-    // --- VARIABLES SYSTÈME ---
     let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlertActive = false;
     let grille = [], grilleAC = [], grilleENI = [], sols = [];
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
@@ -124,20 +139,17 @@
     };
     const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
 
-    const sndAlarm = new Audio('alarm.wav'); sndAlarm.loop = true;
+    const sndAlarm = new Audio('alarm.wav'); sndAlarm.loop = false;
     const sndSuccess = new Audio('success.wav');
     const sndError = new Audio('error.wav');
 
-    // --- GESTION DU TIMER (RÉTABLIE) ---
     function updateDisplay() {
         const display = document.getElementById('timer-display');
         let t = isAlertActive ? alertLeft : timeLeft;
         const m = Math.floor(t / 60), s = t % 60;
         display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        
-        if (isAlertActive) {
-            display.classList.add('alert-mode');
-        } else {
+        if (isAlertActive) display.classList.add('alert-mode'); 
+        else {
             display.classList.remove('alert-mode');
             if(timeLeft < 300) display.classList.add('danger'); else display.classList.remove('danger');
         }
@@ -188,7 +200,6 @@
         updateDisplay();
     }
 
-    // --- LOGIQUE MÉTIER AGENTS ---
     function fetchCSV(url) { return new Promise(r => Papa.parse(url, { download: true, complete: res => r(res.data) })); }
 
     async function chargerMission(id) {
@@ -213,6 +224,13 @@
         grilleAC.forEach((l, i) => { if(i > 0 && l[0]) siu.innerHTML += `<option value="${i}">${l[0]}</option>`; });
         se.innerHTML = '<option value="">-- Énigme --</option>';
         grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
+
+        // Initialisation des roues de couleurs 0-9
+        ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
+            const el = document.getElementById(id);
+            el.innerHTML = "";
+            for(let i=0; i<=9; i++) el.innerHTML += `<option value="${i}">${i}</option>`;
+        });
     }
 
     function updateAgentVisuals() {
@@ -258,11 +276,13 @@
     }
 
     function runEnigme() {
-        const id = document.getElementById('sel-eni').value, val = document.getElementById('eni-val').value.trim(), res = document.getElementById('res-enigme');
+        const id = document.getElementById('sel-eni').value, res = document.getElementById('res-enigme');
+        if(!id) return;
+        const saisi = document.getElementById('eni-1').value + document.getElementById('eni-2').value + document.getElementById('eni-3').value + document.getElementById('eni-4').value;
         const row = grilleENI.find(r => r[0] == id);
-        if(row && val === row[1]?.toString().trim()) {
+        if(row && saisi === row[1]?.toString().trim()) {
             const s = sols.find(x => x.code === row[2]?.toString().trim());
-            res.innerHTML = s ? s.texte : "Code correct."; sndSuccess.play();
+            res.innerHTML = s ? s.texte : "Séquence correcte."; sndSuccess.play();
         } else { res.innerHTML = "Échec du décodage."; sndError.play(); }
     }
 
