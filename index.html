@@ -51,7 +51,7 @@
 
         .timer-bar { 
             background: rgba(0,0,0,0.4); 
-            padding: 10px 15px; 
+            padding: 10px 12px; 
             display: none; 
             justify-content: space-between; 
             align-items: center; 
@@ -61,15 +61,12 @@
             border-top-right-radius: 23px;
         }
         
-        @media (min-height: 750px) and (min-width: 500px) {
-            .timer-bar { border-top-left-radius: 33px; border-top-right-radius: 33px; }
-        }
-
-        #timer-display { font-family: monospace; font-size: 1.4rem; color: #3498db; font-weight: bold; letter-spacing: 2px; }
+        #timer-display { font-family: monospace; font-size: 1.3rem; color: #3498db; font-weight: bold; letter-spacing: 1px; }
         #timer-display.danger { color: var(--eni-red); text-shadow: 0 0 10px var(--eni-red); animation: blink 1s infinite; }
         
-        .timer-controls { display: flex; gap: 8px; }
-        .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.7rem; }
+        .timer-controls { display: flex; gap: 5px; }
+        .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 6px 8px; border-radius: 5px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
+        .timer-btn.alert-mode { border-color: var(--eni-red); color: var(--eni-red); }
 
         .screen { 
             display: none; 
@@ -134,6 +131,7 @@
     <div id="mission-timer" class="timer-bar">
         <div id="timer-display">60:00</div>
         <div class="timer-controls">
+            <button class="timer-btn alert-mode" onclick="penaliteTimer()">ALERTE</button>
             <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
             <button class="timer-btn" onclick="resetTimer()">RESET</button>
         </div>
@@ -215,7 +213,7 @@
     const sndSuccess = new Audio('success.wav');
     const sndError = new Audio('error.wav');
     const sndAlarm = new Audio('alarm.wav');
-    sndAlarm.loop = true; // L'alarme boucle jusqu'au reset
+    sndAlarm.loop = true;
 
     function playSnd(s) { s.currentTime = 0; s.play().catch(() => {}); }
     function stopSnd(s) { s.pause(); s.currentTime = 0; }
@@ -229,7 +227,7 @@
         
         if (timeLeft <= 0) {
             display.classList.add('danger');
-            playSnd(sndAlarm); // Déclenchement de l'alarme à 0
+            playSnd(sndAlarm);
         } else if (timeLeft < 300) {
             display.classList.add('danger');
         } else {
@@ -237,36 +235,37 @@
         }
     }
 
+    // NOUVELLE FONCTION ALERTE
+    function penaliteTimer() {
+        if (timeLeft > 60) {
+            timeLeft -= 60; // Retire 1 minute
+            const display = document.getElementById('timer-display');
+            display.style.color = "var(--eni-red)";
+            setTimeout(() => { if(timeLeft > 300) display.style.color = "#3498db"; }, 500);
+            updateTimerDisplay();
+            playSnd(sndError);
+        }
+    }
+
     function toggleTimer() {
         const btn = document.getElementById('btn-pause');
         if (isPaused) { 
-            isPaused = false; 
-            btn.innerText = "PAUSE"; 
+            isPaused = false; btn.innerText = "PAUSE"; 
             timerId = setInterval(() => { 
-                if(timeLeft > 0) {
-                    timeLeft--; 
-                    updateTimerDisplay(); 
-                } else {
-                    clearInterval(timerId);
-                }
+                if(timeLeft > 0) { timeLeft--; updateTimerDisplay(); } 
+                else { clearInterval(timerId); }
             }, 1000); 
         }
-        else { 
-            isPaused = true; 
-            btn.innerText = "PLAY"; 
-            clearInterval(timerId); 
-        }
+        else { isPaused = true; btn.innerText = "PLAY"; clearInterval(timerId); }
     }
 
     function resetTimer() { 
-        clearInterval(timerId); 
-        isPaused = true; 
-        timeLeft = 3600; 
-        stopSnd(sndAlarm); // Arrête l'alarme lors du reset
-        updateTimerDisplay(); 
+        clearInterval(timerId); isPaused = true; timeLeft = 3600; 
+        stopSnd(sndAlarm); updateTimerDisplay(); 
         document.getElementById('btn-pause').innerText = "PLAY"; 
     }
 
+    // Le reste du JS est identique...
     function initCodeDropdowns() {
         ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
             const s = document.getElementById(id);
