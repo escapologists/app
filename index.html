@@ -66,7 +66,7 @@
         
         .timer-controls { display: flex; gap: 5px; }
         .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 6px 8px; border-radius: 5px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
-        .timer-btn.alert-mode { border-color: var(--eni-red); color: var(--eni-red); }
+        .timer-btn.alert-active { background: var(--eni-red); border-color: white; animation: blink 0.5s infinite; }
 
         .screen { 
             display: none; 
@@ -131,8 +131,8 @@
     <div id="mission-timer" class="timer-bar">
         <div id="timer-display">60:00</div>
         <div class="timer-controls">
-            <button class="timer-btn alert-mode" onclick="penaliteTimer()">ALERTE</button>
-            <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
+            <button id="btn-alert" class="timer-btn" style="color:var(--eni-red)" onclick="toggleAlerte()">ALERTE</button>
+            <button id="btn-pause" class="timer-btn" onclick="toggleTimer()">PLAY</button>
             <button class="timer-btn" onclick="resetTimer()">RESET</button>
         </div>
     </div>
@@ -235,37 +235,66 @@
         }
     }
 
-    // NOUVELLE FONCTION ALERTE
-    function penaliteTimer() {
-        if (timeLeft > 60) {
-            timeLeft -= 60; // Retire 1 minute
-            const display = document.getElementById('timer-display');
-            display.style.color = "var(--eni-red)";
-            setTimeout(() => { if(timeLeft > 300) display.style.color = "#3498db"; }, 500);
-            updateTimerDisplay();
-            playSnd(sndError);
-        }
+    // --- NOUVELLE LOGIQUE TIMER (RESTAURÉE) ---
+
+    function startTimerLogic() {
+        if(timerId) clearInterval(timerId);
+        timerId = setInterval(() => { 
+            if(timeLeft > 0) { timeLeft--; updateTimerDisplay(); } 
+            else { clearInterval(timerId); }
+        }, 1000);
     }
 
     function toggleTimer() {
-        const btn = document.getElementById('btn-pause');
+        const btnP = document.getElementById('btn-pause');
+        const btnA = document.getElementById('btn-alert');
+        
         if (isPaused) { 
-            isPaused = false; btn.innerText = "PAUSE"; 
-            timerId = setInterval(() => { 
-                if(timeLeft > 0) { timeLeft--; updateTimerDisplay(); } 
-                else { clearInterval(timerId); }
-            }, 1000); 
+            isPaused = false; 
+            btnP.innerText = "PAUSE";
+            btnA.classList.remove('alert-active');
+            startTimerLogic();
+        } else { 
+            isPaused = true; 
+            btnP.innerText = "PLAY"; 
+            clearInterval(timerId); 
         }
-        else { isPaused = true; btn.innerText = "PLAY"; clearInterval(timerId); }
+    }
+
+    function toggleAlerte() {
+        const btnA = document.getElementById('btn-alert');
+        const btnP = document.getElementById('btn-pause');
+        const display = document.getElementById('timer-display');
+
+        if (!btnA.classList.contains('alert-active')) {
+            // Activer Alerte
+            isPaused = false;
+            btnA.classList.add('alert-active');
+            btnP.innerText = "PAUSE";
+            display.classList.add('danger');
+            playSnd(sndError);
+            startTimerLogic();
+        } else {
+            // Désactiver Alerte (On fige tout)
+            isPaused = true;
+            btnA.classList.remove('alert-active');
+            btnP.innerText = "PLAY";
+            clearInterval(timerId);
+        }
     }
 
     function resetTimer() { 
-        clearInterval(timerId); isPaused = true; timeLeft = 3600; 
-        stopSnd(sndAlarm); updateTimerDisplay(); 
-        document.getElementById('btn-pause').innerText = "PLAY"; 
+        clearInterval(timerId); 
+        isPaused = true; 
+        timeLeft = 3600; 
+        stopSnd(sndAlarm);
+        document.getElementById('btn-alert').classList.remove('alert-active');
+        document.getElementById('btn-pause').innerText = "PLAY";
+        updateTimerDisplay(); 
     }
 
-    // Le reste du JS est identique...
+    // --- LE RESTE DU CODE (SANS CHANGEMENTS) ---
+
     function initCodeDropdowns() {
         ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
             const s = document.getElementById(id);
