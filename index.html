@@ -11,54 +11,34 @@
         :root { 
             --primary: #20258C; --bg-petrol: #0a1118; --card: #0f1922; --text: #e0e0e0; 
             --tactical-blue: #3498db; --eni-yellow: #EBF099; --eni-blue: #2076B3; 
-            --eni-green: #23991F; --eni-red: #C93110;
+            --eni-green: #23991F; --eni-red: #C93110; --hint-gold: #D4AF37;
         }
         
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: var(--bg-petrol); 
-            color: var(--text); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100dvh; 
-            margin: 0; 
-            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); 
+            display: flex; justify-content: center; align-items: center; height: 100dvh; margin: 0; overflow: hidden;
             padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
         }
 
         .app-container { 
-            width: 95%; 
-            max-width: 380px; 
-            height: 92%; 
-            background: var(--card); 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            overflow: hidden; 
-            border: 2px solid var(--tactical-blue); 
-            border-radius: 25px; 
-            box-shadow: 0 0 20px rgba(52, 152, 219, 0.4);
-            box-sizing: border-box;
+            width: 95%; max-width: 380px; height: 92%; background: var(--card); 
+            display: flex; flex-direction: column; position: relative; overflow: hidden; 
+            border: 2px solid var(--tactical-blue); border-radius: 25px; 
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.4); box-sizing: border-box;
         }
 
         .timer-bar { 
-            background: rgba(0,0,0,0.5); 
-            padding: 12px 15px; 
-            display: none; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid #1a2a36;
-            flex-shrink: 0;
+            background: rgba(0,0,0,0.5); padding: 12px 15px; display: none; 
+            justify-content: space-between; align-items: center; border-bottom: 1px solid #1a2a36; flex-shrink: 0;
         }
         
-        #timer-display { font-family: monospace; font-size: 1.4rem; color: #3498db; font-weight: bold; letter-spacing: 1px; }
+        #timer-display { font-family: monospace; font-size: 1.4rem; color: #3498db; font-weight: bold; }
         #timer-display.alert-mode { color: var(--eni-red); animation: blink 0.8s infinite; }
         #timer-display.danger { color: var(--eni-red); }
 
         .timer-controls { display: flex; gap: 6px; }
         .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.65rem; font-weight: bold; }
-        .timer-btn#btn-alert.active { background: var(--eni-red); border-color: white; color: white; }
+        .timer-btn#btn-alert.active { background: var(--eni-red); border-color: white; }
 
         .screen { display: none; flex-direction: column; height: 100%; padding: 15px 20px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
@@ -67,13 +47,13 @@
         h1 { color: #fff; font-size: 0.95rem; text-transform: uppercase; margin: 0; }
 
         .menu-list { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; justify-content: center; }
-        .btn-graphic { width: 100%; height: 125px; background-size: cover; background-position: center; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+        .btn-graphic { width: 100%; height: 100px; background-size: cover; background-position: center; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; flex-shrink: 0; position: relative;}
+        .btn-label { position: absolute; bottom: 8px; right: 12px; font-size: 0.7rem; font-weight: bold; color: white; text-shadow: 1px 1px 3px black; text-transform: uppercase;}
         
         button { padding: 14px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
         button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: auto; flex-shrink: 0; }
 
-        /* --- RETOUR APPARENCE DES CHOIX --- */
-        select { padding: 10px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 10px; width: 100%; outline: none; font-size: 0.9rem; }
+        select { padding: 10px; border-radius: 10px; background: #0a1118; color: white; border: 1px solid #2c3e50; margin-bottom: 10px; width: 100%; outline: none; }
         label { font-size: 0.65rem; color: #3498db; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: block; margin-left: 5px; }
         
         .agent-avatar-container { width: 85px; height: 85px; margin: 0 auto 10px auto; border-radius: 50%; border: 2px solid var(--primary); background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; overflow: hidden; flex-shrink: 0; }
@@ -89,6 +69,9 @@
         .c-blue { background: var(--eni-blue); color: #fff; }
         .c-green { background: var(--eni-green); color: #fff; }
         .c-red { background: var(--eni-red); color: #fff; }
+
+        /* Aide Spécifique */
+        .hint-btn { background: #1a2a36; border: 1px solid var(--hint-gold); color: var(--hint-gold); margin-bottom: 8px; font-size: 0.75rem; }
 
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
@@ -106,7 +89,7 @@
     </div>
 
     <div id="screen-missions" class="screen active">
-        <div class="mission-header"><h1>SÉLECTION MISSION</h1></div>
+        <div class="mission-header"><h1>INITIALISATION</h1></div>
         <div class="menu-list">
             <button onclick="chargerMission('M1')">M1 : Le jardinier Armé</button>
             <button onclick="chargerMission('M2')">M2 : L'amateur Rouge</button>
@@ -115,60 +98,63 @@
     </div>
 
     <div id="screen-menu" class="screen">
-        <div class="mission-header"><h1 id="mission-title">MISSION</h1></div>
+        <div class="mission-header"><h1 id="mission-title">TACTICAL HUB</h1></div>
         <div class="menu-list">
-            <button class="btn-graphic" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')"></button>
-            <button class="btn-graphic" style="background-image: url('bouton_enigma.jpg');" onclick="show('screen-enigme')"></button>
+            <div class="btn-graphic" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')"><span class="btn-label">Actions</span></div>
+            <div class="btn-graphic" style="background-image: url('bouton_enigma.jpg');" onclick="show('screen-enigme')"><span class="btn-label">Codex</span></div>
+            <div class="btn-graphic" style="background-image: url('bouton_aide.jpg');" onclick="show('screen-aide')"><span class="btn-label">Assistance</span></div>
         </div>
-        <button class="secondary" onclick="show('screen-missions')">Quitter la mission</button>
+        <button class="secondary" onclick="show('screen-missions')">Quitter</button>
     </div>
 
     <div id="screen-action-perso" class="screen">
-        <div class="mission-header"><h1>ACTION AGENT</h1></div>
+        <div class="mission-header"><h1>ORDRE OPÉRATIONNEL</h1></div>
         <div class="agent-avatar-container">
             <img id="agent-avatar" src="" style="display:none;">
             <div id="avatar-none" style="font-size: 2.2rem; color: #3498db; font-weight: bold;">?</div>
         </div>
-        <label>Agent de terrain</label>
-        <select id="sel-p" onchange="updateAgentVisuals()"></select>
-        
-        <label>Action à mener</label>
-        <select id="sel-a" onchange="toggleItemSelect()"></select>
-        
-        <label>Cible / Objet</label>
-        <select id="sel-c-perso" onchange="resetItemUsed()"></select>
-        
+        <label>Agent</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
+        <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
+        <label>Objet</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
         <div id="container-item" style="display:none;">
-            <label>Associer avec</label>
-            <select id="sel-item-used"></select>
+            <label>Combiner avec</label><select id="sel-item-used"></select>
         </div>
-        
-        <div id="res-perso" class="result-box">En attente d'ordres...</div>
-        <button onclick="runActionPerso()" style="margin-top:12px;">Transmettre l'ordre</button>
-        <button class="secondary" onclick="show('screen-menu')">Retour menu</button>
+        <div id="res-perso" class="result-box">Transmission...</div>
+        <button onclick="runActionPerso()" style="margin-top:12px;">Confirmer</button>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 
     <div id="screen-enigme" class="screen">
-        <div class="mission-header"><h1>CRYPTOGRAPHIE</h1></div>
-        <label>Identification Énigme</label>
-        <select id="sel-eni"></select>
-        
+        <div class="mission-header"><h1>DÉCRYPTAGE</h1></div>
+        <label>ID Carte</label><select id="sel-eni"></select>
         <div class="code-container">
             <div class="wheel-wrapper"><select id="eni-1" class="select-color c-yellow"></select></div>
             <div class="wheel-wrapper"><select id="eni-2" class="select-color c-blue"></select></div>
             <div class="wheel-wrapper"><select id="eni-3" class="select-color c-green"></select></div>
             <div class="wheel-wrapper"><select id="eni-4" class="select-color c-red"></select></div>
         </div>
+        <div id="res-enigme" class="result-box">Analyse séquence...</div>
+        <button onclick="runEnigme()" style="margin-top:12px;">Décoder</button>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
+    </div>
+
+    <div id="screen-aide" class="screen">
+        <div class="mission-header"><h1>ASSISTANCE TACTIQUE</h1></div>
+        <label>Numéro de l'énigme / carte</label>
+        <input type="number" id="aide-id" style="width:100%; padding:12px; border-radius:10px; background:#0a1118; color:white; border:1px solid #2c3e50; margin-bottom:15px; box-sizing: border-box;" placeholder="Ex: 104">
         
-        <div id="res-enigme" class="result-box">Entrez la séquence de couleurs.</div>
-        <button onclick="runEnigme()" style="margin-top:12px;">Lancer le décodage</button>
-        <button class="secondary" onclick="show('screen-menu')">Retour menu</button>
+        <button class="hint-btn" onclick="demanderAide(1)">INDICE 1</button>
+        <button class="hint-btn" onclick="demanderAide(2)">INDICE 2</button>
+        <button class="hint-btn" onclick="demanderAide(3)" style="border-color:var(--eni-red); color:var(--eni-red)">SOLUTION FINALE</button>
+        
+        <div id="res-aide" class="result-box">Besoin d'aide ?</div>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 </div>
 
 <script>
     let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlertActive = false;
-    let grille = [], grilleAC = [], grilleENI = [], sols = [];
+    let grille = [], grilleAC = [], grilleENI = [], sols = [], aideData = [];
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
     const mapping = {
         "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
@@ -179,65 +165,40 @@
     };
     const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
 
-    const sndAlarm = new Audio('alarm.wav'); sndAlarm.loop = false;
+    const sndAlarm = new Audio('alarm.wav');
     const sndSuccess = new Audio('success.wav');
     const sndError = new Audio('error.wav');
 
     function updateDisplay() {
-        const display = document.getElementById('timer-display');
+        const d = document.getElementById('timer-display');
         let t = isAlertActive ? alertLeft : timeLeft;
-        const m = Math.floor(t / 60), s = t % 60;
-        display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        if (isAlertActive) display.classList.add('alert-mode'); 
-        else {
-            display.classList.remove('alert-mode');
-            if(timeLeft < 300) display.classList.add('danger'); else display.classList.remove('danger');
-        }
+        d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
+        if (isAlertActive) d.classList.add('alert-mode'); else d.classList.remove('alert-mode');
     }
 
     function toggleTimer() {
         if (isAlertActive) return;
-        const btnP = document.getElementById('btn-pause');
         if (isPaused) {
-            isPaused = false; btnP.innerText = "PAUSE";
-            timerId = setInterval(() => {
-                if (timeLeft > 0) { timeLeft--; updateDisplay(); } 
-                else { clearInterval(timerId); sndAlarm.play(); }
-            }, 1000);
-        } else {
-            isPaused = true; btnP.innerText = "PLAY"; clearInterval(timerId);
-        }
+            isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
+            timerId = setInterval(() => { if(timeLeft>0){timeLeft--;updateDisplay();}else{clearInterval(timerId);sndAlarm.play();} }, 1000);
+        } else { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
     }
 
     function toggleAlerte() {
         const btnA = document.getElementById('btn-alert');
-        const btnP = document.getElementById('btn-pause');
         if (!isAlertActive) {
-            isAlertActive = true; clearInterval(timerId);
-            alertLeft = 60; btnA.classList.add('active'); btnP.disabled = true;
-            timerId = setInterval(() => {
-                if (alertLeft > 0) { alertLeft--; updateDisplay(); } 
-                else { clearInterval(timerId); sndAlarm.play(); }
-            }, 1000);
+            isAlertActive = true; clearInterval(timerId); alertLeft = 60; btnA.classList.add('active');
+            timerId = setInterval(() => { if(alertLeft>0){alertLeft--;updateDisplay();}else{clearInterval(timerId);sndAlarm.play();} }, 1000);
         } else {
-            isAlertActive = false; clearInterval(timerId);
-            btnA.classList.remove('active'); btnP.disabled = false;
-            if (!isPaused) {
-                timerId = setInterval(() => {
-                    if (timeLeft > 0) { timeLeft--; updateDisplay(); } else { clearInterval(timerId); sndAlarm.play(); }
-                }, 1000);
-            }
-            updateDisplay();
+            isAlertActive = false; clearInterval(timerId); btnA.classList.remove('active');
+            if(!isPaused) toggleTimer(); else updateDisplay();
         }
     }
 
-    function resetTimer() {
-        clearInterval(timerId); isPaused = true; isAlertActive = false;
-        timeLeft = 3600; alertLeft = 60; sndAlarm.pause(); sndAlarm.currentTime = 0;
-        document.getElementById('btn-pause').innerText = "PLAY";
-        document.getElementById('btn-pause').disabled = false;
-        document.getElementById('btn-alert').classList.remove('active');
-        updateDisplay();
+    function resetTimer() { 
+        clearInterval(timerId); isPaused = true; isAlertActive = false; timeLeft = 3600; 
+        sndAlarm.pause(); sndAlarm.currentTime = 0; document.getElementById('btn-pause').innerText = "PLAY";
+        document.getElementById('btn-alert').classList.remove('active'); updateDisplay();
     }
 
     function fetchCSV(url) { return new Promise(r => Papa.parse(url, { download: true, complete: res => r(res.data) })); }
@@ -245,10 +206,12 @@
     async function chargerMission(id) {
         const data = await Promise.all([
             fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
-            fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`)
+            fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`),
+            fetchCSV(`aide_${id}.csv`) // Chargement du fichier aide spécifique
         ]);
         grille = data[0]; grilleAC = data[1]; grilleENI = data[2]; 
         sols = data[3].map(row => ({ code: row[0]?.trim(), expert: row[1]?.trim().toUpperCase(), action: row[2]?.trim(), texte: row[3]?.trim() }));
+        aideData = data[4];
         initMenus();
         document.getElementById('mission-title').innerText = "MISSION " + id;
         show('screen-menu');
@@ -262,7 +225,7 @@
         grille.forEach((l, i) => { if(i >= 2 && l[0]) sc.innerHTML += `<option value="${i}">${l[0]}</option>`; });
         siu.innerHTML = '<option value="">-- Aucun --</option>';
         grilleAC.forEach((l, i) => { if(i > 0 && l[0]) siu.innerHTML += `<option value="${i}">${l[0]}</option>`; });
-        se.innerHTML = '<option value="">-- Énigme --</option>';
+        se.innerHTML = '<option value="">-- Carte --</option>';
         grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
         ['eni-1', 'eni-2', 'eni-3', 'eni-4'].forEach(id => {
             const el = document.getElementById(id); el.innerHTML = "";
@@ -284,6 +247,18 @@
 
     function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
 
+    function demanderAide(niveau) {
+        const id = document.getElementById('aide-id').value;
+        const res = document.getElementById('res-aide');
+        if(!id) { res.innerHTML = "Saisissez un numéro."; return; }
+        const aide = aideData.find(r => r[0] == id);
+        if(aide) {
+            res.innerHTML = aide[niveau] || "Pas d'indice disponible.";
+            // Optionnel : Retirer 2 min par aide demandée
+            // timeLeft -= 120; updateDisplay();
+        } else { res.innerHTML = "Référence inconnue."; }
+    }
+
     function runActionPerso() {
         const agentName = document.getElementById('sel-p').value, obj1Idx = document.getElementById('sel-c-perso').value, obj2Idx = document.getElementById('sel-item-used').value, resBox = document.getElementById('res-perso'), sa = document.getElementById('sel-a');
         if(!agentName || !obj1Idx || !sa.options[sa.selectedIndex]) return;
@@ -303,7 +278,7 @@
         }
         const agentInit = agentName[0].toUpperCase(), match = sols.find(s => s.code === code && (s.expert === "" || s.expert === agentInit) && (s.action === "" || s.action.toLowerCase() === actionLabel.toLowerCase()));
         if(match) { resBox.innerHTML = match.texte; sndSuccess.play(); }
-        else { resBox.innerHTML = code ? "Inadapté ici." : "Rien ne se passe."; sndError.play(); }
+        else { resBox.innerHTML = code ? "Analyse négative." : "Aucune interaction."; sndError.play(); }
     }
 
     function runEnigme() {
@@ -313,8 +288,8 @@
         const row = grilleENI.find(r => r[0] == id);
         if(row && saisi === row[1]?.toString().trim()) {
             const s = sols.find(x => x.code === row[2]?.toString().trim());
-            res.innerHTML = s ? s.texte : "Séquence correcte."; sndSuccess.play();
-        } else { res.innerHTML = "Échec du décodage."; sndError.play(); }
+            res.innerHTML = s ? s.texte : "ACCÈS AUTORISÉ."; sndSuccess.play();
+        } else { res.innerHTML = "CODE ERRONÉ."; sndError.play(); }
     }
 
     function show(id) {
