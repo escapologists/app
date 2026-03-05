@@ -35,7 +35,7 @@
         label { font-size: 0.65rem; color: var(--tactical-blue); font-weight: bold; display: block; margin: 5px 0 2px 5px; text-transform: uppercase; }
         select { padding: 10px; border-radius: 8px; background: #0a1118; color: white; border: 1px solid #2c3e50; width: 100%; margin-bottom: 8px; font-size: 0.9rem; }
 
-        .agent-avatar-container { width: 70px; height: 70px; margin: 0 auto 10px auto; border-radius: 50%; border: 2px solid var(--primary); background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .agent-avatar-container { width: 70px; height: 70px; margin: 0 auto 10px auto; border-radius: 50%; border: 3px solid var(--primary); background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #agent-avatar { width: 100%; height: 100%; object-fit: cover; }
 
         .result-box { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 10px; margin: 10px 0; border: 1px solid #1a2a36; min-height: 45px; text-align: center; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; line-height: 1.2; }
@@ -185,12 +185,31 @@
         });
     }
 
+    // FONCTION MISE À JOUR : AJOUT DU RESET DE RÉSULTAT
     function updateAgentVisuals() {
-        const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), ph = document.getElementById('avatar-none'), sa = document.getElementById('sel-a');
-        if (p) { img.src = `${p}.png`; img.style.display = 'block'; ph.style.display = 'none'; 
-            sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`);
+        const p = document.getElementById('sel-p').value, 
+              img = document.getElementById('agent-avatar'), 
+              ph = document.getElementById('avatar-none'), 
+              sa = document.getElementById('sel-a'),
+              res = document.getElementById('res-perso');
+
+        if (p) { 
+            img.src = `${p}.png`; 
+            img.style.display = 'block'; 
+            ph.style.display = 'none'; 
+            
+            sa.innerHTML = ''; 
+            mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`);
+            
+            // RESET DU TEXTE
+            res.innerHTML = "Transmission...";
+            res.style.color = "var(--text)";
+            
             toggleItemSelect();
-        } else { img.style.display = 'none'; ph.style.display = 'block'; }
+        } else { 
+            img.style.display = 'none'; 
+            ph.style.display = 'block'; 
+        }
     }
 
     function toggleItemSelect() { 
@@ -257,15 +276,12 @@
 
     function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
     
-    // Fonction corrigée pour le reset complet à chaque changement d'énigme
     function resetHintsForNewEnigma() { 
         currentHintLevel = 1; 
         document.getElementById('hint-journal').innerHTML = ""; 
         const btn = document.getElementById('btn-next-hint');
         btn.disabled = false; 
         btn.innerText = "Indice 1"; 
-        
-        // Reset de l'affichage du texte de résultat
         const resEni = document.getElementById('res-code-final');
         resEni.innerText = "PRÊT"; 
         resEni.style.color = "white";
