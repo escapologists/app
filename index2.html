@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TEST - Escapologists Debug</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        :root { 
+            --primary: #20258C; --bg-petrol: #0a1118; --card: #0f1922; --text: #e0e0e0; 
+            --tactical-blue: #3498db; --eni-yellow: #EBF099; --eni-blue: #2076B3; 
+            --eni-green: #23991F; --eni-red: #C93110; --hint-gold: #D4AF37;
+            --debug-cyan: #00f2ff;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100dvh; margin: 0; overflow: hidden; }
+        .app-container { width: 95%; max-width: 380px; height: 92%; background: var(--card); display: flex; flex-direction: column; position: relative; border: 2px solid var(--tactical-blue); border-radius: 20px; box-sizing: border-box; overflow: hidden; }
+        
+        .timer-bar { background: rgba(0,0,0,0.8); padding: 12px; display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--tactical-blue); }
+        #timer-display { font-family: 'Courier New', monospace; font-size: 1.6rem; color: var(--tactical-blue); font-weight: bold; }
+        .timer-controls { display: flex; gap: 5px; }
+        .timer-btn { background: #16212b; border: 1px solid #2c3e50; color: white; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 0.6rem; font-weight: bold; }
+
+        .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
+        .screen.active { display: flex; }
+        .mission-header { border: 2px solid var(--primary); border-radius: 12px; padding: 8px; margin-bottom: 15px; background: rgba(32, 37, 140, 0.2); text-align: center; }
+        h1 { font-size: 0.9rem; margin: 0; text-transform: uppercase; color: #fff; }
+
+        .menu-list { display: flex; flex-direction: column; gap: 15px; flex-grow: 1; justify-content: center; }
+        button { padding: 12px; border: none; border-radius: 10px; background: var(--primary); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        button.secondary { background: #16212b; border: 1px solid #2c3e50; margin-top: auto; font-size: 0.8rem; }
+
+        label { font-size: 0.65rem; color: var(--tactical-blue); font-weight: bold; display: block; margin: 5px 0 2px 5px; text-transform: uppercase; }
+        select { padding: 10px; border-radius: 8px; background: #0a1118; color: white; border: 1px solid #2c3e50; width: 100%; margin-bottom: 8px; font-size: 0.9rem; }
+
+        .agent-avatar-container { width: 70px; height: 70px; margin: 0 auto 10px auto; border-radius: 50%; border: 3px solid var(--primary); background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        #agent-avatar { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Styles Debug */
+        .debug-info { font-size: 0.6rem; color: var(--debug-cyan); text-align: center; margin-bottom: 2px; font-family: monospace; text-transform: uppercase; letter-spacing: 1px; }
+        .result-box { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 10px; margin: 0 0 10px 0; border: 1px solid #1a2a36; min-height: 45px; text-align: center; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; line-height: 1.2; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="mission-timer" class="timer-bar">
+        <div id="timer-display">60:00</div>
+        <div class="timer-controls">
+            <button id="btn-alert" class="timer-btn" onclick="toggleAlerte()">Alerte</button>
+            <button id="btn-pause" class="timer-btn" onclick="toggleTimer()">Play</button>
+        </div>
+    </div>
+
+    <div id="screen-missions" class="screen active">
+        <div class="mission-header"><h1>SÉLECTION MISSION (TEST)</h1></div>
+        <div class="menu-list">
+            <button onclick="chargerMission('M1')">M1 : Debug</button>
+            <button onclick="chargerMission('M2')">M2 : Debug</button>
+        </div>
+    </div>
+
+    <div id="screen-menu" class="screen">
+        <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
+        <div class="menu-list">
+            <button onclick="show('screen-action-perso')">Actions Agents</button>
+        </div>
+        <button class="secondary" onclick="show('screen-missions')">Quitter</button>
+    </div>
+
+    <div id="screen-action-perso" class="screen">
+        <div class="mission-header"><h1>DEBUG MODE</h1></div>
+        <div class="agent-avatar-container">
+            <img id="agent-avatar" src="" style="display:none;">
+            <div id="avatar-none" style="font-size: 1.5rem; color: var(--tactical-blue);">?</div>
+        </div>
+        <label>Agent</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
+        <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
+        <label>Cible</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
+        <div id="container-item" style="display:none;">
+            <label>Utiliser avec</label><select id="sel-item-used"></select>
+        </div>
+
+        <div id="debug-code-raw" class="debug-info">CODE RECHERCHÉ : ---</div>
+        <div id="res-perso" class="result-box">En attente...</div>
+
+        <button onclick="runActionPerso()">Transmettre</button>
+        <button class="secondary" onclick="show('screen-menu')">Retour</button>
+    </div>
+</div>
+
+<script>
+    let timeLeft = 3600, timerId = null, isPaused = true, isAlertActive = false;
+    let grille = [], grilleAC = [], sols = [];
+    const alertSound = new Audio('alarm.wav');
+
+    const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
+    const mapping = {
+        "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
+        "Julia": ["regarder", "Manipuler", "faufiler", "déverrouiller"],
+        "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
+        "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
+        "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
+    };
+    const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
+
+    function updateDisplay() {
+        const d = document.getElementById('timer-display');
+        d.innerText = `${Math.floor(timeLeft/60).toString().padStart(2,'0')}:${(timeLeft%60).toString().padStart(2,'0')}`;
+    }
+
+    function toggleTimer() {
+        if (isPaused) {
+            isPaused = false;
+            timerId = setInterval(() => { if(timeLeft > 0) timeLeft--; updateDisplay(); }, 1000);
+        } else { isPaused = true; clearInterval(timerId); }
+    }
+
+    async function chargerMission(id) {
+        const fetchCSV = url => new Promise(r => Papa.parse(url, { download: true, complete: res => r(res.data) }));
+        const d = await Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`solutions_${id}.csv`)]);
+        grille = d[0]; grilleAC = d[1];
+        sols = d[2].map(r => ({ code: r[0]?.trim(), expert: r[1]?.trim().toUpperCase(), action: r[2]?.trim(), texte: r[3]?.trim() }));
+        initMenus();
+        show('screen-menu');
+    }
+
+    function initMenus() {
+        const sp = document.getElementById('sel-p'), sc = document.getElementById('sel-c-perso'), siu = document.getElementById('sel-item-used');
+        sp.innerHTML = '<option value="">Agent</option>'; persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+        sc.innerHTML = '<option value="">Cible</option>'; grille.forEach((l, i) => { if(i >= 2 && l[0]) sc.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+        siu.innerHTML = '<option value="">Aucun</option>'; grilleAC.forEach((l, i) => { if(i > 0 && l[0]) siu.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+    }
+
+    function updateAgentVisuals() {
+        const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), ph = document.getElementById('avatar-none'), sa = document.getElementById('sel-a'), res = document.getElementById('res-perso'), dbg = document.getElementById('debug-code-raw');
+        if (p) { 
+            img.src = `${p}.png`; img.style.display = 'block'; ph.style.display = 'none'; 
+            sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`);
+            res.innerHTML = "En attente..."; dbg.innerHTML = "CODE RECHERCHÉ : ---";
+            toggleItemSelect();
+        }
+    }
+
+    function runActionPerso() {
+        const pName = document.getElementById('sel-p').value, cIdx = document.getElementById('sel-c-perso').value, iIdx = document.getElementById('sel-item-used').value, sa = document.getElementById('sel-a'), res = document.getElementById('res-perso'), dbg = document.getElementById('debug-code-raw');
+        if(!pName || !cIdx || !sa.options[sa.selectedIndex]) return;
+        
+        let actionIdx = parseInt(sa.value), actionLabel = sa.options[sa.selectedIndex].text, code = "";
+
+        // 1. CHERCHE DANS GRILLE_AC (OBJETS)
+        if(actionsWithItems.includes(actionLabel) && iIdx !== "0" && iIdx !== "") {
+            const n1 = grille[cIdx][0].trim(), n2 = grilleAC[iIdx][0].trim();
+            let rA = grilleAC.findIndex(r => r[0]?.trim() === n1), cA = grilleAC[0].findIndex(c => c?.trim() === n2);
+            if(rA !== -1 && cA !== -1) code = grilleAC[rA][cA]?.trim();
+            if(!code || code === "-") {
+                let rB = grilleAC.findIndex(r => r[0]?.trim() === n2), cB = grilleAC[0].findIndex(c => c?.trim() === n1);
+                if(rB !== -1 && cB !== -1) code = grilleAC[rB][cB]?.trim();
+            }
+        }
+
+        // 2. CHERCHE DANS GRILLE.CSV (ACTIONS SIMPLES)
+        if(!code || code === "-") {
+            const col = 1 + (persos.indexOf(pName) * 4) + actionIdx;
+            code = grille[cIdx][col]?.trim();
+        }
+
+        // AFFICHAGE DEBUG
+        dbg.innerHTML = `CODE RECHERCHÉ : <span style="color:white; font-size:0.8rem;">${code || "VIDE"}</span>`;
+
+        // 3. VÉRIFICATION SOLUTION
+        const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
+        if(match) {
+            if (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase()) {
+                res.innerHTML = `Erreur : Le code "${code}" existe mais demande l'action "${match.action}".`; res.style.color = "var(--eni-red)";
+            } else { res.innerHTML = match.texte; res.style.color = "white"; }
+        } else {
+            res.innerHTML = code ? `Le code "${code}" n'est pas dans solutions.csv` : "Aucun code trouvé dans la grille."; 
+            res.style.color = "var(--eni-red)";
+        }
+    }
+
+    function toggleItemSelect() { 
+        const a = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex]?.text;
+        document.getElementById('container-item').style.display = actionsWithItems.includes(a) ? "block" : "none";
+    }
+    function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
+    function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+</script>
+</body>
+</html>
