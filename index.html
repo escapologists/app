@@ -38,7 +38,7 @@
         .agent-avatar-container { width: 70px; height: 70px; margin: 0 auto 10px auto; border-radius: 50%; border: 2px solid var(--primary); background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #agent-avatar { width: 100%; height: 100%; object-fit: cover; }
 
-        .result-box { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 10px; margin: 10px 0; border: 1px solid #1a2a36; min-height: 45px; text-align: center; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
+        .result-box { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 10px; margin: 10px 0; border: 1px solid #1a2a36; min-height: 45px; text-align: center; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; line-height: 1.2; }
         
         .hint-scroll-area { background: rgba(0,0,0,0.3); border: 1px solid #1a2a36; border-radius: 10px; padding: 10px; flex-grow: 1; overflow-y: auto; margin-top: 10px; font-size: 0.8rem; }
         .hint-entry { border-left: 3px solid var(--hint-gold); padding-left: 10px; margin-bottom: 10px; }
@@ -139,7 +139,7 @@
             timerId = setInterval(() => {
                 if(isAlertActive) {
                     if(alertLeft > 0) alertLeft--;
-                    else { toggleAlerte(); } // Auto-stop alerte à 0
+                    else { toggleAlerte(); }
                 } else {
                     if(timeLeft > 0) timeLeft--;
                 }
@@ -189,10 +189,15 @@
     function runActionPerso() {
         const pName = document.getElementById('sel-p').value, cIdx = document.getElementById('sel-c-perso').value, iIdx = document.getElementById('sel-item-used').value, sa = document.getElementById('sel-a'), res = document.getElementById('res-perso');
         if(!pName || !cIdx || !sa.options[sa.selectedIndex]) return;
-        let actionIdx = parseInt(sa.value), actionLabel = sa.options[sa.selectedIndex].text, code = "";
+        
+        let actionIdx = parseInt(sa.value);
+        let actionLabel = sa.options[sa.selectedIndex].text;
+        let code = "";
 
+        // 1. TEST DES OBJETS (GRILLE AC) - Prioritaire
         if(actionsWithItems.includes(actionLabel) && iIdx !== "0" && iIdx !== "") {
-            const n1 = grille[cIdx][0].trim(), n2 = grilleAC[iIdx][0].trim();
+            const n1 = grille[cIdx][0].trim();
+            const n2 = grilleAC[iIdx][0].trim();
             let rA = grilleAC.findIndex(r => r[0]?.trim() === n1), cA = grilleAC[0].findIndex(c => c?.trim() === n2);
             if(rA !== -1 && cA !== -1) code = grilleAC[rA][cA]?.trim();
             if(!code || code === "-") {
@@ -200,13 +205,33 @@
                 if(rB !== -1 && cB !== -1) code = grilleAC[rB][cB]?.trim();
             }
         }
+
+        // 2. TEST ACTION SIMPLE (GRILLE.CSV) - Si pas d'objet ou pas de code objet
         if(!code || code === "-") {
             const col = 1 + (persos.indexOf(pName) * 4) + actionIdx;
             code = grille[cIdx][col]?.trim();
         }
-        const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
-        res.innerHTML = match ? match.texte : "Aucun résultat.";
-        res.style.color = match ? "white" : "var(--eni-red)";
+
+        // 3. VÉRIFICATION STRICTE DANS LES SOLUTIONS
+        const agentInit = pName[0].toUpperCase();
+        
+        // On cherche une solution qui match le code ET (soit l'agent expert, soit pas d'expert)
+        const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === agentInit));
+
+        if(match) {
+            // VERIFICATION : Est-ce que l'action effectuée correspond à l'action prévue dans la solution ?
+            // On compare l'actionLabel (ex: "Forcer") avec l'action dans le CSV (ex: "Forcer")
+            if (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase()) {
+                res.innerHTML = "Cette action n'est pas adaptée ici.";
+                res.style.color = "var(--eni-red)";
+            } else {
+                res.innerHTML = match.texte;
+                res.style.color = "white";
+            }
+        } else {
+            res.innerHTML = "Aucun résultat pour cette action.";
+            res.style.color = "var(--eni-red)";
+        }
     }
 
     function runEnigme() {
