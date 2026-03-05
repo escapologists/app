@@ -16,7 +16,7 @@
         
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100dvh; margin: 0; overflow: hidden; }
 
-        .app-container { width: 95%; max-width: 380px; height: 90%; background: var(--card); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 2px solid var(--tactical-blue); border-radius: 20px; box-shadow: 0 0 20px rgba(52, 152, 219, 0.4); box-sizing: border-box; }
+        .app-container { width: 95%; max-width: 380px; height: 92%; background: var(--card); display: flex; flex-direction: column; position: relative; overflow: hidden; border: 2px solid var(--tactical-blue); border-radius: 20px; box-shadow: 0 0 20px rgba(52, 152, 219, 0.4); box-sizing: border-box; }
 
         .timer-bar { background: rgba(0,0,0,0.7); padding: 12px 15px; display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--tactical-blue); flex-shrink: 0; }
         #timer-display { font-family: 'Courier New', monospace; font-size: 1.5rem; color: var(--tactical-blue); font-weight: bold; }
@@ -44,10 +44,10 @@
         .agent-avatar-container { width: 80px; height: 80px; margin: 0 auto 10px auto; border-radius: 50%; border: 3px solid var(--primary); background: #000; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         #agent-avatar { width: 100%; height: 100%; object-fit: cover; }
 
-        .result-code { background: rgba(0,0,0,0.8); padding: 12px; border-radius: 10px; margin: 10px 0; border: 1px solid #1a2a36; color: #fff; text-align: center; font-weight: bold; font-size: 0.9rem; }
+        .result-code { background: rgba(0,0,0,0.8); padding: 12px; border-radius: 10px; margin: 10px 0; border: 1px solid #1a2a36; color: #fff; text-align: center; font-weight: bold; font-size: 0.9rem; min-height: 40px; display: flex; align-items: center; justify-content: center; }
         
         .hint-scroll-area { background: rgba(0,0,0,0.4); border: 1px solid #1a2a36; border-radius: 10px; padding: 10px; flex-grow: 1; overflow-y: auto; margin-top: 10px; font-size: 0.8rem; }
-        .hint-entry { border-left: 3px solid var(--hint-gold); padding-left: 10px; margin-bottom: 12px; }
+        .hint-entry { border-left: 3px solid var(--hint-gold); padding-left: 10px; margin-bottom: 12px; animation: fadeIn 0.3s ease; }
         .hint-label { font-size: 0.6rem; color: var(--hint-gold); font-weight: bold; margin-bottom: 2px; }
 
         .code-container { display: flex; justify-content: space-between; margin: 10px 0; gap: 5px; }
@@ -59,6 +59,9 @@
         .c-red { background: var(--eni-red); color: #fff; }
 
         .btn-hint-main { background: #1a2a36; border: 1px solid var(--hint-gold); color: var(--hint-gold); width: 100%; margin-top: 5px; }
+        .btn-hint-main:disabled { opacity: 0.4; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
     </style>
 </head>
 <body>
@@ -103,7 +106,7 @@
         <div id="container-item" style="display:none;">
             <label>Utiliser avec</label><select id="sel-item-used"></select>
         </div>
-        <div id="res-perso" class="result-code">En attente...</div>
+        <div id="res-perso" class="result-code">En attente d'ordres...</div>
         <button onclick="runActionPerso()" style="margin-top:10px;">Exécuter</button>
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
@@ -112,18 +115,23 @@
         <div class="mission-header"><h1>MACHINE CRYPTO</h1></div>
         <label>Sélectionner l'énigme</label>
         <select id="sel-eni" onchange="resetHintsForNewEnigma()"></select>
+        
         <div class="code-container">
             <div class="wheel-wrapper"><select id="eni-1" class="select-color c-yellow"></select></div>
             <div class="wheel-wrapper"><select id="eni-2" class="select-color c-blue"></select></div>
             <div class="wheel-wrapper"><select id="eni-3" class="select-color c-green"></select></div>
             <div class="wheel-wrapper"><select id="eni-4" class="select-color c-red"></select></div>
         </div>
+        
         <button onclick="runEnigme()">Tester le code</button>
         <div id="res-code-final" class="result-code">SYSTÈME PRÊT</div>
+
         <button id="btn-next-hint" class="btn-hint-main" onclick="progressiveHint()">Demander Indice 1</button>
+        
         <div class="hint-scroll-area" id="hint-journal">
             <div style="color:#555; text-align:center; font-style:italic;">Journal d'assistance vide.</div>
         </div>
+
         <button class="secondary" onclick="show('screen-menu')">Retour</button>
     </div>
 </div>
@@ -210,20 +218,46 @@
     function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
 
     function runActionPerso() {
-        const agentName = document.getElementById('sel-p').value, obj1Idx = document.getElementById('sel-c-perso').value, obj2Idx = document.getElementById('sel-item-used').value, resBox = document.getElementById('res-perso'), sa = document.getElementById('sel-a');
+        const agentName = document.getElementById('sel-p').value;
+        const obj1Idx = document.getElementById('sel-c-perso').value;
+        const obj2Idx = document.getElementById('sel-item-used').value;
+        const resBox = document.getElementById('res-perso');
+        const sa = document.getElementById('sel-a');
         if(!agentName || !obj1Idx || !sa.options[sa.selectedIndex]) return;
-        let actionLabel = sa.options[sa.selectedIndex].text, code = "";
+        
+        let actionLabel = sa.options[sa.selectedIndex].text;
+        let code = "";
+
+        // SYMÉTRIE DES OBJETS (GRILLE AC)
         if(actionsWithItems.includes(actionLabel) && obj2Idx !== "0" && obj2Idx !== "") {
-            const name1 = grille[obj1Idx][0].trim(), name2 = grilleAC[obj2Idx][0].trim();
-            let rA = grilleAC.findIndex(r => r[0]?.trim() === name1), cA = grilleAC[0].findIndex(c => c?.trim() === name2);
+            const name1 = grille[obj1Idx][0].trim();
+            const name2 = grilleAC[obj2Idx][0].trim();
+            
+            // Test Sens 1 (Cible en ligne, Objet en colonne)
+            let rA = grilleAC.findIndex(r => r[0]?.trim() === name1);
+            let cA = grilleAC[0].findIndex(c => c?.trim() === name2);
             if(rA !== -1 && cA !== -1) code = grilleAC[rA][cA]?.trim();
+
+            // Test Sens 2 (Inversion)
+            if(!code || code === "" || code === "-") {
+                let rB = grilleAC.findIndex(r => r[0]?.trim() === name2);
+                let cB = grilleAC[0].findIndex(c => c?.trim() === name1);
+                if(rB !== -1 && cB !== -1) code = grilleAC[rB][cB]?.trim();
+            }
         } 
-        if (!code) {
-            const agentIdx = persos.indexOf(agentName), colIndex = 1 + (agentIdx * 4) + parseInt(sa.value);
+
+        // ACTION SIMPLE
+        if (!code || code === "" || code === "-") {
+            const agentIdx = persos.indexOf(agentName);
+            const colIndex = 1 + (agentIdx * 4) + parseInt(sa.value);
             code = grille[obj1Idx][colIndex]?.trim();
         }
-        const agentInit = agentName[0].toUpperCase(), match = sols.find(s => s.code === code && (s.expert === "" || s.expert === agentInit));
-        resBox.innerHTML = match ? match.texte : "Aucune interaction utile.";
+
+        const agentInit = agentName[0].toUpperCase();
+        const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === agentInit));
+        
+        if(match) { resBox.innerHTML = match.texte; resBox.style.color = "var(--text)"; }
+        else { resBox.innerHTML = "Aucune interaction utile."; resBox.style.color = "var(--eni-red)"; }
     }
 
     function runEnigme() {
@@ -239,18 +273,23 @@
 
     function progressiveHint() {
         const enigmaId = document.getElementById('sel-eni').value, journal = document.getElementById('hint-journal'), btn = document.getElementById('btn-next-hint');
-        if(!enigmaId) return;
+        if(!enigmaId) { alert("Choisissez une énigme."); return; }
+        
         const hint = aideData.find(r => r[0].trim() == enigmaId && r[1].trim() == currentHintLevel);
         if(hint) {
             if(currentHintLevel === 1) journal.innerHTML = "";
             const div = document.createElement('div'); div.className = 'hint-entry';
-            div.innerHTML = `<div class="hint-label">${currentHintLevel === 3 ? "SOLUTION" : "INDICE "+currentHintLevel}</div><div>${hint[2]}</div>`;
+            const label = currentHintLevel === 3 ? "SOLUTION" : "INDICE " + currentHintLevel;
+            div.innerHTML = `<div class="hint-label">${label}</div><div>${hint[2]}</div>`;
             journal.appendChild(div); journal.scrollTop = journal.scrollHeight;
-            const pen = parseInt(hint[3]); if(!isNaN(pen)) { timeLeft = Math.max(0, timeLeft - (pen * 60)); updateDisplay(); }
+            
+            const pen = parseInt(hint[3]);
+            if(!isNaN(pen) && pen > 0) { timeLeft = Math.max(0, timeLeft - (pen * 60)); updateDisplay(); }
+            
             currentHintLevel++;
             if(currentHintLevel > 3) { btn.innerText = "Fin de l'aide"; btn.disabled = true; }
             else { btn.innerText = currentHintLevel === 3 ? "Demander SOLUTION" : `Demander Indice ${currentHintLevel}`; }
-        }
+        } else { alert("Pas d'indice trouvé pour ce niveau."); }
     }
 
     function resetHintsForNewEnigma() {
@@ -258,6 +297,7 @@
         btn.innerText = "Demander Indice 1"; btn.disabled = false;
         document.getElementById('hint-journal').innerHTML = '<div style="color:#555; text-align:center; font-style:italic;">Journal d\'assistance vide.</div>';
         document.getElementById('res-code-final').innerText = "SYSTÈME PRÊT";
+        document.getElementById('res-code-final').style.color = "white";
     }
 
     function show(id) {
