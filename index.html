@@ -13,12 +13,15 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100dvh; margin: 0; overflow: hidden; }
         
-        /* SPLASH SCREEN */
+        /* SPLASH SCREEN AVEC FONDU */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-petrol); display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s;
         }
+        #splash-screen.fade-out { opacity: 0; visibility: hidden; }
+        
         .loader {
             border: 4px solid #16212b; border-top: 4px solid var(--tactical-blue);
             border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
@@ -26,8 +29,8 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* INTERFACE */
         .app-container { width: 95%; max-width: 380px; height: 92%; background: var(--card); display: flex; flex-direction: column; position: relative; border: 2px solid var(--tactical-blue); border-radius: 20px; box-sizing: border-box; overflow: hidden; }
-        
         .timer-bar { background: rgba(0,0,0,0.8); padding: 12px; display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--tactical-blue); }
         #timer-display { font-family: 'Courier New', monospace; font-size: 1.6rem; color: var(--tactical-blue); font-weight: bold; }
         #timer-display.alert-mode { color: var(--eni-red); text-shadow: 0 0 10px var(--eni-red); }
@@ -66,8 +69,9 @@
 <body>
 
 <div id="splash-screen" style="display:none;">
+    <img src="logo.jpg" alt="Logo" style="width: 200px; margin-bottom: 30px; border-radius: 10px;">
     <div class="loader"></div>
-    <div id="loading-text" style="color: var(--tactical-blue); font-weight: bold;">CHARGEMENT DES DONNÉES...</div>
+    <div id="loading-text" style="color: var(--tactical-blue); font-weight: bold; font-size: 0.8rem; letter-spacing: 2px;">SYNCHRONISATION...</div>
 </div>
 
 <div class="app-container">
@@ -178,19 +182,17 @@
     function resetTimer() { timeLeft = 3600; alertLeft = 60; updateDisplay(); }
 
     async function chargerMission(id) {
-        // Afficher le Splash Screen
-        document.getElementById('splash-screen').style.display = 'flex';
+        const splash = document.getElementById('splash-screen');
+        splash.classList.remove('fade-out');
+        splash.style.display = 'flex';
         
-        // Cache Busting : On ajoute un timestamp pour forcer le téléchargement des CSV
-        const v = "?v=" + Date.now();
+        const v = "?v=" + Date.now(); // Cache Busting
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
         
         try {
             const d = await Promise.all([
-                fetchCSV("grille.csv"), 
-                fetchCSV("grille_ac.csv"), 
-                fetchCSV(`grille_eni_${id}.csv`), 
-                fetchCSV(`solutions_${id}.csv`), 
+                fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
+                fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), 
                 fetchCSV(`indice_${id}.csv`)
             ]);
 
@@ -200,15 +202,15 @@
             initMenus();
             document.getElementById('mission-title').innerText = "MISSION " + id;
             
-            // On cache le Splash après un court délai pour la fluidité
+            // Effet de fondu avant de montrer le menu
             setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
+                splash.classList.add('fade-out');
                 show('screen-menu');
             }, 800);
 
         } catch (e) {
-            alert("Erreur lors du chargement des fichiers CSV.");
-            document.getElementById('splash-screen').style.display = 'none';
+            splash.style.display = 'none';
+            alert("Erreur de synchronisation des données.");
         }
     }
 
@@ -254,10 +256,6 @@
             const n1 = grille[cIdx][0].trim(), n2 = grilleAC[iIdx][0].trim();
             let rA = grilleAC.findIndex(r => r[0]?.trim() === n1), cA = grilleAC[0].findIndex(c => c?.trim() === n2);
             if(rA !== -1 && cA !== -1) code = grilleAC[rA][cA]?.trim();
-            if(!code || code === "-") {
-                let rB = grilleAC.findIndex(r => r[0]?.trim() === n2), cB = grilleAC[0].findIndex(c => c?.trim() === n1);
-                if(rB !== -1 && cB !== -1) code = grilleAC[rB][cB]?.trim();
-            }
         }
         if(!code || code === "-") {
             const col = 1 + (persos.indexOf(pName) * 4) + actionIdx;
