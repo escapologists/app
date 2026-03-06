@@ -13,7 +13,7 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100dvh; margin: 0; overflow: hidden; }
         
-        /* SPLASH SCREEN AVEC FONDU */
+        /* SPLASH SCREEN - AFFICHÉ PAR DÉFAUT */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-petrol); display: flex; flex-direction: column;
@@ -68,10 +68,10 @@
 </head>
 <body>
 
-<div id="splash-screen" style="display:none;">
+<div id="splash-screen">
     <img src="logo.jpg" alt="Logo" style="width: 200px; margin-bottom: 30px; border-radius: 10px;">
     <div class="loader"></div>
-    <div id="loading-text" style="color: var(--tactical-blue); font-weight: bold; font-size: 0.8rem; letter-spacing: 2px;">SYNCHRONISATION...</div>
+    <div id="loading-text" style="color: var(--tactical-blue); font-weight: bold; font-size: 0.8rem; letter-spacing: 2px;">INITIALISATION DU HUB...</div>
 </div>
 
 <div class="app-container">
@@ -151,6 +151,15 @@
     };
     const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
 
+    // INITIALISATION DE L'APPLI AU CHARGEMENT DE LA PAGE
+    window.onload = function() {
+        const splash = document.getElementById('splash-screen');
+        // On laisse le splash screen visible au moins 2 secondes au démarrage
+        setTimeout(() => {
+            splash.classList.add('fade-out');
+        }, 2000);
+    };
+
     function updateDisplay() {
         const d = document.getElementById('timer-display');
         let t = isAlertActive ? alertLeft : timeLeft;
@@ -183,8 +192,10 @@
 
     async function chargerMission(id) {
         const splash = document.getElementById('splash-screen');
+        const loadingText = document.getElementById('loading-text');
+        
+        loadingText.innerText = "SYNCHRONISATION DES FICHIERS...";
         splash.classList.remove('fade-out');
-        splash.style.display = 'flex';
         
         const v = "?v=" + Date.now(); // Cache Busting
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
@@ -202,14 +213,13 @@
             initMenus();
             document.getElementById('mission-title').innerText = "MISSION " + id;
             
-            // Effet de fondu avant de montrer le menu
             setTimeout(() => {
                 splash.classList.add('fade-out');
                 show('screen-menu');
-            }, 800);
+            }, 1000);
 
         } catch (e) {
-            splash.style.display = 'none';
+            splash.classList.add('fade-out');
             alert("Erreur de synchronisation des données.");
         }
     }
