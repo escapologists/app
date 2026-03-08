@@ -13,7 +13,7 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-petrol); color: var(--text); display: flex; justify-content: center; align-items: center; height: 100dvh; margin: 0; overflow: hidden; }
         
-        /* SPLASH SCREEN - AFFICHÉ PAR DÉFAUT */
+        /* SPLASH SCREEN INITIAL */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-petrol); display: flex; flex-direction: column;
@@ -29,7 +29,7 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* INTERFACE */
+        /* CONTENEUR APP */
         .app-container { width: 95%; max-width: 380px; height: 92%; background: var(--card); display: flex; flex-direction: column; position: relative; border: 2px solid var(--tactical-blue); border-radius: 20px; box-sizing: border-box; overflow: hidden; }
         .timer-bar { background: rgba(0,0,0,0.8); padding: 12px; display: none; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--tactical-blue); }
         #timer-display { font-family: 'Courier New', monospace; font-size: 1.6rem; color: var(--tactical-blue); font-weight: bold; }
@@ -71,7 +71,7 @@
 <div id="splash-screen">
     <img src="logo.jpg" alt="Logo" style="width: 200px; margin-bottom: 30px; border-radius: 10px;">
     <div class="loader"></div>
-    <div id="loading-text" style="color: var(--tactical-blue); font-weight: bold; font-size: 0.8rem; letter-spacing: 2px;">INITIALISATION DU HUB...</div>
+    <div id="loading-text" style="color: var(--tactical-blue); font-weight: bold; font-size: 0.8rem; letter-spacing: 2px;">INITIALISATION...</div>
 </div>
 
 <div class="app-container">
@@ -112,7 +112,7 @@
         <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
         <label>Cible</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
         <div id="container-item" style="display:none;">
-            <label>Utiliser avec</label><select id="sel-item-used"></select>
+            <label>Utiliser avec (Objet)</label><select id="sel-item-used"></select>
         </div>
         <div id="res-perso" class="result-box">Transmission...</div>
         <button onclick="runActionPerso()">Transmettre</button>
@@ -151,13 +151,8 @@
     };
     const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
 
-    // INITIALISATION DE L'APPLI AU CHARGEMENT DE LA PAGE
     window.onload = function() {
-        const splash = document.getElementById('splash-screen');
-        // On laisse le splash screen visible au moins 2 secondes au démarrage
-        setTimeout(() => {
-            splash.classList.add('fade-out');
-        }, 2000);
+        setTimeout(() => { document.getElementById('splash-screen').classList.add('fade-out'); }, 2000);
     };
 
     function updateDisplay() {
@@ -171,57 +166,30 @@
         if (isPaused) {
             isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
             timerId = setInterval(() => {
-                if(isAlertActive) {
-                    if(alertLeft > 0) alertLeft--;
-                    else { alertSound.play(); toggleAlerte(); }
-                } else {
-                    if(timeLeft > 0) timeLeft--;
-                }
+                if(isAlertActive) { if(alertLeft > 0) alertLeft--; else { alertSound.play(); toggleAlerte(); } }
+                else { if(timeLeft > 0) timeLeft--; }
                 updateDisplay();
             }, 1000);
         } else { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
     }
 
-    function toggleAlerte() {
-        isAlertActive = !isAlertActive; alertLeft = 60;
-        document.getElementById('btn-alert').classList.toggle('active', isAlertActive);
-        updateDisplay();
-    }
-
+    function toggleAlerte() { isAlertActive = !isAlertActive; alertLeft = 60; document.getElementById('btn-alert').classList.toggle('active', isAlertActive); updateDisplay(); }
     function resetTimer() { timeLeft = 3600; alertLeft = 60; updateDisplay(); }
 
     async function chargerMission(id) {
         const splash = document.getElementById('splash-screen');
-        const loadingText = document.getElementById('loading-text');
-        
-        loadingText.innerText = "SYNCHRONISATION DES FICHIERS...";
+        document.getElementById('loading-text').innerText = "SYNCHRONISATION...";
         splash.classList.remove('fade-out');
-        
-        const v = "?v=" + Date.now(); // Cache Busting
+        const v = "?v=" + Date.now();
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
-        
         try {
-            const d = await Promise.all([
-                fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
-                fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), 
-                fetchCSV(`indice_${id}.csv`)
-            ]);
-
+            const d = await Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)]);
             grille = d[0]; grilleAC = d[1]; grilleENI = d[2]; aideData = d[4];
             sols = d[3].map(r => ({ code: r[0]?.trim(), expert: r[1]?.trim().toUpperCase(), action: r[2]?.trim(), texte: r[3]?.trim() }));
-            
             initMenus();
             document.getElementById('mission-title').innerText = "MISSION " + id;
-            
-            setTimeout(() => {
-                splash.classList.add('fade-out');
-                show('screen-menu');
-            }, 1000);
-
-        } catch (e) {
-            splash.classList.add('fade-out');
-            alert("Erreur de synchronisation des données.");
-        }
+            setTimeout(() => { splash.classList.add('fade-out'); show('screen-menu'); }, 1000);
+        } catch (e) { splash.classList.add('fade-out'); alert("Erreur de synchronisation."); }
     }
 
     function initMenus() {
@@ -249,30 +217,50 @@
     function toggleItemSelect() { 
         const actionMenu = document.getElementById('sel-a');
         const actionLabel = actionMenu.options[actionMenu.selectedIndex]?.text;
-        const container = document.getElementById('container-item');
-        if (actionLabel && actionsWithItems.includes(actionLabel)) {
-            container.style.display = "block";
-        } else {
-            container.style.display = "none";
-            document.getElementById('sel-item-used').selectedIndex = 0;
-        }
+        document.getElementById('container-item').style.display = (actionLabel && actionsWithItems.includes(actionLabel)) ? "block" : "none";
+        if (document.getElementById('container-item').style.display === "none") resetItemUsed();
     }
 
     function runActionPerso() {
         const pName = document.getElementById('sel-p').value, cIdx = document.getElementById('sel-c-perso').value, iIdx = document.getElementById('sel-item-used').value, sa = document.getElementById('sel-a'), res = document.getElementById('res-perso');
         if(!pName || !cIdx || !sa.options[sa.selectedIndex]) return;
-        let actionIdx = parseInt(sa.value), actionLabel = sa.options[sa.selectedIndex].text, code = "";
-        if(actionsWithItems.includes(actionLabel) && iIdx !== "0" && iIdx !== "") {
-            const n1 = grille[cIdx][0].trim(), n2 = grilleAC[iIdx][0].trim();
-            let rA = grilleAC.findIndex(r => r[0]?.trim() === n1), cA = grilleAC[0].findIndex(c => c?.trim() === n2);
-            if(rA !== -1 && cA !== -1) code = grilleAC[rA][cA]?.trim();
-        }
-        if(!code || code === "-") {
+        
+        let actionLabel = sa.options[sa.selectedIndex].text, code = "";
+
+        // --- CAS 2 ÉLÉMENTS (Cible + Objet Tenue) -> GRILLE_AC ---
+        if(iIdx !== "0" && iIdx !== "") {
+            const nomCible = grille[cIdx][0].trim();
+            const nomObjet = grilleAC[iIdx][0].trim();
+
+            // Test 1 : Cible en ligne, Objet en colonne
+            let r1 = grilleAC.findIndex(r => r[0]?.trim() === nomCible);
+            let c1 = grilleAC[0].findIndex(c => c?.trim() === nomObjet);
+            let found = (r1 !== -1 && c1 !== -1) ? grilleAC[r1][c1]?.trim() : "";
+
+            // Test 2 : Objet en ligne, Cible en colonne
+            if(!found || found === "-") {
+                let r2 = grilleAC.findIndex(r => r[0]?.trim() === nomObjet);
+                let c2 = grilleAC[0].findIndex(c => c?.trim() === nomCible);
+                found = (r2 !== -1 && c2 !== -1) ? grilleAC[r2][c2]?.trim() : "";
+            }
+
+            code = found;
+
+            if(!code || code === "-") {
+                res.innerHTML = "Aucune interaction possible."; res.style.color = "var(--eni-red)";
+                return;
+            }
+        } 
+        // --- CAS 1 ÉLÉMENT (Action Agent sur Cible) -> GRILLE ---
+        else {
+            const actionIdx = parseInt(sa.value);
             const col = 1 + (persos.indexOf(pName) * 4) + actionIdx;
             code = grille[cIdx][col]?.trim();
         }
+
         const agentInit = pName[0].toUpperCase();
         const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === agentInit));
+        
         if(match) {
             if (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase()) {
                 res.innerHTML = "Action inadaptée."; res.style.color = "var(--eni-red)";
