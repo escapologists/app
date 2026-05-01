@@ -13,6 +13,7 @@
             --ink-black: #1a1a1a;
             --comic-yellow: #EBF099;
             --alert-red: #ff0000;
+            --mission-green: #27ae60; /* Nouveau vert opérationnel */
         }
 
         body { 
@@ -94,16 +95,20 @@
 
         h1 { font-family: 'Bangers', cursive; font-size: 1.4rem; margin: 0; color: white; text-shadow: 2px 2px 0px var(--ink-black); text-transform: uppercase; text-align: center; }
 
+        /* Mise à jour du style de l'encart de mission */
         .mission-reminder {
-            font-family: 'Kalam', cursive;
-            background: white;
-            border: 2px dashed var(--ink-black);
-            padding: 4px;
+            font-family: 'Bangers', cursive; /* Changé pour plus de style */
+            background: var(--mission-green);
+            border: 3px solid var(--ink-black);
+            padding: 8px;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             margin: 0 15px 10px 15px;
             transform: rotate(1deg);
-            color: var(--ink-black);
+            color: white;
+            text-shadow: 1px 1px 0px var(--ink-black);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
         }
 
         .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
@@ -197,10 +202,10 @@
         <button onclick="chargerMission('M3', 'ft. Belzebuth')">M3 : ft. Belzebuth</button>
     </div>
 
-    <!-- Menu Hub avec Rappel Mission -->
+    <!-- Menu Hub avec Rappel Mission (Vert) -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
-        <div id="active-mission-name" class="mission-reminder">Mission : ---</div>
+        <div id="active-mission-name" class="mission-reminder">OBJECTIF : ---</div>
         
         <div class="menu-list">
             <div class="btn-comic-tile" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')">
@@ -213,6 +218,7 @@
         <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
     </div>
 
+    <!-- Reste du code identique ... -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
@@ -331,7 +337,7 @@
     async function chargerMission(id, nom) {
         currentMissionId = id;
         currentMissionName = nom;
-        document.getElementById('active-mission-name').innerText = `Mission : ${nom}`;
+        document.getElementById('active-mission-name').innerText = `OBJECTIF : ${nom}`;
         
         const v = "?v=" + Date.now();
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
