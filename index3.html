@@ -13,6 +13,7 @@
             --ink-black: #1a1a1a;
             --comic-yellow: #EBF099;
             --paper-tint: rgba(245, 230, 211, 0.9);
+            --alert-red: #ff0000;
         }
 
         body { 
@@ -59,10 +60,11 @@
             text-align: center;
         }
 
+        /* TIMER & ALERTE */
         .timer-bar { 
             background: var(--comic-yellow);
             border-bottom: 3px solid var(--ink-black);
-            padding: 10px;
+            padding: 8px 12px;
             display: none;
             justify-content: space-between;
             align-items: center;
@@ -73,17 +75,43 @@
             font-size: 2.2rem; 
             color: var(--ink-black);
         }
+        #timer-display.alert-active { color: var(--alert-red); animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
+        .timer-controls { display: flex; gap: 5px; }
         .timer-btn { 
             background: var(--ink-black); 
             color: white; 
             font-family: 'Bangers'; 
-            border: none; 
-            padding: 5px 10px; 
+            border: 2px solid white; 
+            padding: 5px 8px; 
             cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .timer-btn.btn-alert { background: var(--primary); }
+
+        /* BOUTONS GRAPHIQUES MENU */
+        .menu-list { display: flex; flex-direction: column; gap: 15px; padding: 10px; }
+        .btn-comic-tile {
+            width: 100%;
+            height: 140px;
+            border: 4px solid var(--ink-black);
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        .btn-comic-tile:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0px rgba(0,0,0,0.2); }
+        .btn-label {
+            position: absolute; bottom: 0; right: 0; background: var(--comic-yellow);
+            padding: 5px 10px; font-family: 'Bangers'; border-top: 3px solid var(--ink-black);
+            border-left: 3px solid var(--ink-black); font-size: 1.2rem;
         }
 
-        .screen { display: none; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        /* SCREENS & BUTTONS */
+        .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
 
         button { 
@@ -99,54 +127,52 @@
             box-shadow: 4px 4px 0px var(--ink-black);
         }
 
-        button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--ink-black); }
-        button.secondary { background: #3498db; }
+        button.secondary { background: #3498db; font-size: 1rem; }
 
-        label { font-family: 'Kalam', cursive; font-size: 0.9rem; color: var(--ink-black); font-weight: bold; margin-bottom: 3px; display: block; }
-        select { font-family: 'Kalam', cursive; padding: 10px; border: 2px solid var(--ink-black); background: white; width: 100%; margin-bottom: 12px; }
+        label { font-family: 'Kalam', cursive; font-size: 0.9rem; color: var(--ink-black); font-weight: bold; margin-bottom: 2px; display: block; }
+        select { font-family: 'Kalam', cursive; padding: 8px; border: 2px solid var(--ink-black); background: white; width: 100%; margin-bottom: 10px; }
+
+        /* AGENT AVATAR FIX */
+        .agent-avatar-container { 
+            width: 120px; height: 120px; 
+            border: 4px solid var(--ink-black);
+            background: white;
+            margin: 0 auto 15px auto;
+            overflow: hidden;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+        #agent-avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         .result-box { 
             background: white;
             border: 3px solid var(--ink-black);
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
+            padding: 12px;
+            border-radius: 15px;
+            margin: 10px 0;
             font-family: 'Kalam', cursive;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-        }
-
-        .agent-avatar-container { 
-            width: 80px; height: 80px; 
-            border: 3px solid var(--ink-black);
-            background: #eee;
-            margin: 0 auto 10px auto;
-            overflow: hidden;
+            min-height: 50px;
+            display: flex; align-items: center; justify-content: center; text-align: center;
         }
 
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 0.5s;
         }
     </style>
 </head>
 <body>
 
 <div id="splash-screen">
-    <img src="logo.jpg" alt="Logo" style="width: 200px; border: 4px solid black; margin-bottom: 20px;">
-    <h2 style="font-family:'Bangers'; color:var(--primary); font-size:2rem;">INITIALISATION...</h2>
+    <img src="logo.jpg" style="width: 220px; border: 4px solid black; margin-bottom: 20px;">
+    <h2 style="font-family:'Bangers'; color:var(--primary); font-size:2rem;">CHARGEMENT...</h2>
 </div>
 
 <div class="app-container">
     <div id="mission-timer" class="timer-bar">
         <div id="timer-display">60:00</div>
         <div class="timer-controls">
+            <button class="timer-btn btn-alert" onclick="triggerAlert()">ALERTE</button>
             <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
             <button class="timer-btn" onclick="resetTimer()">RESET</button>
         </div>
@@ -161,22 +187,27 @@
 
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
-        <button onclick="show('screen-action-perso')">ORDRE AGENT</button>
-        <button onclick="show('screen-enigme')" class="secondary">MACHINE CRYPTO</button>
+        <div class="menu-list">
+            <div class="btn-comic-tile" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')">
+                <div class="btn-label">ORDRE AGENT</div>
+            </div>
+            <div class="btn-comic-tile" style="background-image: url('bouton_enigma.jpg');" onclick="show('screen-enigme')">
+                <div class="btn-label">MACHINE CRYPTO</div>
+            </div>
+        </div>
         <button class="secondary" style="margin-top:auto;" onclick="show('screen-missions')">QUITTER</button>
     </div>
 
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ACTION</h1></div>
         <div class="agent-avatar-container">
-            <img id="agent-avatar" src="" style="width:100%; height:100%; display:none; object-fit:cover;">
-            <div id="avatar-none" style="font-family:'Bangers'; font-size:2rem; text-align:center; line-height:80px;">?</div>
+            <img id="agent-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
         </div>
         <label>AGENT</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
         <label>ACTION</label><select id="sel-a" onchange="toggleItemSelect()"></select>
         <label>CIBLE</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
         <div id="container-item" style="display:none;">
-            <label>UTILISER AVEC (OBJET)</label><select id="sel-item-used"></select>
+            <label>AVEC OBJET</label><select id="sel-item-used"></select>
         </div>
         <div id="res-perso" class="result-box">Transmission...</div>
         <button onclick="runActionPerso()">TRANSMETTRE</button>
@@ -200,7 +231,7 @@
 </div>
 
 <script>
-    let timeLeft = 3600, timerId = null, isPaused = true;
+    let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], aideData = [];
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
     const mapping = {
@@ -210,35 +241,45 @@
         "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
-    const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
 
     window.onload = function() {
-        setTimeout(() => { document.getElementById('splash-screen').style.opacity = '0'; 
-        setTimeout(()=> document.getElementById('splash-screen').style.display='none', 500); }, 1500);
+        setTimeout(() => { document.getElementById('splash-screen').style.display='none'; }, 1500);
     };
 
     function updateDisplay() {
         const d = document.getElementById('timer-display');
-        d.innerText = `${Math.floor(timeLeft/60).toString().padStart(2,'0')}:${(timeLeft%60).toString().padStart(2,'0')}`;
+        let t = isAlert ? alertLeft : timeLeft;
+        d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
+        d.classList.toggle('alert-active', isAlert);
+    }
+
+    function triggerAlert() {
+        if(!isAlert) { isAlert = true; alertLeft = 60; } 
+        else { isAlert = false; }
+        updateDisplay();
     }
 
     function toggleTimer() {
         if (isPaused) {
             isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
-            timerId = setInterval(() => { if(timeLeft > 0) { timeLeft--; updateDisplay(); } }, 1000);
+            timerId = setInterval(() => {
+                if(isAlert) { if(alertLeft > 0) alertLeft--; else isAlert = false; }
+                else { if(timeLeft > 0) timeLeft--; }
+                updateDisplay();
+            }, 1000);
         } else { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
     }
-    function resetTimer() { timeLeft = 3600; updateDisplay(); }
+
+    function resetTimer() { timeLeft = 3600; alertLeft = 60; isAlert = false; updateDisplay(); }
 
     async function chargerMission(id) {
         const v = "?v=" + Date.now();
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
-        try {
-            const d = await Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)]);
-            grille = d[0]; grilleAC = d[1]; grilleENI = d[2]; sols = d[3].map(r => ({ code: r[0]?.trim(), expert: r[1]?.trim().toUpperCase(), action: r[2]?.trim(), texte: r[3]?.trim() }));
-            aideData = d[4]; initMenus();
-            show('screen-menu');
-        } catch (e) { alert("Erreur de chargement."); }
+        const d = await Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)]);
+        grille = d[0]; grilleAC = d[1]; grilleENI = d[2]; aideData = d[4];
+        sols = d[3].map(r => ({ code: r[0]?.trim(), expert: r[1]?.trim().toUpperCase(), action: r[2]?.trim(), texte: r[3]?.trim() }));
+        initMenus();
+        show('screen-menu');
     }
 
     function initMenus() {
@@ -254,9 +295,9 @@
     }
 
     function updateAgentVisuals() {
-        const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), ph = document.getElementById('avatar-none'), sa = document.getElementById('sel-a');
+        const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
         if (p) { 
-            img.src = `${p}.png`; img.style.display = 'block'; ph.style.display = 'none'; 
+            img.src = `${p}.png`;
             sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`);
             toggleItemSelect();
         }
@@ -264,7 +305,7 @@
 
     function toggleItemSelect() { 
         const aLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex]?.text;
-        document.getElementById('container-item').style.display = actionsWithItems.includes(aLabel) ? "block" : "none";
+        document.getElementById('container-item').style.display = (aLabel && !["regarder", "Manipuler"].includes(aLabel)) ? "block" : (aLabel === "Manipuler" ? "block" : "none");
     }
 
     function runActionPerso() {
@@ -281,13 +322,12 @@
                 found = (r2 !== -1 && c2 !== -1) ? grilleAC[r2][c2]?.trim() : "";
             }
             code = found;
-            if(!code || code === "-") { res.innerHTML = "Pas possible !"; return; }
         } else {
             code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
         }
 
         const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
-        res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Rien ne se passe.";
+        res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet.";
     }
 
     function runEnigme() {
@@ -295,16 +335,19 @@
         const row = grilleENI.find(r => r[0] == id);
         if(row && saisi === row[1]?.toString().trim()) {
             const s = sols.find(x => x.code === row[2]?.toString().trim());
-            res.innerHTML = s ? s.texte : "CODE VALIDE";
-        } else res.innerHTML = "ERREUR CODE";
+            res.innerHTML = s ? s.texte : "DECODAGE REUSSI";
+        } else res.innerHTML = "CODE ERRONE";
     }
 
-    function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
     function show(id) { 
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
         document.getElementById(id).classList.add('active'); 
         document.getElementById('mission-timer').style.display = (id === 'screen-missions') ? 'none' : 'flex'; 
     }
+    
+    function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
+    function resetHintsForNewEnigma() { document.getElementById('res-code-final').innerText = "PRET"; }
+    function progressiveHint() { alert("Consultez vos documents pour les indices."); }
 </script>
 </body>
 </html>
