@@ -87,24 +87,36 @@
             border: 3px solid var(--ink-black);
             padding: 6px;
             transform: rotate(-1deg);
-            margin: 5px 5px 15px 5px;
+            margin: 5px 5px 10px 5px;
             z-index: 10;
             box-shadow: 4px 4px 0px var(--ink-black);
         }
 
         h1 { font-family: 'Bangers', cursive; font-size: 1.4rem; margin: 0; color: white; text-shadow: 2px 2px 0px var(--ink-black); text-transform: uppercase; text-align: center; }
 
+        .mission-reminder {
+            font-family: 'Kalam', cursive;
+            background: white;
+            border: 2px dashed var(--ink-black);
+            padding: 4px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin: 0 15px 10px 15px;
+            transform: rotate(1deg);
+            color: var(--ink-black);
+        }
+
         .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
 
-        .menu-list { display: flex; flex-direction: column; gap: 15px; padding: 20px; }
+        .menu-list { display: flex; flex-direction: column; gap: 15px; padding: 10px 20px; }
         
         .btn-comic-tile {
-            width: 100%; height: 140px; border: 4px solid var(--ink-black);
+            width: 100%; height: 130px; border: 4px solid var(--ink-black);
             background-size: cover; background-position: center; position: relative;
             box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
             cursor: pointer;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .btn-label {
@@ -170,23 +182,26 @@
         </div>
     </div>
 
-    <!-- Choix Mission (Images remplaçant les boutons M1 et M2) -->
+    <!-- Choix Mission -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         
-        <div class="btn-comic-tile" style="background-image: url('but_mission_1.jpg');" onclick="chargerMission('M1')">
+        <div class="btn-comic-tile" style="background-image: url('but_mission_1.jpg');" onclick="chargerMission('M1', 'Le jardinier Armé')">
             <div class="btn-label">MISSION 1</div>
         </div>
 
-        <div class="btn-comic-tile" style="background-image: url('but_mission_2.jpg');" onclick="chargerMission('M2')">
+        <div class="btn-comic-tile" style="background-image: url('but_mission_2.jpg');" onclick="chargerMission('M2', 'L\'amateur Rouge')">
             <div class="btn-label">MISSION 2</div>
         </div>
 
-        <button onclick="chargerMission('M3')">M3 : ft. Belzebuth</button>
+        <button onclick="chargerMission('M3', 'ft. Belzebuth')">M3 : ft. Belzebuth</button>
     </div>
 
+    <!-- Menu Hub avec Rappel Mission -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
+        <div id="active-mission-name" class="mission-reminder">Mission : ---</div>
+        
         <div class="menu-list">
             <div class="btn-comic-tile" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')">
                 <div class="btn-label">ORDRE AGENT</div>
@@ -234,7 +249,7 @@
 
 <script>
     let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
-    let currentMission = "", indiceLevel = 0;
+    let currentMissionId = "", currentMissionName = "", indiceLevel = 0;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], indicesCSV = [];
     const alarmSound = document.getElementById('alarm-sound');
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
@@ -313,8 +328,11 @@
         show('screen-missions');
     }
 
-    async function chargerMission(id) {
-        currentMission = id;
+    async function chargerMission(id, nom) {
+        currentMissionId = id;
+        currentMissionName = nom;
+        document.getElementById('active-mission-name').innerText = `Mission : ${nom}`;
+        
         const v = "?v=" + Date.now();
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
         const d = await Promise.all([
