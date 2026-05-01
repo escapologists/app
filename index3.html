@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Tactical Hub - 70's Edition</title>
+    <title>The Escapologists - Tactical Hub</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Kalam:wght@700&display=swap');
 
         :root { 
-            --primary: #C93110; /* Rouge vif Comics */
+            --primary: #C93110; 
             --ink-black: #1a1a1a;
             --comic-yellow: #EBF099;
-            --paper-tint: rgba(245, 230, 211, 0.85);
+            --paper-tint: rgba(245, 230, 211, 0.9);
         }
 
         body { 
@@ -33,33 +33,32 @@
             height: 92%; 
             background: var(--paper-tint);
             border: 4px solid var(--ink-black);
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.3);
             display: flex; 
             flex-direction: column; 
             position: relative; 
             overflow: hidden;
         }
 
-        /* HEADER ASPECT BANDE DESSINÉE */
         .mission-header { 
             background: var(--primary);
             border-bottom: 4px solid var(--ink-black);
-            padding: 10px;
+            padding: 12px;
             transform: rotate(-1deg);
             margin: -5px -5px 15px -5px;
+            z-index: 10;
         }
 
         h1 { 
             font-family: 'Bangers', cursive;
             font-size: 1.8rem; 
             margin: 0; 
-            letter-spacing: 2px;
             color: white;
             text-shadow: 3px 3px 0px var(--ink-black);
             text-transform: uppercase;
+            text-align: center;
         }
 
-        /* TIMER STYLE ANALOGIQUE */
         .timer-bar { 
             background: var(--comic-yellow);
             border-bottom: 3px solid var(--ink-black);
@@ -71,48 +70,41 @@
 
         #timer-display { 
             font-family: 'Bangers', cursive;
-            font-size: 2rem; 
+            font-size: 2.2rem; 
             color: var(--ink-black);
         }
 
-        /* BOUTONS STYLE "POW!" */
+        .timer-btn { 
+            background: var(--ink-black); 
+            color: white; 
+            font-family: 'Bangers'; 
+            border: none; 
+            padding: 5px 10px; 
+            cursor: pointer;
+        }
+
+        .screen { display: none; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        .screen.active { display: flex; }
+
         button { 
             font-family: 'Bangers', cursive;
             padding: 12px; 
             border: 3px solid var(--ink-black);
             background: var(--primary); 
             color: white; 
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             cursor: pointer; 
             text-transform: uppercase;
-            transition: transform 0.1s;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            box-shadow: 4px 4px 0px var(--ink-black);
         }
 
-        button:active { transform: scale(0.95); }
-        
+        button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--ink-black); }
         button.secondary { background: #3498db; }
 
-        /* FORMULAIRES */
-        label { 
-            font-family: 'Kalam', cursive;
-            font-size: 0.9rem; 
-            color: var(--ink-black);
-            font-weight: bold;
-            margin-left: 5px;
-        }
+        label { font-family: 'Kalam', cursive; font-size: 0.9rem; color: var(--ink-black); font-weight: bold; margin-bottom: 3px; display: block; }
+        select { font-family: 'Kalam', cursive; padding: 10px; border: 2px solid var(--ink-black); background: white; width: 100%; margin-bottom: 12px; }
 
-        select { 
-            font-family: 'Kalam', cursive;
-            padding: 8px; 
-            border: 2px solid var(--ink-black);
-            background: white;
-            width: 100%;
-            margin-bottom: 15px;
-            border-radius: 0; /* Aspect tranché */
-        }
-
-        /* RÉSULTAT DANS UNE BULLE */
         .result-box { 
             background: white;
             border: 3px solid var(--ink-black);
@@ -120,131 +112,199 @@
             border-radius: 20px;
             margin: 15px 0;
             font-family: 'Kalam', cursive;
-            font-size: 1rem;
-            position: relative;
             min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: var(--ink-black);
-        }
-
-        .result-box::after { /* Petite pointe de bulle */
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 20px;
-            border-width: 15px 15px 0;
-            border-style: solid;
-            border-color: var(--ink-black) transparent;
+            position: relative;
         }
 
         .agent-avatar-container { 
-            width: 90px; height: 90px; 
-            border: 4px solid var(--ink-black);
-            background: white;
+            width: 80px; height: 80px; 
+            border: 3px solid var(--ink-black);
+            background: #eee;
             margin: 0 auto 10px auto;
-            transform: rotate(3deg);
+            overflow: hidden;
         }
 
-        /* ÉCRANS */
-        .screen { display: none; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-        .screen.active { display: flex; }
-
-        /* SPLASH SCREEN CUSTOM */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; display: flex; flex-direction: column;
+            background: white; display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 0.5s;
         }
     </style>
 </head>
 <body>
 
 <div id="splash-screen">
-    <img src="logo.jpg" style="width: 250px; border: 5px solid black;">
-    <h2 style="font-family:'Bangers'; color:var(--primary); font-size:2rem;">CHARGEMENT...</h2>
+    <img src="logo.jpg" alt="Logo" style="width: 200px; border: 4px solid black; margin-bottom: 20px;">
+    <h2 style="font-family:'Bangers'; color:var(--primary); font-size:2rem;">INITIALISATION...</h2>
 </div>
 
 <div class="app-container">
     <div id="mission-timer" class="timer-bar">
         <div id="timer-display">60:00</div>
         <div class="timer-controls">
-            <button style="padding:5px 10px; font-size:0.8rem;" onclick="toggleTimer()">GO!</button>
+            <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
+            <button class="timer-btn" onclick="resetTimer()">RESET</button>
         </div>
     </div>
 
-    <!-- Écran Missions -->
     <div id="screen-missions" class="screen active">
-        <div class="mission-header"><h1>TOP SECRET</h1></div>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-            <button onclick="chargerMission('M1')">MISSION : JARDINIER</button>
-            <button onclick="chargerMission('M2')">MISSION : ROUGE</button>
-            <button onclick="chargerMission('M3')">MISSION : BELZEBUTH</button>
-        </div>
+        <div class="mission-header"><h1>The Escapologists</h1></div>
+        <button onclick="chargerMission('M1')">M1 : Le jardinier Armé</button>
+        <button onclick="chargerMission('M2')">M2 : L'amateur Rouge</button>
+        <button onclick="chargerMission('M3')">M3 : ft. Belzebuth</button>
     </div>
 
-    <!-- Écran Menu -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <button onclick="show('screen-action-perso')">ORDRE AGENT</button>
-        <button onclick="show('screen-enigme')" class="secondary">DECRYPTAGE</button>
-        <button class="secondary" style="margin-top:auto;" onclick="show('screen-missions')">RETOUR</button>
+        <button onclick="show('screen-enigme')" class="secondary">MACHINE CRYPTO</button>
+        <button class="secondary" style="margin-top:auto;" onclick="show('screen-missions')">QUITTER</button>
     </div>
 
-    <!-- Écran Actions -->
     <div id="screen-action-perso" class="screen">
-        <div class="mission-header"><h1>COMMANDE</h1></div>
+        <div class="mission-header"><h1>ACTION</h1></div>
         <div class="agent-avatar-container">
-            <img id="agent-avatar" src="" style="width:100%; height:100%; display:none; object-fit: cover;">
+            <img id="agent-avatar" src="" style="width:100%; height:100%; display:none; object-fit:cover;">
+            <div id="avatar-none" style="font-family:'Bangers'; font-size:2rem; text-align:center; line-height:80px;">?</div>
         </div>
-        <label>QUI ?</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
-        <label>QUOI ?</label><select id="sel-a" onchange="toggleItemSelect()"></select>
-        <label>SUR QUOI ?</label><select id="sel-c-perso"></select>
-        
+        <label>AGENT</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
+        <label>ACTION</label><select id="sel-a" onchange="toggleItemSelect()"></select>
+        <label>CIBLE</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
         <div id="container-item" style="display:none;">
-            <label>AVEC QUEL OBJET ?</label><select id="sel-item-used"></select>
+            <label>UTILISER AVEC (OBJET)</label><select id="sel-item-used"></select>
         </div>
-
-        <div id="res-perso" class="result-box">En attente d'ordres...</div>
-        
-        <button onclick="runActionPerso()">TRANSMETTRE !</button>
+        <div id="res-perso" class="result-box">Transmission...</div>
+        <button onclick="runActionPerso()">TRANSMETTRE</button>
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
 
-    <!-- Écran Énigme -->
     <div id="screen-enigme" class="screen">
-        <div class="mission-header"><h1>CRYPTO-GEAR</h1></div>
-        <select id="sel-eni" onchange="resetHintsForNewEnigma()"></select>
-        <div style="display:flex; gap:5px; margin-bottom:15px;">
-            <select id="eni-1"></select><select id="eni-2"></select>
-            <select id="eni-3"></select><select id="eni-4"></select>
+        <div class="mission-header"><h1>CRYPTO</h1></div>
+        <label>ENIGME</label><select id="sel-eni" onchange="resetHintsForNewEnigma()"></select>
+        <div style="display:flex; gap:5px; margin-bottom:10px;">
+            <select id="eni-1" style="background:var(--comic-yellow)"></select>
+            <select id="eni-2" style="background:#3498db; color:white"></select>
+            <select id="eni-3" style="background:#23991F; color:white"></select>
+            <select id="eni-4" style="background:var(--primary); color:white"></select>
         </div>
         <button onclick="runEnigme()">DECODER</button>
-        <div id="res-code-final" class="result-box">SYSTEME PRET</div>
-        <button id="btn-next-hint" style="background:var(--comic-yellow); color:black" onclick="progressiveHint()">BESOIN D'UN INDICE ?</button>
+        <div id="res-code-final" class="result-box">PRET</div>
+        <button id="btn-next-hint" style="background:var(--comic-yellow); color:black;" onclick="progressiveHint()">INDICE ?</button>
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
 </div>
 
 <script>
-    // Reprise de toute la logique fonctionnelle précédente (recherche grille, AC, etc.)
-    // ... Garder les fonctions JavaScript du message précédent ici ...
-    // Note : Assurez-vous d'inclure les fonctions : chargerMission, runActionPerso, etc.
-    
-    // (Script raccourci pour l'exemple, mais remettez bien vos fonctions chargerMission etc.)
+    let timeLeft = 3600, timerId = null, isPaused = true;
+    let grille = [], grilleAC = [], grilleENI = [], sols = [], aideData = [];
+    const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
+    const mapping = {
+        "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
+        "Julia": ["regarder", "Manipuler", "faufiler", "déverrouiller"],
+        "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
+        "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
+        "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
+    };
+    const actionsWithItems = ["Manipuler", "Forcer", "déverrouiller", "lancer", "soigner", "dynamiter"];
+
     window.onload = function() {
-        setTimeout(() => { document.getElementById('splash-screen').style.display='none'; }, 2000);
+        setTimeout(() => { document.getElementById('splash-screen').style.opacity = '0'; 
+        setTimeout(()=> document.getElementById('splash-screen').style.display='none', 500); }, 1500);
     };
 
-    function show(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('mission-timer').style.display = (id === 'screen-missions') ? 'none' : 'flex';
+    function updateDisplay() {
+        const d = document.getElementById('timer-display');
+        d.innerText = `${Math.floor(timeLeft/60).toString().padStart(2,'0')}:${(timeLeft%60).toString().padStart(2,'0')}`;
     }
 
-    // [METTRE ICI LE RESTE DU JAVASCRIPT TECHNIQUE DU MESSAGE PRÉCÉDENT]
+    function toggleTimer() {
+        if (isPaused) {
+            isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
+            timerId = setInterval(() => { if(timeLeft > 0) { timeLeft--; updateDisplay(); } }, 1000);
+        } else { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
+    }
+    function resetTimer() { timeLeft = 3600; updateDisplay(); }
+
+    async function chargerMission(id) {
+        const v = "?v=" + Date.now();
+        const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
+        try {
+            const d = await Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)]);
+            grille = d[0]; grilleAC = d[1]; grilleENI = d[2]; sols = d[3].map(r => ({ code: r[0]?.trim(), expert: r[1]?.trim().toUpperCase(), action: r[2]?.trim(), texte: r[3]?.trim() }));
+            aideData = d[4]; initMenus();
+            show('screen-menu');
+        } catch (e) { alert("Erreur de chargement."); }
+    }
+
+    function initMenus() {
+        const sp = document.getElementById('sel-p'), sc = document.getElementById('sel-c-perso'), siu = document.getElementById('sel-item-used'), se = document.getElementById('sel-eni');
+        sp.innerHTML = '<option value="">AGENT</option>'; persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+        sc.innerHTML = '<option value="">CIBLE</option>'; grille.forEach((l, i) => { if(i >= 2 && l[0]) sc.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+        siu.innerHTML = '<option value="0">AUCUN</option>'; grilleAC.forEach((l, i) => { if(i > 0 && l[0]) siu.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+        se.innerHTML = '<option value="">-- ENIGME --</option>'; grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
+        ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
+            let e = document.getElementById(id); e.innerHTML = "";
+            for(let i=0; i<=9; i++) e.innerHTML += `<option value="${i}">${i}</option>`;
+        });
+    }
+
+    function updateAgentVisuals() {
+        const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), ph = document.getElementById('avatar-none'), sa = document.getElementById('sel-a');
+        if (p) { 
+            img.src = `${p}.png`; img.style.display = 'block'; ph.style.display = 'none'; 
+            sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`);
+            toggleItemSelect();
+        }
+    }
+
+    function toggleItemSelect() { 
+        const aLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex]?.text;
+        document.getElementById('container-item').style.display = actionsWithItems.includes(aLabel) ? "block" : "none";
+    }
+
+    function runActionPerso() {
+        const pName = document.getElementById('sel-p').value, cIdx = document.getElementById('sel-c-perso').value, iIdx = document.getElementById('sel-item-used').value, sa = document.getElementById('sel-a'), res = document.getElementById('res-perso');
+        if(!pName || !cIdx) return;
+        let actionLabel = sa.options[sa.selectedIndex].text, code = "";
+
+        if(iIdx !== "0" && iIdx !== "") {
+            const nomC = grille[cIdx][0].trim(), nomO = grilleAC[iIdx][0].trim();
+            let r1 = grilleAC.findIndex(r => r[0]?.trim() === nomC), c1 = grilleAC[0].findIndex(c => c?.trim() === nomO);
+            let found = (r1 !== -1 && c1 !== -1) ? grilleAC[r1][c1]?.trim() : "";
+            if(!found || found === "-") {
+                let r2 = grilleAC.findIndex(r => r[0]?.trim() === nomO), c2 = grilleAC[0].findIndex(c => c?.trim() === nomC);
+                found = (r2 !== -1 && c2 !== -1) ? grilleAC[r2][c2]?.trim() : "";
+            }
+            code = found;
+            if(!code || code === "-") { res.innerHTML = "Pas possible !"; return; }
+        } else {
+            code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
+        }
+
+        const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
+        res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Rien ne se passe.";
+    }
+
+    function runEnigme() {
+        const id = document.getElementById('sel-eni').value, res = document.getElementById('res-code-final'), saisi = ['eni-1','eni-2','eni-3','eni-4'].map(i => document.getElementById(i).value).join('');
+        const row = grilleENI.find(r => r[0] == id);
+        if(row && saisi === row[1]?.toString().trim()) {
+            const s = sols.find(x => x.code === row[2]?.toString().trim());
+            res.innerHTML = s ? s.texte : "CODE VALIDE";
+        } else res.innerHTML = "ERREUR CODE";
+    }
+
+    function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
+    function show(id) { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+        document.getElementById(id).classList.add('active'); 
+        document.getElementById('mission-timer').style.display = (id === 'screen-missions') ? 'none' : 'flex'; 
+    }
 </script>
 </body>
 </html>
