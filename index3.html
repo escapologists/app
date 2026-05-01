@@ -116,6 +116,7 @@
         <button style="padding:2px 8px; font-size:0.7rem;" onclick="toggleTimer()" id="btn-pause">PLAY</button>
     </div>
 
+    <!-- Écran Missions -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         <button onclick="chargerMission('M1')">M1 : Le jardinier Armé</button>
@@ -123,6 +124,7 @@
         <button onclick="chargerMission('M3')">M3 : ft. Belzebuth</button>
     </div>
 
+    <!-- Menu Hub -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div class="menu-list">
@@ -133,8 +135,10 @@
                 <div class="btn-label">MACHINE CRYPTO</div>
             </div>
         </div>
+        <button class="secondary" onclick="show('screen-missions')">QUITTER</button>
     </div>
 
+    <!-- Écran Énigme -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="resetHints()"></select>
@@ -143,7 +147,7 @@
             <select id="eni-3"></select><select id="eni-4"></select>
         </div>
         <button onclick="runEnigme()">DECODER</button>
-        <button class="hint-btn" onclick="getHint()">BESOIN D'UN INDICE ? (-1 min)</button>
+        <button id="btn-hint" class="hint-btn" onclick="getHint()">BESOIN D'UN INDICE ?</button>
         <div id="res-code-final" class="result-box">SCANNER PRET</div>
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
@@ -174,7 +178,7 @@
         const d = await Promise.all([
             fetchCSV(`grille_eni_${id}.csv`), 
             fetchCSV(`solutions_${id}.csv`), 
-            fetchCSV(`indice_${id}.csv`) // Lecture du fichier indice_M1.csv
+            fetchCSV(`indice_${id}.csv`)
         ]);
 
         grilleENI = d[0];
@@ -200,22 +204,25 @@
         const resBox = document.getElementById('res-code-final');
         if(!idEni) return;
 
-        const row = indicesCSV.find(r => r[0] == idEni);
-        if(!row) return;
+        // On filtre toutes les lignes du CSV qui concernent cette énigme
+        const rows = indicesCSV.filter(r => r[0] == idEni);
+        if(rows.length === 0) return;
 
-        // Incrémenter le niveau d'indice (max 3)
-        if (indiceLevel < 3) {
-            indiceLevel++;
-            // Retirer 1 minute (60 secondes)
-            timeLeft = Math.max(0, timeLeft - 60);
+        // On cherche la ligne correspondant au niveau d'indice actuel + 1
+        const nextLevel = indiceLevel + 1;
+        const hintRow = rows.find(r => r[1] == nextLevel);
+
+        if(hintRow) {
+            indiceLevel = nextLevel;
+            
+            // Décompte du temps (Col 4)
+            const penalite = parseInt(hintRow[3]) || 0;
+            timeLeft = Math.max(0, timeLeft - (penalite * 60));
             updateDisplay();
 
-            // Construire le texte cumulé
-            let hintText = "";
-            for(let i = 1; i <= indiceLevel; i++) {
-                if(row[i]) hintText += (hintText ? "\n---\n" : "") + row[i];
-            }
-            resBox.innerText = hintText;
+            // Affichage cumulé (Col 3)
+            let currentContent = (indiceLevel === 1) ? "" : resBox.innerText + "\n---\n";
+            resBox.innerText = currentContent + hintRow[2];
         }
     }
 
