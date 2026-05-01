@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tactical Hub - 70's Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Kalam:wght@700&display=swap');
+
+        :root { 
+            --primary: #C93110; /* Rouge vif Comics */
+            --ink-black: #1a1a1a;
+            --comic-yellow: #EBF099;
+            --paper-tint: rgba(245, 230, 211, 0.85);
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: url('Fond70.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0; 
+            overflow: hidden; 
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container { 
+            width: 95%; 
+            max-width: 380px; 
+            height: 92%; 
+            background: var(--paper-tint);
+            border: 4px solid var(--ink-black);
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden;
+        }
+
+        /* HEADER ASPECT BANDE DESSINÉE */
+        .mission-header { 
+            background: var(--primary);
+            border-bottom: 4px solid var(--ink-black);
+            padding: 10px;
+            transform: rotate(-1deg);
+            margin: -5px -5px 15px -5px;
+        }
+
+        h1 { 
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem; 
+            margin: 0; 
+            letter-spacing: 2px;
+            color: white;
+            text-shadow: 3px 3px 0px var(--ink-black);
+            text-transform: uppercase;
+        }
+
+        /* TIMER STYLE ANALOGIQUE */
+        .timer-bar { 
+            background: var(--comic-yellow);
+            border-bottom: 3px solid var(--ink-black);
+            padding: 10px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #timer-display { 
+            font-family: 'Bangers', cursive;
+            font-size: 2rem; 
+            color: var(--ink-black);
+        }
+
+        /* BOUTONS STYLE "POW!" */
+        button { 
+            font-family: 'Bangers', cursive;
+            padding: 12px; 
+            border: 3px solid var(--ink-black);
+            background: var(--primary); 
+            color: white; 
+            font-size: 1.2rem;
+            cursor: pointer; 
+            text-transform: uppercase;
+            transition: transform 0.1s;
+            margin-bottom: 10px;
+        }
+
+        button:active { transform: scale(0.95); }
+        
+        button.secondary { background: #3498db; }
+
+        /* FORMULAIRES */
+        label { 
+            font-family: 'Kalam', cursive;
+            font-size: 0.9rem; 
+            color: var(--ink-black);
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        select { 
+            font-family: 'Kalam', cursive;
+            padding: 8px; 
+            border: 2px solid var(--ink-black);
+            background: white;
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 0; /* Aspect tranché */
+        }
+
+        /* RÉSULTAT DANS UNE BULLE */
+        .result-box { 
+            background: white;
+            border: 3px solid var(--ink-black);
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+            font-family: 'Kalam', cursive;
+            font-size: 1rem;
+            position: relative;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--ink-black);
+        }
+
+        .result-box::after { /* Petite pointe de bulle */
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 20px;
+            border-width: 15px 15px 0;
+            border-style: solid;
+            border-color: var(--ink-black) transparent;
+        }
+
+        .agent-avatar-container { 
+            width: 90px; height: 90px; 
+            border: 4px solid var(--ink-black);
+            background: white;
+            margin: 0 auto 10px auto;
+            transform: rotate(3deg);
+        }
+
+        /* ÉCRANS */
+        .screen { display: none; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        .screen.active { display: flex; }
+
+        /* SPLASH SCREEN CUSTOM */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+
+<div id="splash-screen">
+    <img src="logo.jpg" style="width: 250px; border: 5px solid black;">
+    <h2 style="font-family:'Bangers'; color:var(--primary); font-size:2rem;">CHARGEMENT...</h2>
+</div>
+
+<div class="app-container">
+    <div id="mission-timer" class="timer-bar">
+        <div id="timer-display">60:00</div>
+        <div class="timer-controls">
+            <button style="padding:5px 10px; font-size:0.8rem;" onclick="toggleTimer()">GO!</button>
+        </div>
+    </div>
+
+    <!-- Écran Missions -->
+    <div id="screen-missions" class="screen active">
+        <div class="mission-header"><h1>TOP SECRET</h1></div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button onclick="chargerMission('M1')">MISSION : JARDINIER</button>
+            <button onclick="chargerMission('M2')">MISSION : ROUGE</button>
+            <button onclick="chargerMission('M3')">MISSION : BELZEBUTH</button>
+        </div>
+    </div>
+
+    <!-- Écran Menu -->
+    <div id="screen-menu" class="screen">
+        <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
+        <button onclick="show('screen-action-perso')">ORDRE AGENT</button>
+        <button onclick="show('screen-enigme')" class="secondary">DECRYPTAGE</button>
+        <button class="secondary" style="margin-top:auto;" onclick="show('screen-missions')">RETOUR</button>
+    </div>
+
+    <!-- Écran Actions -->
+    <div id="screen-action-perso" class="screen">
+        <div class="mission-header"><h1>COMMANDE</h1></div>
+        <div class="agent-avatar-container">
+            <img id="agent-avatar" src="" style="width:100%; height:100%; display:none; object-fit: cover;">
+        </div>
+        <label>QUI ?</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
+        <label>QUOI ?</label><select id="sel-a" onchange="toggleItemSelect()"></select>
+        <label>SUR QUOI ?</label><select id="sel-c-perso"></select>
+        
+        <div id="container-item" style="display:none;">
+            <label>AVEC QUEL OBJET ?</label><select id="sel-item-used"></select>
+        </div>
+
+        <div id="res-perso" class="result-box">En attente d'ordres...</div>
+        
+        <button onclick="runActionPerso()">TRANSMETTRE !</button>
+        <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
+    </div>
+
+    <!-- Écran Énigme -->
+    <div id="screen-enigme" class="screen">
+        <div class="mission-header"><h1>CRYPTO-GEAR</h1></div>
+        <select id="sel-eni" onchange="resetHintsForNewEnigma()"></select>
+        <div style="display:flex; gap:5px; margin-bottom:15px;">
+            <select id="eni-1"></select><select id="eni-2"></select>
+            <select id="eni-3"></select><select id="eni-4"></select>
+        </div>
+        <button onclick="runEnigme()">DECODER</button>
+        <div id="res-code-final" class="result-box">SYSTEME PRET</div>
+        <button id="btn-next-hint" style="background:var(--comic-yellow); color:black" onclick="progressiveHint()">BESOIN D'UN INDICE ?</button>
+        <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
+    </div>
+</div>
+
+<script>
+    // Reprise de toute la logique fonctionnelle précédente (recherche grille, AC, etc.)
+    // ... Garder les fonctions JavaScript du message précédent ici ...
+    // Note : Assurez-vous d'inclure les fonctions : chargerMission, runActionPerso, etc.
+    
+    // (Script raccourci pour l'exemple, mais remettez bien vos fonctions chargerMission etc.)
+    window.onload = function() {
+        setTimeout(() => { document.getElementById('splash-screen').style.display='none'; }, 2000);
+    };
+
+    function show(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('mission-timer').style.display = (id === 'screen-missions') ? 'none' : 'flex';
+    }
+
+    // [METTRE ICI LE RESTE DU JAVASCRIPT TECHNIQUE DU MESSAGE PRÉCÉDENT]
+</script>
+</body>
+</html>
