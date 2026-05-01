@@ -12,13 +12,14 @@
             --primary: #C93110; 
             --ink-black: #1a1a1a;
             --comic-yellow: #EBF099;
-            --paper-tint: rgba(245, 230, 211, 0.9);
+            --paper-tint: rgba(245, 230, 211, 0.4); /* Plus transparent pour voir le fond */
             --alert-red: #ff0000;
         }
 
         body { 
             font-family: 'Segoe UI', sans-serif; 
-            background: url('Fond70.jpg') no-repeat center center fixed;
+            /* Utilisation de ton image de fond style papier vieilli */
+            background: url('fond_comic.jpg') no-repeat center center fixed;
             background-size: cover;
             margin: 0; 
             overflow: hidden; 
@@ -29,25 +30,25 @@
         }
 
         .app-container { 
-            width: 95%; 
-            max-width: 380px; 
-            height: 94%; 
-            background: var(--paper-tint);
-            border: 4px solid var(--ink-black);
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.3);
+            width: 90%; 
+            max-width: 360px; 
+            height: 92%; 
+            background: transparent; /* Transparent pour profiter du fond */
             display: flex; 
             flex-direction: column; 
             position: relative; 
             overflow: hidden;
+            /* On enlève la bordure CSS car l'image en possède déjà une */
         }
 
         .mission-header { 
             background: var(--primary);
-            border-bottom: 4px solid var(--ink-black);
+            border: 3px solid var(--ink-black);
             padding: 6px;
-            transform: rotate(-0.5deg);
-            margin: -2px -2px 10px -2px;
+            transform: rotate(-1deg);
+            margin: 5px 5px 15px 5px;
             z-index: 10;
+            box-shadow: 4px 4px 0px var(--ink-black);
         }
 
         h1 { 
@@ -62,11 +63,13 @@
 
         .timer-bar { 
             background: var(--comic-yellow);
-            border-bottom: 3px solid var(--ink-black);
+            border: 3px solid var(--ink-black);
             padding: 5px 12px;
+            margin: 0 10px;
             display: none;
             justify-content: space-between;
             align-items: center;
+            transform: rotate(0.5deg);
         }
 
         #timer-display { 
@@ -83,84 +86,90 @@
             font-size: 0.7rem;
         }
 
-        .menu-list { display: flex; flex-direction: column; gap: 12px; padding: 10px; }
+        .menu-list { display: flex; flex-direction: column; gap: 15px; padding: 20px; }
+        
         .btn-comic-tile {
             width: 100%;
-            height: 150px;
+            height: 140px;
             border: 4px solid var(--ink-black);
             background-size: cover;
             background-position: center;
             position: relative;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
         }
+        
+        .btn-comic-tile:active { transform: scale(0.98); }
+
         .btn-label {
-            position: absolute; bottom: 0; right: 0; background: var(--comic-yellow);
-            padding: 4px 8px; font-family: 'Bangers'; border-top: 3px solid var(--ink-black);
-            border-left: 3px solid var(--ink-black); font-size: 1.1rem;
+            position: absolute; bottom: -5px; right: -5px; background: var(--comic-yellow);
+            padding: 4px 12px; font-family: 'Bangers'; border: 3px solid var(--ink-black);
+            font-size: 1.2rem; transform: rotate(-2deg);
         }
 
-        .screen { display: none; flex-direction: column; height: 100%; padding: 12px; box-sizing: border-box; overflow-y: auto; }
+        .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
 
         .button-row {
             display: flex;
             gap: 10px;
-            margin-top: 5px;
+            margin-top: 10px;
         }
-        .button-row button {
-            flex: 1;
-            margin-bottom: 0;
-        }
+        .button-row button { flex: 1; margin-bottom: 0; }
 
         button { 
             font-family: 'Bangers', cursive;
-            padding: 10px; 
+            padding: 12px; 
             border: 3px solid var(--ink-black);
             background: var(--primary); 
             color: white; 
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer; 
             text-transform: uppercase;
             margin-bottom: 10px;
-            box-shadow: 3px 3px 0px var(--ink-black);
+            box-shadow: 4px 4px 0px var(--ink-black);
         }
 
-        button.secondary { background: #3498db; font-size: 1rem; }
+        button.secondary { background: #3498db; }
 
-        label { font-family: 'Kalam', cursive; font-size: 0.85rem; font-weight: bold; }
-        select { font-family: 'Kalam', cursive; padding: 6px; border: 2px solid var(--ink-black); width: 100%; margin-bottom: 8px; }
+        label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; color: var(--ink-black); }
+        select { 
+            font-family: 'Kalam', cursive; 
+            padding: 8px; 
+            border: 3px solid var(--ink-black); 
+            width: 100%; 
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.8);
+        }
 
-        /* CADRE PHOTO PORTRAIT 3:4 */
         .agent-avatar-container { 
-            width: 120px; /* Largeur réduite */
-            height: 160px; /* Hauteur maintenue */
+            width: 120px; 
+            height: 160px; 
             border: 4px solid var(--ink-black);
             background: #fff;
-            margin: 0 auto 10px auto;
+            margin: 0 auto 15px auto;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
+            transform: rotate(1deg);
         }
-        #agent-avatar { 
-            max-width: 100%; 
-            max-height: 100%; 
-            object-fit: contain; 
-            display: none; 
-        }
+        
+        #agent-avatar { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
 
         .result-box { 
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             border: 3px solid var(--ink-black);
-            padding: 10px;
-            border-radius: 12px;
-            margin: 8px 0;
+            padding: 12px;
+            margin: 10px 0;
             font-family: 'Kalam', cursive;
-            min-height: 45px;
+            min-height: 50px;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
         }
 
         #splash-screen {
@@ -183,10 +192,10 @@
         <div class="timer-controls">
             <button class="timer-btn btn-alert" onclick="triggerAlert()">ALERTE</button>
             <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
-            <button class="timer-btn" onclick="resetTimer()">RESET</button>
         </div>
     </div>
 
+    <!-- Choix Mission -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         <button onclick="chargerMission('M1')">M1 : Le jardinier Armé</button>
@@ -194,6 +203,7 @@
         <button onclick="chargerMission('M3')">M3 : ft. Belzebuth</button>
     </div>
 
+    <!-- Menu Principal -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div class="menu-list">
@@ -207,6 +217,7 @@
         <button class="secondary" style="margin-top:auto;" onclick="show('screen-missions')">QUITTER</button>
     </div>
 
+    <!-- Action Agent -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container">
@@ -218,7 +229,7 @@
         <div id="container-item" style="display:none;">
             <label>AVEC QUEL OBJET ?</label><select id="sel-item-used"></select>
         </div>
-        <div id="res-perso" class="result-box">En attente...</div>
+        <div id="res-perso" class="result-box">En attente des ordres...</div>
         
         <div class="button-row">
             <button onclick="runActionPerso()">TRANSMETTRE</button>
@@ -226,6 +237,7 @@
         </div>
     </div>
 
+    <!-- Enigme -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="resetHintsForNewEnigma()"></select>
@@ -235,13 +247,14 @@
             <select id="eni-3" style="background:#23991F; color:white"></select>
             <select id="eni-4" style="background:var(--primary); color:white"></select>
         </div>
-        <button onclick="runEnigme()">DECODER</button>
-        <div id="res-code-final" class="result-box">SYSTEME PRET</div>
+        <button onclick="runEnigme()">DECODER LE SIGNAL</button>
+        <div id="res-code-final" class="result-box">SCANNER PRET</div>
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
 </div>
 
 <script>
+    /* [LOGIQUE JAVASCRIPT IDENTIQUE - GARDEE EN MÉMOIRE] */
     let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], aideData = [];
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
@@ -294,9 +307,9 @@
 
     function initMenus() {
         const sp = document.getElementById('sel-p'), sc = document.getElementById('sel-c-perso'), siu = document.getElementById('sel-item-used'), se = document.getElementById('sel-eni');
-        sp.innerHTML = '<option value="">AGENT</option>'; persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
-        sc.innerHTML = '<option value="">CIBLE</option>'; grille.forEach((l, i) => { if(i >= 2 && l[0]) sc.innerHTML += `<option value="${i}">${l[0]}</option>`; });
-        siu.innerHTML = '<option value="0">AUCUN</option>'; grilleAC.forEach((l, i) => { if(i > 0 && l[0]) siu.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+        sp.innerHTML = '<option value="">-- CHOISIR AGENT --</option>'; persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+        sc.innerHTML = '<option value="">-- CHOISIR CIBLE --</option>'; grille.forEach((l, i) => { if(i >= 2 && l[0]) sc.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+        siu.innerHTML = '<option value="0">-- AUCUN OBJET --</option>'; grilleAC.forEach((l, i) => { if(i > 0 && l[0]) siu.innerHTML += `<option value="${i}">${l[0]}</option>`; });
         se.innerHTML = '<option value="">-- ENIGME --</option>'; grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
         ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
             let e = document.getElementById(id); e.innerHTML = "";
@@ -332,7 +345,7 @@
             code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
         }
         const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
-        res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet.";
+        res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
     }
 
     function runEnigme() {
@@ -351,7 +364,7 @@
     }
     
     function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
-    function resetHintsForNewEnigma() { document.getElementById('res-code-final').innerText = "SYSTEME PRET"; }
+    function resetHintsForNewEnigma() { document.getElementById('res-code-final').innerText = "SCANNER PRET"; }
 </script>
 </body>
 </html>
