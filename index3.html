@@ -12,6 +12,7 @@
             --primary: #C93110; 
             --ink-black: #1a1a1a;
             --comic-yellow: #EBF099;
+            --alert-red: #ff0000;
         }
 
         body { 
@@ -37,6 +38,50 @@
             overflow: hidden;
         }
 
+        /* --- TIMER BAR --- */
+        .timer-bar { 
+            background: var(--comic-yellow);
+            border: 3px solid var(--ink-black);
+            padding: 5px 12px;
+            margin: 0 10px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 20;
+        }
+
+        #timer-display { font-family: 'Bangers', cursive; font-size: 1.8rem; min-width: 80px; }
+
+        .timer-controls { display: flex; gap: 4px; }
+
+        .timer-btn {
+            padding: 3px 6px;
+            font-family: 'Bangers';
+            font-size: 0.65rem;
+            border: 2px solid var(--ink-black);
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn-alert { background: var(--alert-red); color: white; }
+        .btn-reset { background: #7f8c8d; color: white; }
+
+        /* --- OVERLAY FIN --- */
+        #finish-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        /* --- SCREENS --- */
         .mission-header { 
             background: var(--primary);
             border: 3px solid var(--ink-black);
@@ -47,27 +92,7 @@
             box-shadow: 4px 4px 0px var(--ink-black);
         }
 
-        h1 { 
-            font-family: 'Bangers', cursive;
-            font-size: 1.4rem; 
-            margin: 0; 
-            color: white;
-            text-shadow: 2px 2px 0px var(--ink-black);
-            text-transform: uppercase;
-            text-align: center;
-        }
-
-        .timer-bar { 
-            background: var(--comic-yellow);
-            border: 3px solid var(--ink-black);
-            padding: 5px 12px;
-            margin: 0 10px;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #timer-display { font-family: 'Bangers', cursive; font-size: 1.8rem; }
+        h1 { font-family: 'Bangers', cursive; font-size: 1.4rem; margin: 0; color: white; text-shadow: 2px 2px 0px var(--ink-black); text-transform: uppercase; text-align: center; }
 
         .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
@@ -99,35 +124,34 @@
         button.hint-btn { background: #f39c12; font-size: 0.9rem; margin-top: 5px; }
 
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; }
-        select { 
-            font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); 
-            width: 100%; margin-bottom: 10px; background: rgba(255,255,255,0.8);
-        }
+        select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: rgba(255,255,255,0.8); }
 
-        .agent-avatar-container { 
-            width: 120px; height: 160px; border: 4px solid var(--ink-black);
-            background: #fff; margin: 0 auto 15px auto; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
-        }
-        
+        .agent-avatar-container { width: 120px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 15px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 8px 8px 0px rgba(0,0,0,0.15); }
         #agent-avatar { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
 
-        .result-box { 
-            background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black);
-            padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive;
-            min-height: 50px; text-align: center; display: flex;
-            align-items: center; justify-content: center;
-            white-space: pre-line;
-        }
+        .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 50px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
+    
+    <!-- Ecran de fin / Alarme -->
+    <div id="finish-overlay">
+        <h2 style="font-family:'Bangers'; font-size:2.5rem; color:var(--alert-red);">TEMPS ÉCOULÉ !</h2>
+        <p style="font-family:'Kalam'; margin-bottom:20px;">L'alarme a été déclenchée. Que décidez-vous ?</p>
+        <button onclick="addExtraTime()">CONTINUER (+10 MN)</button>
+        <button class="secondary" onclick="quitToHome()">ABANDONNER</button>
+    </div>
+
+    <!-- Chrono -->
     <div id="mission-timer" class="timer-bar">
         <div id="timer-display">60:00</div>
-        <button style="padding:2px 8px; font-size:0.7rem;" onclick="toggleTimer()" id="btn-pause">PLAY</button>
+        <div class="timer-controls">
+            <button class="timer-btn btn-alert" onclick="triggerAlert()">ALERTE</button>
+            <button class="timer-btn btn-reset" onclick="resetTimer()">RESET</button>
+            <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
+        </div>
     </div>
 
     <!-- Choix Mission -->
@@ -149,7 +173,7 @@
                 <div class="btn-label">MACHINE CRYPTO</div>
             </div>
         </div>
-        <button class="secondary" style="margin-top:auto;" onclick="show('screen-missions')">QUITTER</button>
+        <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
     </div>
 
     <!-- Action Agent -->
@@ -184,10 +208,13 @@
     </div>
 </div>
 
+<audio id="alarm-sound" src="alarm.wav"></audio>
+
 <script>
-    let timeLeft = 3600, timerId = null, isPaused = true;
-    let indiceLevel = 0;
+    let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
+    let currentMission = "", indiceLevel = 0;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], indicesCSV = [];
+    const alarmSound = document.getElementById('alarm-sound');
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
     const mapping = {
         "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
@@ -197,27 +224,82 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
+    // --- LOGIQUE CHRONO ---
     function toggleTimer() {
         if (isPaused) {
             isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
-            timerId = setInterval(() => { if(timeLeft > 0) { timeLeft--; updateDisplay(); } }, 1000);
-        } else { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
+            timerId = setInterval(() => { 
+                if(isAlert) { 
+                    if(alertLeft > 0) alertLeft--; 
+                    else endMission(); 
+                } else { 
+                    if(timeLeft > 0) timeLeft--; 
+                    else endMission();
+                }
+                updateDisplay(); 
+            }, 1000);
+        } else { pauseTimer(); }
+    }
+
+    function pauseTimer() {
+        isPaused = true; 
+        document.getElementById('btn-pause').innerText = "PLAY"; 
+        clearInterval(timerId);
+    }
+
+    function resetTimer() {
+        pauseTimer();
+        timeLeft = 3600;
+        alertLeft = 60;
+        isAlert = false;
+        updateDisplay();
+    }
+
+    function triggerAlert() {
+        isAlert = !isAlert;
+        if(isAlert) alertLeft = 60;
+        updateDisplay();
     }
 
     function updateDisplay() {
         const d = document.getElementById('timer-display');
-        d.innerText = `${Math.floor(timeLeft/60).toString().padStart(2,'0')}:${(timeLeft%60).toString().padStart(2,'0')}`;
+        let t = isAlert ? alertLeft : timeLeft;
+        d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
+        d.style.color = isAlert ? 'var(--alert-red)' : 'black';
     }
 
+    function endMission() {
+        pauseTimer();
+        alarmSound.currentTime = 0;
+        alarmSound.play();
+        document.getElementById('finish-overlay').style.display = 'flex';
+    }
+
+    function addExtraTime() {
+        alarmSound.pause();
+        alarmSound.currentTime = 0;
+        timeLeft += 600; 
+        isAlert = false;
+        document.getElementById('finish-overlay').style.display = 'none';
+        toggleTimer();
+    }
+
+    function quitToHome() {
+        alarmSound.pause();
+        alarmSound.currentTime = 0;
+        document.getElementById('finish-overlay').style.display = 'none';
+        resetTimer();
+        show('screen-missions');
+    }
+
+    // --- LOGIQUE DONNEES ---
     async function chargerMission(id) {
+        currentMission = id;
         const v = "?v=" + Date.now();
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
         const d = await Promise.all([
-            fetchCSV("grille.csv"), 
-            fetchCSV("grille_ac.csv"), 
-            fetchCSV(`grille_eni_${id}.csv`), 
-            fetchCSV(`solutions_${id}.csv`),
-            fetchCSV(`indice_${id}.csv`)
+            fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
+            fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)
         ]);
         grille = d[0]; grilleAC = d[1]; grilleENI = d[2];
         sols = d[3].map(r => ({ code: r[0]?.trim(), expert: r[1]?.trim().toUpperCase(), action: r[2]?.trim(), texte: r[3]?.trim() }));
@@ -238,6 +320,7 @@
         });
     }
 
+    // --- ACTIONS HUB ---
     function updateAgentVisuals() {
         const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
         if (p) { img.src = `${p}.png`; img.style.display = 'block'; sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); toggleItemSelect(); }
