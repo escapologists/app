@@ -124,7 +124,21 @@
         button.hint-btn { background: #f39c12; font-size: 0.9rem; margin-top: 5px; }
 
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; }
-        select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: rgba(255,255,255,0.8); }
+        
+        select { 
+            font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); 
+            width: 100%; margin-bottom: 10px; background: white; color: var(--ink-black);
+        }
+
+        /* Spécifique pour les 4 chiffres de l'énigme */
+        .digit-selector {
+            flex: 1;
+            text-align: center;
+            font-size: 1.2rem;
+            background: white !important;
+            color: var(--ink-black) !important;
+            font-weight: bold;
+        }
 
         .agent-avatar-container { width: 120px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 15px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 8px 8px 0px rgba(0,0,0,0.15); }
         #agent-avatar { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
@@ -197,9 +211,11 @@
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="resetHints()"></select>
-        <div style="display:flex; gap:5px; margin-bottom:10px;">
-            <select id="eni-1"></select><select id="eni-2"></select>
-            <select id="eni-3"></select><select id="eni-4"></select>
+        <div style="display:flex; gap:8px; margin-bottom:15px;">
+            <select id="eni-1" class="digit-selector"></select>
+            <select id="eni-2" class="digit-selector"></select>
+            <select id="eni-3" class="digit-selector"></select>
+            <select id="eni-4" class="digit-selector"></select>
         </div>
         <button onclick="runEnigme()">DECODER</button>
         <button class="hint-btn" onclick="getHint()">BESOIN D'UN INDICE ?</button>
