@@ -130,15 +130,19 @@
             width: 100%; margin-bottom: 10px; background: white; color: var(--ink-black);
         }
 
-        /* Spécifique pour les 4 chiffres de l'énigme */
+        /* Styles spécifiques pour les 4 chiffres colorés */
         .digit-selector {
             flex: 1;
             text-align: center;
-            font-size: 1.2rem;
-            background: white !important;
-            color: var(--ink-black) !important;
+            font-size: 1.4rem;
             font-weight: bold;
+            font-family: 'Bangers', cursive;
         }
+
+        #eni-1 { background-color: #f1c40f !important; } /* Jaune */
+        #eni-2 { background-color: #3498db !important; color: white !important; } /* Bleu */
+        #eni-3 { background-color: #2ecc71 !important; } /* Vert */
+        #eni-4 { background-color: #e74c3c !important; color: white !important; } /* Rouge */
 
         .agent-avatar-container { width: 120px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 15px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 8px 8px 0px rgba(0,0,0,0.15); }
         #agent-avatar { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
@@ -150,7 +154,6 @@
 
 <div class="app-container">
     
-    <!-- Ecran de fin / Alarme -->
     <div id="finish-overlay">
         <h2 style="font-family:'Bangers'; font-size:2.5rem; color:var(--alert-red);">TEMPS ÉCOULÉ !</h2>
         <p style="font-family:'Kalam'; margin-bottom:20px;">L'alarme a été déclenchée. Que décidez-vous ?</p>
@@ -158,7 +161,6 @@
         <button class="secondary" onclick="quitToHome()">ABANDONNER</button>
     </div>
 
-    <!-- Chrono -->
     <div id="mission-timer" class="timer-bar">
         <div id="timer-display">60:00</div>
         <div class="timer-controls">
@@ -168,7 +170,6 @@
         </div>
     </div>
 
-    <!-- Choix Mission -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         <button onclick="chargerMission('M1')">M1 : Le jardinier Armé</button>
@@ -176,7 +177,6 @@
         <button onclick="chargerMission('M3')">M3 : ft. Belzebuth</button>
     </div>
 
-    <!-- Menu Principal -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div class="menu-list">
@@ -190,7 +190,6 @@
         <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
     </div>
 
-    <!-- Action Agent -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
@@ -207,7 +206,6 @@
         </div>
     </div>
 
-    <!-- Machine Crypto -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="resetHints()"></select>
@@ -240,7 +238,6 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
-    // --- LOGIQUE CHRONO ---
     function toggleTimer() {
         if (isPaused) {
             isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
@@ -308,7 +305,6 @@
         show('screen-missions');
     }
 
-    // --- LOGIQUE DONNEES ---
     async function chargerMission(id) {
         currentMission = id;
         const v = "?v=" + Date.now();
@@ -336,7 +332,6 @@
         });
     }
 
-    // --- ACTIONS HUB ---
     function updateAgentVisuals() {
         const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
         if (p) { img.src = `${p}.png`; img.style.display = 'block'; sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); toggleItemSelect(); }
