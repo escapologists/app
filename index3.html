@@ -41,11 +41,10 @@
             overflow: hidden;
         }
 
-        /* TITRE RÉDUIT */
         .mission-header { 
             background: var(--primary);
             border-bottom: 4px solid var(--ink-black);
-            padding: 6px; /* Réduit */
+            padding: 6px;
             transform: rotate(-0.5deg);
             margin: -2px -2px 10px -2px;
             z-index: 10;
@@ -53,16 +52,14 @@
 
         h1 { 
             font-family: 'Bangers', cursive;
-            font-size: 1.4rem; /* Réduit */
+            font-size: 1.4rem; 
             margin: 0; 
             color: white;
             text-shadow: 2px 2px 0px var(--ink-black);
             text-transform: uppercase;
             text-align: center;
-            letter-spacing: 1px;
         }
 
-        /* TIMER */
         .timer-bar { 
             background: var(--comic-yellow);
             border-bottom: 3px solid var(--ink-black);
@@ -75,10 +72,7 @@
         #timer-display { 
             font-family: 'Bangers', cursive;
             font-size: 1.8rem; 
-            color: var(--ink-black);
         }
-        #timer-display.alert-active { color: var(--alert-red); animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
         .timer-btn { 
             background: var(--ink-black); 
@@ -86,12 +80,9 @@
             font-family: 'Bangers'; 
             border: 2px solid white; 
             padding: 3px 8px; 
-            cursor: pointer;
             font-size: 0.7rem;
         }
-        .timer-btn.btn-alert { background: var(--primary); }
 
-        /* MENU PRINCIPAL */
         .menu-list { display: flex; flex-direction: column; gap: 12px; padding: 10px; }
         .btn-comic-tile {
             width: 100%;
@@ -99,9 +90,7 @@
             border: 4px solid var(--ink-black);
             background-size: cover;
             background-position: center;
-            cursor: pointer;
             position: relative;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
         }
         .btn-label {
             position: absolute; bottom: 0; right: 0; background: var(--comic-yellow);
@@ -109,9 +98,19 @@
             border-left: 3px solid var(--ink-black); font-size: 1.1rem;
         }
 
-        /* ÉCRANS */
         .screen { display: none; flex-direction: column; height: 100%; padding: 12px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
+
+        /* BOUTONS CÔTE À CÔTE */
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .button-row button {
+            flex: 1;
+            margin-bottom: 0;
+        }
 
         button { 
             font-family: 'Bangers', cursive;
@@ -126,28 +125,27 @@
             box-shadow: 3px 3px 0px var(--ink-black);
         }
 
-        button.secondary { background: #3498db; font-size: 0.9rem; margin-top: 5px;}
+        button.secondary { background: #3498db; font-size: 1rem; }
 
-        label { font-family: 'Kalam', cursive; font-size: 0.85rem; color: var(--ink-black); font-weight: bold; margin-bottom: 2px; }
-        select { font-family: 'Kalam', cursive; padding: 6px; border: 2px solid var(--ink-black); background: white; width: 100%; margin-bottom: 8px; }
+        label { font-family: 'Kalam', cursive; font-size: 0.85rem; font-weight: bold; }
+        select { font-family: 'Kalam', cursive; padding: 6px; border: 2px solid var(--ink-black); width: 100%; margin-bottom: 8px; }
 
-        /* CADRE AGENT AGRANDI */
+        /* CADRE PHOTO CORRIGÉ */
         .agent-avatar-container { 
-            width: 160px; /* Plus grand */
-            height: 160px; /* Plus grand */
+            width: 160px; 
+            height: 160px; 
             border: 4px solid var(--ink-black);
-            background: white;
+            background: #fff;
             margin: 0 auto 10px auto;
             overflow: hidden;
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
-            background-image: url('logo.jpg'); /* Fallback */
-            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #agent-avatar { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            object-position: top; /* Priorité au visage */
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; /* L'image entière rentre dans le cadre */
             display: none; 
         }
 
@@ -159,8 +157,7 @@
             margin: 8px 0;
             font-family: 'Kalam', cursive;
             min-height: 45px;
-            font-size: 0.95rem;
-            display: flex; align-items: center; justify-content: center; text-align: center;
+            text-align: center;
         }
 
         #splash-screen {
@@ -187,7 +184,6 @@
         </div>
     </div>
 
-    <!-- Choix Mission -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         <button onclick="chargerMission('M1')">M1 : Le jardinier Armé</button>
@@ -195,7 +191,6 @@
         <button onclick="chargerMission('M3')">M3 : ft. Belzebuth</button>
     </div>
 
-    <!-- Menu Principal -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div class="menu-list">
@@ -209,7 +204,6 @@
         <button class="secondary" style="margin-top:auto;" onclick="show('screen-missions')">QUITTER</button>
     </div>
 
-    <!-- Action Agent -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container">
@@ -222,11 +216,14 @@
             <label>AVEC QUEL OBJET ?</label><select id="sel-item-used"></select>
         </div>
         <div id="res-perso" class="result-box">En attente...</div>
-        <button onclick="runActionPerso()">TRANSMETTRE</button>
-        <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
+        
+        <!-- BOUTONS ALIGNÉS -->
+        <div class="button-row">
+            <button onclick="runActionPerso()">TRANSMETTRE</button>
+            <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
+        </div>
     </div>
 
-    <!-- Enigme -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="resetHintsForNewEnigma()"></select>
@@ -238,7 +235,6 @@
         </div>
         <button onclick="runEnigme()">DECODER</button>
         <div id="res-code-final" class="result-box">SYSTEME PRET</div>
-        <button id="btn-next-hint" style="background:var(--comic-yellow); color:black;" onclick="progressiveHint()">BESOIN D'UN INDICE ?</button>
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
 </div>
@@ -263,7 +259,6 @@
         const d = document.getElementById('timer-display');
         let t = isAlert ? alertLeft : timeLeft;
         d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
-        d.classList.toggle('alert-active', isAlert);
     }
 
     function triggerAlert() {
@@ -288,8 +283,8 @@
     async function chargerMission(id) {
         const v = "?v=" + Date.now();
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
-        const d = await Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)]);
-        grille = d[0]; grilleAC = d[1]; grilleENI = d[2]; aideData = d[4];
+        const d = await Promise.all([fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`)]);
+        grille = d[0]; grilleAC = d[1]; grilleENI = d[2];
         sols = d[3].map(r => ({ code: r[0]?.trim(), expert: r[1]?.trim().toUpperCase(), action: r[2]?.trim(), texte: r[3]?.trim() }));
         initMenus();
         show('screen-menu');
@@ -326,20 +321,14 @@
         const pName = document.getElementById('sel-p').value, cIdx = document.getElementById('sel-c-perso').value, iIdx = document.getElementById('sel-item-used').value, sa = document.getElementById('sel-a'), res = document.getElementById('res-perso');
         if(!pName || !cIdx) return;
         let actionLabel = sa.options[sa.selectedIndex].text, code = "";
-
         if(iIdx !== "0" && iIdx !== "") {
             const nomC = grille[cIdx][0].trim(), nomO = grilleAC[iIdx][0].trim();
             let r1 = grilleAC.findIndex(r => r[0]?.trim() === nomC), c1 = grilleAC[0].findIndex(c => c?.trim() === nomO);
             let found = (r1 !== -1 && c1 !== -1) ? grilleAC[r1][c1]?.trim() : "";
-            if(!found || found === "-") {
-                let r2 = grilleAC.findIndex(r => r[0]?.trim() === nomO), c2 = grilleAC[0].findIndex(c => c?.trim() === nomC);
-                found = (r2 !== -1 && c2 !== -1) ? grilleAC[r2][c2]?.trim() : "";
-            }
             code = found;
         } else {
             code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
         }
-
         const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
         res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet.";
     }
@@ -361,7 +350,6 @@
     
     function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
     function resetHintsForNewEnigma() { document.getElementById('res-code-final').innerText = "SYSTEME PRET"; }
-    function progressiveHint() { alert("Indices disponibles dans votre dossier de mission."); }
 </script>
 </body>
 </html>
