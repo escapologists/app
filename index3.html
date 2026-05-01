@@ -104,6 +104,7 @@
             background-size: cover; background-position: center; position: relative;
             box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
             cursor: pointer;
+            margin-bottom: 10px;
         }
 
         .btn-label {
@@ -169,10 +170,18 @@
         </div>
     </div>
 
+    <!-- Choix Mission (Images remplaçant les boutons M1 et M2) -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
-        <button onclick="chargerMission('M1')">M1 : Le jardinier Armé</button>
-        <button onclick="chargerMission('M2')">M2 : L'amateur Rouge</button>
+        
+        <div class="btn-comic-tile" style="background-image: url('but_mission_1.jpg');" onclick="chargerMission('M1')">
+            <div class="btn-label">MISSION 1</div>
+        </div>
+
+        <div class="btn-comic-tile" style="background-image: url('but_mission_2.jpg');" onclick="chargerMission('M2')">
+            <div class="btn-label">MISSION 2</div>
+        </div>
+
         <button onclick="chargerMission('M3')">M3 : ft. Belzebuth</button>
     </div>
 
