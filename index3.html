@@ -1,18 +1,411 @@
-/* --- SPLASH SCREEN --- */
-#splash-screen {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: transparent; /* Fond noir supprimé */
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.8s ease-out;
-}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>The Escapologists - Tactical Hub</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Kalam:wght@700&display=swap');
 
-#splash-screen img {
-    max-width: 80%;
-    height: auto;
-    /* Optionnel : ajout d'un léger contour blanc ou ombre si ton logo est sombre */
-    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
-}
+        :root { 
+            --primary: #C93110; 
+            --ink-black: #1a1a1a;
+            --comic-yellow: #EBF099;
+            --alert-red: #ff0000;
+            --mission-green: #27ae60;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: url('fond_comic.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0; 
+            overflow: hidden; 
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container { 
+            width: 90%; 
+            max-width: 360px; 
+            height: 92%; 
+            background: transparent; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden;
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent; /* Transparent pour voir le fond_comic.jpg derrière */
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-out;
+        }
+
+        #splash-screen img {
+            max-width: 80%;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(0,0,0,0.6));
+        }
+
+        /* --- TIMER BAR --- */
+        .timer-bar { 
+            background: var(--comic-yellow);
+            border: 3px solid var(--ink-black);
+            padding: 5px 12px;
+            margin: 0 10px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 20;
+        }
+
+        #timer-display { font-family: 'Bangers', cursive; font-size: 1.8rem; min-width: 80px; }
+        .timer-controls { display: flex; gap: 4px; }
+        .timer-btn { padding: 3px 6px; font-family: 'Bangers'; font-size: 0.65rem; border: 2px solid var(--ink-black); cursor: pointer; text-transform: uppercase; }
+        .btn-alert { background: var(--alert-red); color: white; }
+        .btn-reset { background: #7f8c8d; color: white; }
+
+        /* --- OVERLAY FIN --- */
+        #finish-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        /* --- ELEMENTS VISUELS --- */
+        .mission-header { 
+            background: var(--primary);
+            border: 3px solid var(--ink-black);
+            padding: 6px;
+            transform: rotate(-1deg);
+            margin: 5px 5px 10px 5px;
+            z-index: 10;
+            box-shadow: 4px 4px 0px var(--ink-black);
+        }
+
+        h1 { font-family: 'Bangers', cursive; font-size: 1.4rem; margin: 0; color: white; text-shadow: 2px 2px 0px var(--ink-black); text-transform: uppercase; text-align: center; }
+
+        .mission-reminder {
+            font-family: 'Bangers', cursive;
+            background: var(--mission-green);
+            border: 3px solid var(--ink-black);
+            padding: 8px;
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 0 15px 10px 15px;
+            transform: rotate(1deg);
+            color: white;
+            text-shadow: 1px 1px 0px var(--ink-black);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+
+        .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
+        .screen.active { display: flex; }
+
+        .menu-list { display: flex; flex-direction: column; gap: 15px; padding: 10px 20px; }
+        
+        .btn-comic-tile {
+            width: 100%; height: 130px; border: 4px solid var(--ink-black);
+            background-size: cover; background-position: center; position: relative;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .btn-label {
+            position: absolute; bottom: -5px; right: -5px; background: var(--comic-yellow);
+            padding: 4px 12px; font-family: 'Bangers'; border: 3px solid var(--ink-black);
+            font-size: 1.2rem; transform: rotate(-2deg);
+        }
+
+        button { 
+            font-family: 'Bangers', cursive; padding: 12px; 
+            border: 3px solid var(--ink-black); background: var(--primary); 
+            color: white; font-size: 1.1rem; cursor: pointer; 
+            text-transform: uppercase; margin-bottom: 10px;
+            box-shadow: 4px 4px 0px var(--ink-black);
+        }
+
+        button.secondary { background: #3498db; }
+        button.hint-btn { background: #f39c12; font-size: 0.9rem; margin-top: 5px; }
+
+        label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; }
+        
+        select { 
+            font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); 
+            width: 100%; margin-bottom: 10px; background: white; color: var(--ink-black);
+        }
+
+        .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; }
+
+        #eni-1 { background-color: #f1c40f !important; }
+        #eni-2 { background-color: #3498db !important; color: white !important; }
+        #eni-3 { background-color: #2ecc71 !important; }
+        #eni-4 { background-color: #e74c3c !important; color: white !important; }
+
+        .agent-avatar-container { width: 120px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 15px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 8px 8px 0px rgba(0,0,0,0.15); }
+        #agent-avatar { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
+
+        .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 50px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img src="logo.jpg" alt="Logo The Escapologists">
+    </div>
+
+    <!-- Overlay de fin -->
+    <div id="finish-overlay">
+        <h2 style="font-family:'Bangers'; font-size:2.5rem; color:var(--alert-red);">TEMPS ÉCOULÉ !</h2>
+        <p style="font-family:'Kalam'; margin-bottom:20px;">L'alarme a été déclenchée. Que décidez-vous ?</p>
+        <button onclick="addExtraTime()">CONTINUER (+10 MN)</button>
+        <button class="secondary" onclick="quitToHome()">ABANDONNER</button>
+    </div>
+
+    <!-- Barre de Timer -->
+    <div id="mission-timer" class="timer-bar">
+        <div id="timer-display">60:00</div>
+        <div class="timer-controls">
+            <button class="timer-btn btn-alert" onclick="triggerAlert()">ALERTE</button>
+            <button class="timer-btn btn-reset" onclick="resetTimer()">RESET</button>
+            <button class="timer-btn" onclick="toggleTimer()" id="btn-pause">PLAY</button>
+        </div>
+    </div>
+
+    <!-- Écran : Choix Mission -->
+    <div id="screen-missions" class="screen active">
+        <div class="mission-header"><h1>The Escapologists</h1></div>
+        
+        <div class="btn-comic-tile" style="background-image: url('but_mission_1.jpg');" onclick="chargerMission('M1', 'Le jardinier Armé')">
+            <div class="btn-label">MISSION 1</div>
+        </div>
+
+        <div class="btn-comic-tile" style="background-image: url('but_mission_2.jpg');" onclick="chargerMission('M2', 'L\'amateur Rouge')">
+            <div class="btn-label">MISSION 2</div>
+        </div>
+
+        <button onclick="chargerMission('M3', 'ft. Belzebuth')">M3 : ft. Belzebuth</button>
+    </div>
+
+    <!-- Écran : Menu Hub -->
+    <div id="screen-menu" class="screen">
+        <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
+        <div id="active-mission-name" class="mission-reminder">OBJECTIF : ---</div>
+        
+        <div class="menu-list">
+            <div class="btn-comic-tile" style="background-image: url('bouton_action.jpg');" onclick="show('screen-action-perso')">
+                <div class="btn-label">ORDRE AGENT</div>
+            </div>
+            <div class="btn-comic-tile" style="background-image: url('bouton_enigma.jpg');" onclick="show('screen-enigme')">
+                <div class="btn-label">MACHINE CRYPTO</div>
+            </div>
+        </div>
+        <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
+    </div>
+
+    <!-- Écran : Action Agent -->
+    <div id="screen-action-perso" class="screen">
+        <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
+        <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
+        <label>QUI ?</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
+        <label>QUOI ?</label><select id="sel-a" onchange="toggleItemSelect()"></select>
+        <label>SUR QUOI ?</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
+        <div id="container-item" style="display:none;">
+            <label>AVEC QUEL OBJET ?</label><select id="sel-item-used"></select>
+        </div>
+        <div id="res-perso" class="result-box">En attente...</div>
+        <div style="display:flex; gap:10px;">
+            <button style="flex:1" onclick="runActionPerso()">TRANSMETTRE</button>
+            <button style="flex:1" class="secondary" onclick="show('screen-menu')">RETOUR</button>
+        </div>
+    </div>
+
+    <!-- Écran : Enigme / Crypto -->
+    <div id="screen-enigme" class="screen">
+        <div class="mission-header"><h1>DECRYPTAGE</h1></div>
+        <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton()"></select>
+        <div style="display:flex; gap:8px; margin-bottom:15px;">
+            <select id="eni-1" class="digit-selector"></select>
+            <select id="eni-2" class="digit-selector"></select>
+            <select id="eni-3" class="digit-selector"></select>
+            <select id="eni-4" class="digit-selector"></select>
+        </div>
+        <button onclick="runEnigme()">DECODER</button>
+        <button id="btn-get-hint" class="hint-btn" onclick="getHint()">BESOIN D'UN INDICE ?</button>
+        <div id="res-code-final" class="result-box">SCANNER PRET</div>
+        <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
+    </div>
+</div>
+
+<audio id="alarm-sound" src="alarm.wav"></audio>
+
+<script>
+    // --- INITIALISATION & SPLASH SCREEN ---
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.display = 'none'; }, 800);
+        }, 3000); 
+    });
+
+    // --- VARIABLES GLOBALES ---
+    let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
+    let currentMissionId = "", currentMissionName = "", indiceLevel = 0;
+    let grille = [], grilleAC = [], grilleENI = [], sols = [], indicesCSV = [];
+    const alarmSound = document.getElementById('alarm-sound');
+    const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
+    const mapping = {
+        "Banks": ["regarder", "Manipuler", "assommer", "Forcer"],
+        "Julia": ["regarder", "Manipuler", "faufiler", "déverrouiller"],
+        "Kim": ["regarder", "Manipuler", "acrobatie", "lancer"],
+        "Murphy": ["regarder", "Manipuler", "soigner", "Médical"],
+        "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
+    };
+
+    // --- LOGIQUE TIMER ---
+    function toggleTimer() {
+        if (isPaused) {
+            isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
+            timerId = setInterval(() => { 
+                if(isAlert) { if(alertLeft > 0) alertLeft--; else endMission(); } 
+                else { if(timeLeft > 0) timeLeft--; else endMission(); }
+                updateDisplay(); 
+            }, 1000);
+        } else { pauseTimer(); }
+    }
+    function pauseTimer() { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
+    function resetTimer() { pauseTimer(); timeLeft = 3600; alertLeft = 60; isAlert = false; updateDisplay(); }
+    function triggerAlert() { isAlert = !isAlert; if(isAlert) alertLeft = 60; updateDisplay(); }
+    function updateDisplay() {
+        const d = document.getElementById('timer-display');
+        let t = isAlert ? alertLeft : timeLeft;
+        d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
+        d.style.color = isAlert ? 'var(--alert-red)' : 'black';
+    }
+    function endMission() { pauseTimer(); alarmSound.currentTime = 0; alarmSound.play(); document.getElementById('finish-overlay').style.display = 'flex'; }
+    function addExtraTime() { alarmSound.pause(); timeLeft += 600; isAlert = false; document.getElementById('finish-overlay').style.display = 'none'; toggleTimer(); }
+    function quitToHome() { alarmSound.pause(); document.getElementById('finish-overlay').style.display = 'none'; resetTimer(); show('screen-missions'); }
+
+    // --- CHARGEMENT DES DONNÉES ---
+    async function chargerMission(id, nom) {
+        currentMissionId = id;
+        currentMissionName = nom;
+        document.getElementById('active-mission-name').innerText = `OBJECTIF : ${nom}`;
+        const v = "?v=" + Date.now();
+        const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
+        const d = await Promise.all([
+            fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
+            fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)
+        ]);
+        grille = d[0]; grilleAC = d[1]; grilleENI = d[2];
+        sols = d[3].map(r => ({ code: r[0]?.trim(), expert: r[1]?.trim().toUpperCase(), action: r[2]?.trim(), texte: r[3]?.trim() }));
+        indicesCSV = d[4];
+        initMenus();
+        show('screen-menu');
+    }
+
+    function initMenus() {
+        const sp = document.getElementById('sel-p'), sc = document.getElementById('sel-c-perso'), siu = document.getElementById('sel-item-used'), se = document.getElementById('sel-eni');
+        sp.innerHTML = '<option value="">-- AGENT --</option>'; persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+        sc.innerHTML = '<option value="">-- CIBLE --</option>'; grille.forEach((l, i) => { if(i >= 2 && l[0]) sc.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+        siu.innerHTML = '<option value="0">-- AUCUN OBJET --</option>'; grilleAC.forEach((l, i) => { if(i > 0 && l[0]) siu.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+        se.innerHTML = '<option value="">-- ENIGME --</option>'; grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
+        ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
+            let e = document.getElementById(id); e.innerHTML = "";
+            for(let i=0; i<=9; i++) e.innerHTML += `<option value="${i}">${i}</option>`;
+        });
+        updateHintButton();
+    }
+
+    // --- ACTIONS AGENTS ---
+    function updateAgentVisuals() {
+        const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
+        if (p) { img.src = `${p}.png`; img.style.display = 'block'; sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); toggleItemSelect(); }
+    }
+    function toggleItemSelect() { 
+        const aLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex]?.text;
+        document.getElementById('container-item').style.display = (aLabel && !["regarder", "Manipuler"].includes(aLabel)) ? "block" : (aLabel === "Manipuler" ? "block" : "none");
+    }
+    function runActionPerso() {
+        const pName = document.getElementById('sel-p').value, cIdx = document.getElementById('sel-c-perso').value, iIdx = document.getElementById('sel-item-used').value, sa = document.getElementById('sel-a'), res = document.getElementById('res-perso');
+        if(!pName || !cIdx) return;
+        let actionLabel = sa.options[sa.selectedIndex].text, code = "";
+        if(iIdx !== "0" && iIdx !== "") {
+            const nomC = grille[cIdx][0].trim(), nomO = grilleAC[iIdx][0].trim();
+            let r1 = grilleAC.findIndex(r => r[0]?.trim() === nomC), c1 = grilleAC[0].findIndex(c => c?.trim() === nomO);
+            code = (r1 !== -1 && c1 !== -1) ? grilleAC[r1][c1]?.trim() : "";
+        } else {
+            code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
+        }
+        const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
+        res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
+    }
+
+    // --- ENIGMES & INDICES ---
+    function updateHintButton() {
+        const idEni = document.getElementById('sel-eni').value;
+        const btn = document.getElementById('btn-get-hint');
+        if(!idEni) { btn.innerText = "BESOIN D'UN INDICE ?"; indiceLevel = 0; document.getElementById('res-code-final').innerText = "SCANNER PRET"; return; }
+        const rows = indicesCSV.filter(r => r[0] == idEni);
+        const nextRow = rows.find(r => r[1] == (indiceLevel + 1));
+        btn.innerText = nextRow ? `BESOIN D'UN INDICE ? (-${nextRow[3]} mn)` : "PLUS D'INDICES DISPONIBLES";
+    }
+    function getHint() {
+        const idEni = document.getElementById('sel-eni').value;
+        const resBox = document.getElementById('res-code-final');
+        if(!idEni) return;
+        const rows = indicesCSV.filter(r => r[0] == idEni);
+        const nextLevel = indiceLevel + 1;
+        const hintRow = rows.find(r => r[1] == nextLevel);
+        if(hintRow) {
+            indiceLevel = nextLevel;
+            timeLeft = Math.max(0, timeLeft - (parseInt(hintRow[3]) * 60));
+            updateDisplay();
+            let current = (indiceLevel === 1) ? "" : resBox.innerText + "\n---\n";
+            resBox.innerText = current + hintRow[2];
+            updateHintButton();
+        }
+    }
+    function runEnigme() {
+        const id = document.getElementById('sel-eni').value, res = document.getElementById('res-code-final'), saisi = ['eni-1','eni-2','eni-3','eni-4'].map(i => document.getElementById(i).value).join('');
+        const row = grilleENI.find(r => r[0] == id);
+        if(row && saisi === row[1]?.toString().trim()) {
+            const s = sols.find(x => x.code === row[2]?.toString().trim());
+            res.innerHTML = s ? s.texte : "ACCÈS AUTORISÉ";
+        } else res.innerHTML = "CODE INCORRECT";
+    }
+
+    // --- NAVIGATION ---
+    function show(id) { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+        document.getElementById(id).classList.add('active'); 
+        document.getElementById('mission-timer').style.display = (id === 'screen-missions') ? 'none' : 'flex'; 
+    }
+    function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
+</script>
+</body>
+</html>
