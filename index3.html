@@ -13,7 +13,7 @@
             --ink-black: #1a1a1a;
             --comic-yellow: #EBF099;
             --alert-red: #ff0000;
-            --mission-green: #27ae60; /* Nouveau vert opérationnel */
+            --mission-green: #27ae60;
         }
 
         body { 
@@ -39,6 +39,25 @@
             overflow: hidden;
         }
 
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--ink-black);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-out;
+        }
+
+        #splash-screen img {
+            max-width: 80%;
+            height: auto;
+            border: 5px solid white;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
         /* --- TIMER BAR --- */
         .timer-bar { 
             background: var(--comic-yellow);
@@ -52,18 +71,8 @@
         }
 
         #timer-display { font-family: 'Bangers', cursive; font-size: 1.8rem; min-width: 80px; }
-
         .timer-controls { display: flex; gap: 4px; }
-
-        .timer-btn {
-            padding: 3px 6px;
-            font-family: 'Bangers';
-            font-size: 0.65rem;
-            border: 2px solid var(--ink-black);
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
+        .timer-btn { padding: 3px 6px; font-family: 'Bangers'; font-size: 0.65rem; border: 2px solid var(--ink-black); cursor: pointer; text-transform: uppercase; }
         .btn-alert { background: var(--alert-red); color: white; }
         .btn-reset { background: #7f8c8d; color: white; }
 
@@ -95,9 +104,8 @@
 
         h1 { font-family: 'Bangers', cursive; font-size: 1.4rem; margin: 0; color: white; text-shadow: 2px 2px 0px var(--ink-black); text-transform: uppercase; text-align: center; }
 
-        /* Mise à jour du style de l'encart de mission */
         .mission-reminder {
-            font-family: 'Bangers', cursive; /* Changé pour plus de style */
+            font-family: 'Bangers', cursive;
             background: var(--mission-green);
             border: 3px solid var(--ink-black);
             padding: 8px;
@@ -148,13 +156,7 @@
             width: 100%; margin-bottom: 10px; background: white; color: var(--ink-black);
         }
 
-        .digit-selector {
-            flex: 1;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: bold;
-            font-family: 'Bangers', cursive;
-        }
+        .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; }
 
         #eni-1 { background-color: #f1c40f !important; }
         #eni-2 { background-color: #3498db !important; color: white !important; }
@@ -171,6 +173,11 @@
 
 <div class="app-container">
     
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img src="logo.jpg" alt="Logo The Escapologists">
+    </div>
+
     <div id="finish-overlay">
         <h2 style="font-family:'Bangers'; font-size:2.5rem; color:var(--alert-red);">TEMPS ÉCOULÉ !</h2>
         <p style="font-family:'Kalam'; margin-bottom:20px;">L'alarme a été déclenchée. Que décidez-vous ?</p>
@@ -202,7 +209,7 @@
         <button onclick="chargerMission('M3', 'ft. Belzebuth')">M3 : ft. Belzebuth</button>
     </div>
 
-    <!-- Menu Hub avec Rappel Mission (Vert) -->
+    <!-- Menu Hub -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div id="active-mission-name" class="mission-reminder">OBJECTIF : ---</div>
@@ -218,7 +225,7 @@
         <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
     </div>
 
-    <!-- Reste du code identique ... -->
+    <!-- Ordre Agent -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
@@ -235,6 +242,7 @@
         </div>
     </div>
 
+    <!-- Machine Crypto -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton()"></select>
@@ -254,6 +262,15 @@
 <audio id="alarm-sound" src="alarm.wav"></audio>
 
 <script>
+    // --- GESTION DU SPLASH SCREEN ---
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.display = 'none'; }, 800);
+        }, 3000); // 3 secondes d'affichage
+    });
+
     let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
     let currentMissionId = "", currentMissionName = "", indiceLevel = 0;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], indicesCSV = [];
@@ -271,38 +288,16 @@
         if (isPaused) {
             isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
             timerId = setInterval(() => { 
-                if(isAlert) { 
-                    if(alertLeft > 0) alertLeft--; 
-                    else endMission(); 
-                } else { 
-                    if(timeLeft > 0) timeLeft--; 
-                    else endMission();
-                }
+                if(isAlert) { if(alertLeft > 0) alertLeft--; else endMission(); } 
+                else { if(timeLeft > 0) timeLeft--; else endMission(); }
                 updateDisplay(); 
             }, 1000);
         } else { pauseTimer(); }
     }
 
-    function pauseTimer() {
-        isPaused = true; 
-        document.getElementById('btn-pause').innerText = "PLAY"; 
-        clearInterval(timerId);
-    }
-
-    function resetTimer() {
-        pauseTimer();
-        timeLeft = 3600;
-        alertLeft = 60;
-        isAlert = false;
-        updateDisplay();
-    }
-
-    function triggerAlert() {
-        isAlert = !isAlert;
-        if(isAlert) alertLeft = 60;
-        updateDisplay();
-    }
-
+    function pauseTimer() { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
+    function resetTimer() { pauseTimer(); timeLeft = 3600; alertLeft = 60; isAlert = false; updateDisplay(); }
+    function triggerAlert() { isAlert = !isAlert; if(isAlert) alertLeft = 60; updateDisplay(); }
     function updateDisplay() {
         const d = document.getElementById('timer-display');
         let t = isAlert ? alertLeft : timeLeft;
@@ -310,35 +305,14 @@
         d.style.color = isAlert ? 'var(--alert-red)' : 'black';
     }
 
-    function endMission() {
-        pauseTimer();
-        alarmSound.currentTime = 0;
-        alarmSound.play();
-        document.getElementById('finish-overlay').style.display = 'flex';
-    }
-
-    function addExtraTime() {
-        alarmSound.pause();
-        alarmSound.currentTime = 0;
-        timeLeft += 600; 
-        isAlert = false;
-        document.getElementById('finish-overlay').style.display = 'none';
-        toggleTimer();
-    }
-
-    function quitToHome() {
-        alarmSound.pause();
-        alarmSound.currentTime = 0;
-        document.getElementById('finish-overlay').style.display = 'none';
-        resetTimer();
-        show('screen-missions');
-    }
+    function endMission() { pauseTimer(); alarmSound.currentTime = 0; alarmSound.play(); document.getElementById('finish-overlay').style.display = 'flex'; }
+    function addExtraTime() { alarmSound.pause(); alarmSound.currentTime = 0; timeLeft += 600; isAlert = false; document.getElementById('finish-overlay').style.display = 'none'; toggleTimer(); }
+    function quitToHome() { alarmSound.pause(); alarmSound.currentTime = 0; document.getElementById('finish-overlay').style.display = 'none'; resetTimer(); show('screen-missions'); }
 
     async function chargerMission(id, nom) {
         currentMissionId = id;
         currentMissionName = nom;
         document.getElementById('active-mission-name').innerText = `OBJECTIF : ${nom}`;
-        
         const v = "?v=" + Date.now();
         const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
         const d = await Promise.all([
@@ -393,31 +367,19 @@
     function updateHintButton() {
         const idEni = document.getElementById('sel-eni').value;
         const btn = document.getElementById('btn-get-hint');
-        if(!idEni) { 
-            btn.innerText = "BESOIN D'UN INDICE ?"; 
-            indiceLevel = 0; 
-            document.getElementById('res-code-final').innerText = "SCANNER PRET";
-            return; 
-        }
-        
+        if(!idEni) { btn.innerText = "BESOIN D'UN INDICE ?"; indiceLevel = 0; document.getElementById('res-code-final').innerText = "SCANNER PRET"; return; }
         const rows = indicesCSV.filter(r => r[0] == idEni);
         const nextRow = rows.find(r => r[1] == (indiceLevel + 1));
-        if(nextRow) {
-            btn.innerText = `BESOIN D'UN INDICE ? (-${nextRow[3]} mn)`;
-        } else {
-            btn.innerText = "PLUS D'INDICES DISPONIBLES";
-        }
+        btn.innerText = nextRow ? `BESOIN D'UN INDICE ? (-${nextRow[3]} mn)` : "PLUS D'INDICES DISPONIBLES";
     }
 
     function getHint() {
         const idEni = document.getElementById('sel-eni').value;
         const resBox = document.getElementById('res-code-final');
         if(!idEni) return;
-        
         const rows = indicesCSV.filter(r => r[0] == idEni);
         const nextLevel = indiceLevel + 1;
         const hintRow = rows.find(r => r[1] == nextLevel);
-        
         if(hintRow) {
             indiceLevel = nextLevel;
             timeLeft = Math.max(0, timeLeft - (parseInt(hintRow[3]) * 60));
