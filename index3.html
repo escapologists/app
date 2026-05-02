@@ -39,23 +39,24 @@
             overflow: hidden;
         }
 
-        /* --- SPLASH SCREEN (CORRECTIF FIXE) --- */
+        /* --- SPLASH SCREEN PLEIN ÉCRAN --- */
         #splash-screen {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: transparent; 
+            top: 0; left: 0; 
+            width: 100vw; height: 100vh;
+            background: var(--ink-black); /* Fond de secours */
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
-            pointer-events: none; /* Évite de bloquer les clics si le logo tarde à disparaître */
             transition: opacity 0.8s ease-out;
+            pointer-events: none;
         }
 
         #splash-screen img {
-            max-width: 80%;
-            height: auto;
-            filter: drop-shadow(0 0 15px rgba(0,0,0,0.6));
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* L'image remplit tout l'écran sans déformation */
         }
 
         /* --- TIMER BAR --- */
@@ -171,12 +172,14 @@
 </head>
 <body>
 
+<!-- Splash Screen mis à jour -->
 <div id="splash-screen">
-    <img src="logo.jpg" alt="Logo The Escapologists">
+    <img src="splash.jpg" alt="Splash Screen">
 </div>
 
 <div class="app-container">
     
+    <!-- Overlay de fin -->
     <div id="finish-overlay">
         <h2 style="font-family:'Bangers'; font-size:2.5rem; color:var(--alert-red);">TEMPS ÉCOULÉ !</h2>
         <p style="font-family:'Kalam'; margin-bottom:20px;">L'alarme a été déclenchée. Que décidez-vous ?</p>
@@ -184,6 +187,7 @@
         <button class="secondary" onclick="quitToHome()">ABANDONNER</button>
     </div>
 
+    <!-- Barre de Timer -->
     <div id="mission-timer" class="timer-bar">
         <div id="timer-display">60:00</div>
         <div class="timer-controls">
@@ -193,7 +197,7 @@
         </div>
     </div>
 
-    <!-- Choix Mission -->
+    <!-- Écran : Choix Mission -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         <div class="btn-comic-tile" style="background-image: url('but_mission_1.jpg');" onclick="chargerMission('M1', 'Le jardinier Armé')">
@@ -205,7 +209,7 @@
         <button onclick="chargerMission('M3', 'ft. Belzebuth')">M3 : ft. Belzebuth</button>
     </div>
 
-    <!-- Menu Hub -->
+    <!-- Écran : Menu Hub -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div id="active-mission-name" class="mission-reminder">OBJECTIF : ---</div>
@@ -220,7 +224,7 @@
         <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
     </div>
 
-    <!-- Ordre Agent -->
+    <!-- Écran : Ordre Agent -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
@@ -237,7 +241,7 @@
         </div>
     </div>
 
-    <!-- Machine Crypto -->
+    <!-- Écran : Machine Crypto -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton()"></select>
@@ -257,6 +261,7 @@
 <audio id="alarm-sound" src="alarm.wav"></audio>
 
 <script>
+    // --- GESTION DU SPLASH SCREEN ---
     window.addEventListener('load', () => {
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
@@ -265,6 +270,7 @@
         }, 2500); 
     });
 
+    // --- VARIABLES & LOGIQUE HUB ---
     let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
     let currentMissionId = "", currentMissionName = "", indiceLevel = 0;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], indicesCSV = [];
