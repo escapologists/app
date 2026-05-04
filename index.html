@@ -94,7 +94,7 @@
             border: 3px solid var(--ink-black);
             padding: 6px;
             transform: rotate(-1deg);
-            margin: 5px 5px 5px 5px;
+            margin: 5px;
             z-index: 10;
             box-shadow: 4px 4px 0px var(--ink-black);
         }
@@ -108,8 +108,7 @@
             text-transform: uppercase;
             background: rgba(235, 240, 153, 0.8);
             width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto 15px auto;
             padding: 2px 10px;
             border: 2px solid var(--ink-black);
             transform: rotate(1deg);
@@ -242,7 +241,7 @@
     <!-- ÉCRAN ÉNIGME -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
-        <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton()"></select>
+        <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton(event)"></select>
         <div style="display:flex; gap:8px; margin-bottom:15px;">
             <select id="eni-1" class="digit-selector"></select>
             <select id="eni-2" class="digit-selector"></select>
@@ -259,22 +258,6 @@
 <audio id="alarm-sound" src="alarm.wav"></audio>
 
 <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('SW enregistré !'))
-                .catch(err => console.log('Erreur SW', err));
-        });
-    }
-
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => { splash.style.display = 'none'; }, 800);
-        }, 2500); 
-    });
-
     let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
     let currentMissionId = "", currentMissionName = "", indiceLevel = 0;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], indicesCSV = [];
@@ -288,6 +271,22 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
+    // --- GESTION ÉCRANS & SPLASH ---
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.display = 'none'; }, 800);
+        }, 2500); 
+    });
+
+    function show(id) { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+        document.getElementById(id).classList.add('active'); 
+        document.getElementById('mission-timer').style.display = (id === 'screen-missions') ? 'none' : 'flex'; 
+    }
+
+    // --- TIMER ---
     function toggleTimer() {
         if (isPaused) {
             isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
@@ -311,6 +310,7 @@
     function addExtraTime() { alarmSound.pause(); timeLeft += 600; isAlert = false; document.getElementById('finish-overlay').style.display = 'none'; toggleTimer(); }
     function quitToHome() { alarmSound.pause(); document.getElementById('finish-overlay').style.display = 'none'; resetTimer(); show('screen-missions'); }
 
+    // --- CHARGEMENT MISSION ---
     async function chargerMission(id, nom) {
         currentMissionId = id;
         currentMissionName = nom;
@@ -341,6 +341,7 @@
         updateHintButton();
     }
 
+    // --- ACTIONS AGENTS ---
     function updateAgentVisuals() {
         const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
         if (p) { img.src = `${p}.png`; img.style.display = 'block'; sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); toggleItemSelect(); }
@@ -350,6 +351,8 @@
         const aLabel = document.getElementById('sel-a').options[document.getElementById('sel-a').selectedIndex]?.text;
         document.getElementById('container-item').style.display = (aLabel && !["regarder", "Manipuler"].includes(aLabel)) ? "block" : (aLabel === "Manipuler" ? "block" : "none");
     }
+
+    function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
 
     function runActionPerso() {
         const pName = document.getElementById('sel-p').value, cIdx = document.getElementById('sel-c-perso').value, iIdx = document.getElementById('sel-item-used').value, sa = document.getElementById('sel-a'), res = document.getElementById('res-perso');
@@ -366,32 +369,45 @@
         res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
     }
 
-    function updateHintButton() {
+    // --- ÉNIGMES & INDICES ---
+    function updateHintButton(e) {
         const idEni = document.getElementById('sel-eni').value;
         const btn = document.getElementById('btn-get-hint');
         const resBox = document.getElementById('res-code-final');
-        resBox.innerText = "SCANNER PRET"; 
-        if(!idEni) { btn.innerText = "BESOIN D'UN INDICE ?"; indiceLevel = 0; return; }
+        
+        // On ne reset l'affichage que si l'utilisateur change de choix dans la liste
+        if (e && e.type === 'change') {
+            resBox.innerText = "SCANNER PRET";
+            indiceLevel = 0; 
+        }
+
+        if(!idEni) { 
+            btn.innerText = "BESOIN D'UN INDICE ?"; 
+            return; 
+        }
+
         const rows = indicesCSV.filter(r => r[0] == idEni);
         const nextRow = rows.find(r => r[1] == (indiceLevel + 1));
         btn.innerText = nextRow ? `BESOIN D'UN INDICE ? (-${nextRow[3]} mn)` : "PLUS D'INDICES DISPONIBLES";
-        indiceLevel = 0; 
     }
 
     function getHint() {
         const idEni = document.getElementById('sel-eni').value;
         const resBox = document.getElementById('res-code-final');
         if(!idEni) return;
+
         const rows = indicesCSV.filter(r => r[0] == idEni);
         const nextLevel = indiceLevel + 1;
         const hintRow = rows.find(r => r[1] == nextLevel);
+
         if(hintRow) {
             indiceLevel = nextLevel;
             timeLeft = Math.max(0, timeLeft - (parseInt(hintRow[3]) * 60));
             updateDisplay();
+            
             let current = (indiceLevel === 1) ? "" : resBox.innerText + "\n---\n";
             resBox.innerText = current + hintRow[2];
-            updateHintButton();
+            updateHintButton(); 
         }
     }
 
@@ -404,13 +420,6 @@
         } else res.innerHTML = "CODE INCORRECT";
     }
 
-    function show(id) { 
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-        document.getElementById(id).classList.add('active'); 
-        document.getElementById('mission-timer').style.display = (id === 'screen-missions') ? 'none' : 'flex'; 
-    }
-    
-    function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
 </script>
 </body>
 </html>
