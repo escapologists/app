@@ -35,7 +35,6 @@
             align-items: center;
         }
 
-        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100dvh; 
@@ -48,11 +47,7 @@
             pointer-events: none;
         }
 
-        #splash-screen img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; 
-        }
+        #splash-screen img { width: 100%; height: 100%; object-fit: cover; }
 
         .app-container { 
             width: 90%; 
@@ -66,7 +61,6 @@
             padding-top: env(safe-area-inset-top);
         }
 
-        /* --- TIMER BAR --- */
         .timer-bar { 
             background: var(--comic-yellow);
             border: 3px solid var(--ink-black);
@@ -95,7 +89,6 @@
             color: white;
         }
 
-        /* --- HEADERS --- */
         .mission-header { 
             background: var(--primary);
             border: 3px solid var(--ink-black);
@@ -140,18 +133,11 @@
         .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
 
-        /* --- BOUTONS MISSIONS --- */
         .btn-comic-tile {
-            width: 100%; 
-            height: 120px; 
-            border: 4px solid var(--ink-black);
-            background-size: cover; 
-            background-position: center; 
-            position: relative;
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
-            cursor: pointer;
-            margin-bottom: 20px; 
-            flex-shrink: 0;
+            width: 100%; height: 120px; border: 4px solid var(--ink-black);
+            background-size: cover; background-position: center; position: relative;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.2); cursor: pointer;
+            margin-bottom: 20px; flex-shrink: 0;
         }
 
         .btn-label {
@@ -161,51 +147,33 @@
         }
 
         button { 
-            font-family: 'Bangers', cursive; padding: 12px; 
-            border: 3px solid var(--ink-black); background: var(--primary); 
-            color: white; font-size: 1.1rem; cursor: pointer; 
-            text-transform: uppercase; margin-bottom: 10px;
+            font-family: 'Bangers', cursive; padding: 12px; border: 3px solid var(--ink-black); background: var(--primary); 
+            color: white; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px;
             box-shadow: 4px 4px 0px var(--ink-black);
         }
 
         button.secondary { background: #3498db; }
-
-        label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; }
+        label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
         
         select { 
             font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); 
             width: 100%; margin-bottom: 10px; background: white;
         }
 
-        /* --- AGENT PHOTO --- */
         .agent-avatar-container { 
-            width: 110px; 
-            height: 180px; 
-            border: 4px solid var(--ink-black); 
-            background: #fff; 
-            margin: 0 auto 15px auto; 
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
+            width: 110px; height: 180px; border: 4px solid var(--ink-black); 
+            background: #fff; margin: 0 auto 15px auto; overflow: hidden; 
+            display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
         }
         
-        #agent-avatar { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: contain; 
-            display: none; 
-        }
+        #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
         .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 50px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
     </style>
 </head>
 <body>
 
-<div id="splash-screen">
-    <img src="splash.jpg" alt="Splash Screen">
-</div>
+<div id="splash-screen"><img src="splash.jpg" alt="Splash Screen"></div>
 
 <div class="app-container">
     <div id="finish-overlay">
@@ -223,6 +191,7 @@
         </div>
     </div>
 
+    <!-- SÉLECTION MISSIONS -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         <div class="subtitle-header">Choix des missions</div>
@@ -235,6 +204,7 @@
         <button onclick="chargerMission('M3', 'ft. Belzebuth')">M3 : ft. Belzebuth</button>
     </div>
 
+    <!-- HUB -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div id="active-mission-name" class="mission-reminder">OBJECTIF : ---</div>
@@ -249,15 +219,19 @@
         <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
     </div>
 
+    <!-- ORDRE DE MISSION (ACTION) -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
-        <label>QUI ?</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
-        <label>QUOI ?</label><select id="sel-a" onchange="toggleItemSelect()"></select>
-        <label>SUR QUOI ?</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
+        
+        <label>Agent</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
+        <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
+        <label>Cible</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
+        
         <div id="container-item" style="display:none;">
-            <label>AVEC QUEL OBJET ?</label><select id="sel-item-used"></select>
+            <label>Objet</label><select id="sel-item-used"></select>
         </div>
+        
         <div id="res-perso" class="result-box">En attente...</div>
         <div style="display:flex; gap:10px;">
             <button style="flex:1" onclick="runActionPerso()">TRANSMETTRE</button>
@@ -265,6 +239,7 @@
         </div>
     </div>
 
+    <!-- ÉCRAN ÉNIGME -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton()"></select>
@@ -395,16 +370,11 @@
         const idEni = document.getElementById('sel-eni').value;
         const btn = document.getElementById('btn-get-hint');
         const resBox = document.getElementById('res-code-final');
-        
-        // EFFACER LE TEXTE PRÉCÉDENT
-        resBox.innerText = idEni ? "SCANNER PRET" : "SCANNER PRET"; 
-
+        resBox.innerText = "SCANNER PRET"; 
         if(!idEni) { btn.innerText = "BESOIN D'UN INDICE ?"; indiceLevel = 0; return; }
         const rows = indicesCSV.filter(r => r[0] == idEni);
         const nextRow = rows.find(r => r[1] == (indiceLevel + 1));
         btn.innerText = nextRow ? `BESOIN D'UN INDICE ? (-${nextRow[3]} mn)` : "PLUS D'INDICES DISPONIBLES";
-        
-        // Reset du niveau d'indice quand on change d'énigme
         indiceLevel = 0; 
     }
 
