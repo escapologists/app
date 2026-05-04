@@ -150,7 +150,7 @@
             position: relative;
             box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
             cursor: pointer;
-            margin-bottom: 20px; /* Espace entre chaque bouton */
+            margin-bottom: 20px; 
             flex-shrink: 0;
         }
 
@@ -223,23 +223,18 @@
         </div>
     </div>
 
-    <!-- ÉCRAN DE SÉLECTION DES MISSIONS -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         <div class="subtitle-header">Choix des missions</div>
-        
         <div class="btn-comic-tile" style="background-image: url('but_mission_1.jpg');" onclick="chargerMission('M1', 'Le jardinier Armé')">
             <div class="btn-label">MISSION 1</div>
         </div>
-        
         <div class="btn-comic-tile" style="background-image: url('but_mission_2.jpg');" onclick="chargerMission('M2', 'L\'amateur Rouge')">
             <div class="btn-label">MISSION 2</div>
         </div>
-        
         <button onclick="chargerMission('M3', 'ft. Belzebuth')">M3 : ft. Belzebuth</button>
     </div>
 
-    <!-- MENU HUB -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div id="active-mission-name" class="mission-reminder">OBJECTIF : ---</div>
@@ -254,7 +249,6 @@
         <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
     </div>
 
-    <!-- ÉCRAN ACTIONS -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
@@ -271,7 +265,6 @@
         </div>
     </div>
 
-    <!-- ÉCRAN ÉNIGME -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton()"></select>
@@ -401,10 +394,18 @@
     function updateHintButton() {
         const idEni = document.getElementById('sel-eni').value;
         const btn = document.getElementById('btn-get-hint');
-        if(!idEni) { btn.innerText = "BESOIN D'UN INDICE ?"; indiceLevel = 0; document.getElementById('res-code-final').innerText = "SCANNER PRET"; return; }
+        const resBox = document.getElementById('res-code-final');
+        
+        // EFFACER LE TEXTE PRÉCÉDENT
+        resBox.innerText = idEni ? "SCANNER PRET" : "SCANNER PRET"; 
+
+        if(!idEni) { btn.innerText = "BESOIN D'UN INDICE ?"; indiceLevel = 0; return; }
         const rows = indicesCSV.filter(r => r[0] == idEni);
         const nextRow = rows.find(r => r[1] == (indiceLevel + 1));
         btn.innerText = nextRow ? `BESOIN D'UN INDICE ? (-${nextRow[3]} mn)` : "PLUS D'INDICES DISPONIBLES";
+        
+        // Reset du niveau d'indice quand on change d'énigme
+        indiceLevel = 0; 
     }
 
     function getHint() {
