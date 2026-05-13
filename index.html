@@ -190,7 +190,6 @@
         </div>
     </div>
 
-    <!-- SÉLECTION MISSIONS -->
     <div id="screen-missions" class="screen active">
         <div class="mission-header"><h1>The Escapologists</h1></div>
         <div class="subtitle-header">Choix des missions</div>
@@ -203,7 +202,6 @@
         <button onclick="chargerMission('M3', 'ft. Belzebuth')">M3 : ft. Belzebuth</button>
     </div>
 
-    <!-- HUB -->
     <div id="screen-menu" class="screen">
         <div class="mission-header"><h1>HUB TACTIQUE</h1></div>
         <div id="active-mission-name" class="mission-reminder">OBJECTIF : ---</div>
@@ -218,7 +216,6 @@
         <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
     </div>
 
-    <!-- ORDRE DE MISSION (ACTION) -->
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
@@ -238,7 +235,6 @@
         </div>
     </div>
 
-    <!-- ÉCRAN ÉNIGME -->
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
         <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton(event)"></select>
@@ -271,7 +267,6 @@
         "Stacy": ["regarder", "Manipuler", "pirater", "dynamiter"]
     };
 
-    // --- GESTION ÉCRANS & SPLASH ---
     window.addEventListener('load', () => {
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
@@ -286,7 +281,6 @@
         document.getElementById('mission-timer').style.display = (id === 'screen-missions') ? 'none' : 'flex'; 
     }
 
-    // --- TIMER ---
     function toggleTimer() {
         if (isPaused) {
             isPaused = false; document.getElementById('btn-pause').innerText = "PAUSE";
@@ -306,11 +300,15 @@
         d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
         d.style.color = isAlert ? 'var(--alert-red)' : 'black';
     }
-    function endMission() { pauseTimer(); alarmSound.currentTime = 0; alarmSound.play(); document.getElementById('finish-overlay').style.display = 'flex'; }
+    function endMission() { 
+        pauseTimer(); 
+        alarmSound.currentTime = 0; 
+        alarmSound.play(); // Jouera une seule fois car loop=false par défaut
+        document.getElementById('finish-overlay').style.display = 'flex'; 
+    }
     function addExtraTime() { alarmSound.pause(); timeLeft += 600; isAlert = false; document.getElementById('finish-overlay').style.display = 'none'; toggleTimer(); }
     function quitToHome() { alarmSound.pause(); document.getElementById('finish-overlay').style.display = 'none'; resetTimer(); show('screen-missions'); }
 
-    // --- CHARGEMENT MISSION ---
     async function chargerMission(id, nom) {
         currentMissionId = id;
         currentMissionName = nom;
@@ -341,7 +339,6 @@
         updateHintButton();
     }
 
-    // --- ACTIONS AGENTS ---
     function updateAgentVisuals() {
         const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
         if (p) { img.src = `${p}.png`; img.style.display = 'block'; sa.innerHTML = ''; mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); toggleItemSelect(); }
@@ -369,23 +366,12 @@
         res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
     }
 
-    // --- ÉNIGMES & INDICES ---
     function updateHintButton(e) {
         const idEni = document.getElementById('sel-eni').value;
         const btn = document.getElementById('btn-get-hint');
         const resBox = document.getElementById('res-code-final');
-        
-        // On ne reset l'affichage que si l'utilisateur change de choix dans la liste
-        if (e && e.type === 'change') {
-            resBox.innerText = "SCANNER PRET";
-            indiceLevel = 0; 
-        }
-
-        if(!idEni) { 
-            btn.innerText = "BESOIN D'UN INDICE ?"; 
-            return; 
-        }
-
+        if (e && e.type === 'change') { resBox.innerText = "SCANNER PRET"; indiceLevel = 0; }
+        if(!idEni) { btn.innerText = "BESOIN D'UN INDICE ?"; return; }
         const rows = indicesCSV.filter(r => r[0] == idEni);
         const nextRow = rows.find(r => r[1] == (indiceLevel + 1));
         btn.innerText = nextRow ? `BESOIN D'UN INDICE ? (-${nextRow[3]} mn)` : "PLUS D'INDICES DISPONIBLES";
@@ -395,16 +381,13 @@
         const idEni = document.getElementById('sel-eni').value;
         const resBox = document.getElementById('res-code-final');
         if(!idEni) return;
-
         const rows = indicesCSV.filter(r => r[0] == idEni);
         const nextLevel = indiceLevel + 1;
         const hintRow = rows.find(r => r[1] == nextLevel);
-
         if(hintRow) {
             indiceLevel = nextLevel;
             timeLeft = Math.max(0, timeLeft - (parseInt(hintRow[3]) * 60));
             updateDisplay();
-            
             let current = (indiceLevel === 1) ? "" : resBox.innerText + "\n---\n";
             resBox.innerText = current + hintRow[2];
             updateHintButton(); 
@@ -419,7 +402,6 @@
             res.innerHTML = s ? s.texte : "ACCÈS AUTORISÉ";
         } else res.innerHTML = "CODE INCORRECT";
     }
-
 </script>
 </body>
 </html>
