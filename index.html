@@ -35,6 +35,7 @@
             align-items: center;
         }
 
+        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100dvh; 
@@ -46,7 +47,6 @@
             transition: opacity 0.8s ease-out;
             pointer-events: none;
         }
-
         #splash-screen img { width: 100%; height: 100%; object-fit: cover; }
 
         .app-container { 
@@ -61,6 +61,7 @@
             padding-top: env(safe-area-inset-top);
         }
 
+        /* --- UI ELEMENTS --- */
         .timer-bar { 
             background: var(--comic-yellow);
             border: 3px solid var(--ink-black);
@@ -71,7 +72,6 @@
             align-items: center;
             z-index: 20;
         }
-
         #timer-display { font-family: 'Bangers', cursive; font-size: 1.8rem; min-width: 80px; }
         .timer-controls { display: flex; gap: 4px; }
         .timer-btn { padding: 3px 6px; font-family: 'Bangers'; font-size: 0.65rem; border: 2px solid var(--ink-black); cursor: pointer; text-transform: uppercase; }
@@ -95,7 +95,6 @@
             padding: 6px;
             transform: rotate(-1deg);
             margin: 5px;
-            z-index: 10;
             box-shadow: 4px 4px 0px var(--ink-black);
         }
 
@@ -138,7 +137,6 @@
             box-shadow: 6px 6px 0px rgba(0,0,0,0.2); cursor: pointer;
             margin-bottom: 20px; flex-shrink: 0;
         }
-
         .btn-label {
             position: absolute; bottom: -5px; right: -5px; background: var(--comic-yellow);
             padding: 4px 12px; font-family: 'Bangers'; border: 3px solid var(--ink-black);
@@ -150,21 +148,19 @@
             color: white; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px;
             box-shadow: 4px 4px 0px var(--ink-black);
         }
-
         button.secondary { background: #3498db; }
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
-        
-        select { 
-            font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); 
-            width: 100%; margin-bottom: 10px; background: white;
-        }
+        select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
-        .agent-avatar-container { 
-            width: 110px; height: 180px; border: 4px solid var(--ink-black); 
-            background: #fff; margin: 0 auto 15px auto; overflow: hidden; 
-            display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
-        }
-        
+        /* --- ENIGMA COLORS RESTORED --- */
+        .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
+        #eni-1 { background-color: #f1c40f !important; }
+        #eni-2 { background-color: #3498db !important; color: white !important; }
+        #eni-3 { background-color: #2ecc71 !important; }
+        #eni-4 { background-color: #e74c3c !important; color: white !important; }
+
+        /* --- AGENT PHOTO --- */
+        .agent-avatar-container { width: 110px; height: 180px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 15px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
         #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
         .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 50px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
@@ -219,15 +215,10 @@
     <div id="screen-action-perso" class="screen">
         <div class="mission-header"><h1>ORDRE DE MISSION</h1></div>
         <div class="agent-avatar-container"><img id="agent-avatar" src=""></div>
-        
         <label>Agent</label><select id="sel-p" onchange="updateAgentVisuals()"></select>
         <label>Action</label><select id="sel-a" onchange="toggleItemSelect()"></select>
         <label>Cible</label><select id="sel-c-perso" onchange="resetItemUsed()"></select>
-        
-        <div id="container-item" style="display:none;">
-            <label>Objet</label><select id="sel-item-used"></select>
-        </div>
-        
+        <div id="container-item" style="display:none;"><label>Objet</label><select id="sel-item-used"></select></div>
         <div id="res-perso" class="result-box">En attente...</div>
         <div style="display:flex; gap:10px;">
             <button style="flex:1" onclick="runActionPerso()">TRANSMETTRE</button>
@@ -237,7 +228,7 @@
 
     <div id="screen-enigme" class="screen">
         <div class="mission-header"><h1>DECRYPTAGE</h1></div>
-        <label>CHOIX ENIGME</label><select id="sel-eni" onchange="updateHintButton(event)"></select>
+        <label>Choix Enigme</label><select id="sel-eni" onchange="updateHintButton(event)"></select>
         <div style="display:flex; gap:8px; margin-bottom:15px;">
             <select id="eni-1" class="digit-selector"></select>
             <select id="eni-2" class="digit-selector"></select>
@@ -245,7 +236,7 @@
             <select id="eni-4" class="digit-selector"></select>
         </div>
         <button onclick="runEnigme()">DECODER</button>
-        <button id="btn-get-hint" class="hint-btn" onclick="getHint()" style="background:#f39c12; font-size:0.9rem;">BESOIN D'UN INDICE ?</button>
+        <button id="btn-get-hint" onclick="getHint()" style="background:#f39c12; font-size:0.9rem;">BESOIN D'UN INDICE ?</button>
         <div id="res-code-final" class="result-box">SCANNER PRET</div>
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
@@ -300,12 +291,7 @@
         d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
         d.style.color = isAlert ? 'var(--alert-red)' : 'black';
     }
-    function endMission() { 
-        pauseTimer(); 
-        alarmSound.currentTime = 0; 
-        alarmSound.play(); // Jouera une seule fois car loop=false par défaut
-        document.getElementById('finish-overlay').style.display = 'flex'; 
-    }
+    function endMission() { pauseTimer(); alarmSound.currentTime = 0; alarmSound.play(); document.getElementById('finish-overlay').style.display = 'flex'; }
     function addExtraTime() { alarmSound.pause(); timeLeft += 600; isAlert = false; document.getElementById('finish-overlay').style.display = 'none'; toggleTimer(); }
     function quitToHome() { alarmSound.pause(); document.getElementById('finish-overlay').style.display = 'none'; resetTimer(); show('screen-missions'); }
 
