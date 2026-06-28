@@ -367,21 +367,19 @@ function runActionPerso() {
             
             code = (r2 !== -1 && c2 !== -1) ? grilleAC[r2][c2]?.trim() : "";
         }
+    // ... (fin de la recherche du code A+B ou B+A) ...
     } else {
-        // Si aucun objet, action classique sur la grille personnage
         code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
     }
-    // ==========================================
-    // APERÇU DU CODE (À COLLER ICI)
-    if (code) {
-        alert("Code recherché : " + code);
-    } else {
-        alert("Aucun code trouvé pour cette combinaison.");
-    }
-    // ==========================================
+    
     // Recherche du résultat dans le fichier des solutions
     const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
-    res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
+    
+    // Affichage du texte ET du code secret pour le débogage
+    let texteResultat = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
+    
+    // On ajoute le code entre crochets à la fin du message (ex: [RE01] ou [Vide])
+    res.innerHTML = texteResultat + ` <span style="color: gray; font-size: 0.9em;">[Code cherché : ${code || "Aucun"}]</span>`;
 }
     
     function updateHintButton(e) {
