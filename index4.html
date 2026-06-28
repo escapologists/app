@@ -180,17 +180,50 @@
         }
     }
 
-    function runActionPerso() {
-        const pName = document.getElementById('sel-p').value, cIdx = document.getElementById('sel-c-perso').value, iIdx = document.getElementById('sel-item-used').value, sa = document.getElementById('sel-a'), res = document.getElementById('res-perso'), dbg = document.getElementById('debug-code-raw');
-        if(!pName || !cIdx || !sa.options[sa.selectedIndex]) return;
-        
-        let actionIdx = parseInt(sa.value), actionLabel = sa.options[sa.selectedIndex].text, code = "";
 
-        if(actionsWithItems.includes(actionLabel) && iIdx !== "0" && iIdx !== "") {
-            const n1 = grille[cIdx][0].trim(), n2 = grilleAC[iIdx][0].trim();
-            let rA = grilleAC.findIndex(r => r[0]?.trim() === n1), cA = grilleAC[0].findIndex(c => c?.trim() === n2);
-            if(rA !== -1 && cA !== -1) code = grilleAC[rA][cA]?.trim();
+function runActionPerso() {
+    const pName = document.getElementById('sel-p').value;
+    const cIdx = document.getElementById('sel-c-perso').value;
+    const iIdx = document.getElementById('sel-item-used').value;
+    const sa = document.getElementById('sel-a');
+    const res = document.getElementById('res-perso');
+    
+    if(!pName || !cIdx) return;
+    
+    let actionLabel = sa.options[sa.selectedIndex].text;
+    let code = "";
+    
+    // Si un objet est sélectionné (différent de "0" ou vide)
+    if(iIdx !== "0" && iIdx !== "") {
+        const nomC = grille[cIdx][0].trim();
+        const nomO = grilleAC[iIdx][0].trim();
+        
+        // Tentative 1 : Cible en ligne, Objet en colonne (A + B)
+        let r1 = grilleAC.findIndex(r => r[0]?.trim() === nomC);
+        let c1 = grilleAC[0].findIndex(c => c?.trim() === nomO);
+        
+        if (r1 !== -1 && c1 !== -1 && grilleAC[r1][c1]?.trim() !== "") {
+            code = grilleAC[r1][c1].trim();
+        } else {
+            // Tentative 2 : Objet en ligne, Cible en colonne (B + A)
+            let r2 = grilleAC.findIndex(r => r[0]?.trim() === nomO);
+            let c2 = grilleAC[0].findIndex(c => c?.trim() === nomC);
+            
+            code = (r2 !== -1 && c2 !== -1) ? grilleAC[r2][c2]?.trim() : "";
         }
+    } else {
+        // Si aucun objet, action classique sur la grille personnage
+        code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
+    }
+    
+    // Recherche du résultat dans le fichier des solutions
+    const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
+    res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
+}
+
+
+
+        
 
         if(!code || code === "-") {
             const col = 1 + (persos.indexOf(pName) * 4) + actionIdx;
