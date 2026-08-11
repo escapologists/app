@@ -3,7 +3,7 @@
 11;3;3 lettres (A, H, K) lu par Banks, et leurs positions dans l'alphabet :1, 8 et 11 soit un code 1811;3
 12;1;On cherche les valeurs manquantes pour certains fils dont les couleurs…;1
 12;2;"Rappelez-vous vos cours de peinture au primaire; le gris, c'est du blanc et du noir…";1
-12;3;"Le rouge avec du blanc fait du rose donc c'est 7; le violet (9) avec du rouge (7) donc le bleu est 2 et pour le vert : du bleu (2) avec du jaune (3) donc 5";3
+12;3;"Le  rose (6) est composé de blanc (-1) et de rouge donc 7; le violet (9) est composé de rouge (7) et de bleu donc 2. Enfin pour le vert : du bleu (2) avec du jaune (3) donc 5. Le code est donc Jaune-Bleu-Vert-Rouge soit 3257";3
 13;1;Il faut ouvrir les vannes dans un certain ordre, rien de compliqué;1
 13;2;Les divisions donnent toujours des résultats ronds;1
 13;3;On part de 200, on enleve 80 (vanne 2), on divise par 2 soit 120/2=60 (vanne 3) , on ajoute 90 (vanne 4) soit 150 et on divise par 3 (vanne 1) soit 2341;3
