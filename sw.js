@@ -1,4 +1,4 @@
-const CACHE_NAME = 'escapologists-v2';
+const CACHE_NAME = 'escapologists-v3';
 
 // Fichiers à mettre en cache pour le fonctionnement 100% hors-ligne
 const ASSETS = [
