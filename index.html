@@ -425,6 +425,13 @@ function runActionPerso() {
             const s = sols.find(x => x.code === row[2]?.toString().trim());
             res.innerHTML = s ? s.texte : "ACCÈS AUTORISÉ";
         } else res.innerHTML = "CODE INCORRECT";
+if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker actif !'))
+                    .catch(err => console.error('Erreur Service Worker :', err));
+            });
+        }
     }
 </script>
 </body>
