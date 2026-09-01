@@ -6,6 +6,8 @@ const ASSETS = [
   './index.html',
   './manifest.json',
   './papaparse.min.js',
+  'https://fonts.googleapis.com/css2?family=Bangers&family=Kalam:wght@700&display=swap',
+  'https://fonts.gstatic.com/s/bangers/v20/FeVQS0BTqb0h60ACH55uhQI.woff2',
   
   // Images d'ambiance et boutons
   './splash.jpg',
