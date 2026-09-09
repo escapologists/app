@@ -18,6 +18,7 @@
 1526;;;Rien de particulier
 1527;;;Rien de particulier
 1528;;;Elle doit pouvoir bricoler un truc avec un autre objet.
+1534;;;La porte s'ouvre. Aller au chapitre 1.4
 1637;;;Murphy ne sait pas quoi faire de cet engrais.
 1638;;;La grille de ce conduit n'a pas l'air bien fixée.
 1639;;;Un conduit d'aération mais obturé par une grille.
@@ -160,7 +161,6 @@
 4306;;;La porte est verrouillée par un code. Prendre la carte Enigme 1
 4309;;;il n'y a rien à manipuler
 4310;;;Une injection prête pour reveiller quelqu'un dans le coma
-1534;;;La porte s'ouvre. Aller au chapitre 1.4
 4316;;;Stacy doit pouvoir bricoler un truc avec ça
 4317;;;Julia va pouvoir l'utiliser sur une porte avec une serrure
 4318;;;Seule Stacy peut manipuler un truc comme ça
