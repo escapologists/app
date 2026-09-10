@@ -366,47 +366,48 @@ function runActionPerso() {
     
     if(!pName || !cIdx) return;
     
-    let actionLabel = sa.options[sa.selectedIndex].text;
+    let actionLabel = sa.options[sa.selectedIndex].text.trim().toLowerCase();
     let code = "";
     let debugInfo = "";
+    let isObjectCombination = (iIdx !== "0" && iIdx !== "");
     
-    // Fonction utilitaire pour ajouter un zéro initial aux chiffres uniques (ex: "9" -> "09")
     const normalize = val => {
         if (!val) return "";
         let s = val.trim();
         return (s.length === 1 && !isNaN(s)) ? "0" + s : s;
     };
     
-    if(iIdx !== "0" && iIdx !== "") {
+    if(isObjectCombination) {
+        // --- Combinaison de deux objets (Grille AC) ---
         const nomC = normalize(grille[cIdx]?.[0]);
         const nomO = normalize(grilleAC[iIdx]?.[0]);
         
-        // 1. Recherche directe (nomC en ligne, nomO en colonne)
         let r1 = grilleAC.findIndex(r => normalize(r[0]) === nomC);
         let c1 = grilleAC[0]?.findIndex(c => normalize(c) === nomO);
         
-        // 2. Recherche inversée (nomO en ligne, nomC en colonne)
         let r2 = grilleAC.findIndex(r => normalize(r[0]) === nomO);
         let c2 = grilleAC[0]?.findIndex(c => normalize(c) === nomC);
         
         if (r1 !== -1 && c1 !== -1 && grilleAC[r1]?.[c1]?.trim()) {
             code = grilleAC[r1][c1].trim();
-            debugInfo = `Tableau AC [L${r1} (${nomC}), C${c1} (${nomO})]`;
+            debugInfo = `Grille AC [L${r1} (${nomC}), C${c1} (${nomO})]`;
         } else if (r2 !== -1 && c2 !== -1 && grilleAC[r2]?.[c2]?.trim()) {
             code = grilleAC[r2][c2].trim();
-            debugInfo = `Tableau AC inversé [L${r2} (${nomO}), C${c2} (${nomC})]`;
+            debugInfo = `Grille AC inversée [L${r2} (${nomO}), C${c2} (${nomC})]`;
         } else {
             code = "";
-            debugInfo = `Introuvable AC : Ligne/Col pour (${nomC} / ${nomO})`;
+            debugInfo = `Introuvable AC pour (${nomC} / ${nomO})`;
         }
     } else {
-        // Calcul pour la grille standard
+        // --- Action simple sur un seul objet (Grille Standard) ---
         const colIdx = 1 + (persos.indexOf(pName) * 4) + parseInt(sa.value);
         code = grille[cIdx][colIdx]?.trim();
-        debugInfo = `Grille [Ligne ${cIdx}, Col ${colIdx}]`;
+        debugInfo = `Grille Standard [Ligne ${cIdx}, Col ${colIdx}]`;
     }
 
-    // 1. Récupération de tous les candidats ayant le bon code et le bon expert (ou universel "")
+    // --- CORRESPONDANCE DANS SOLUTIONS.CSV ---
+    
+    // 1. Filtrer par le code et l'expert (si spécifié dans le CSV)
     const candidates = sols.filter(s => 
         s.code === code && 
         (s.expert === "" || s.expert === pName[0].toUpperCase())
@@ -415,20 +416,28 @@ function runActionPerso() {
     let texteResultat = "Aucun effet détecté.";
 
     if (candidates.length > 0) {
-        // 2. Recherche parmi les candidats de la ligne correspondant exactement à l'action choisie
-        const matchAction = candidates.find(s => 
-            s.action && s.action.trim().toLowerCase() === actionLabel.trim().toLowerCase()
-        );
+        // 2. Chercher la bonne ligne d'action
+        const matchSolution = candidates.find(s => {
+            let actCSV = s.action ? s.action.trim().toLowerCase() : "";
+            
+            // Si la case action du CSV est vide -> C'est la manipulation simple par défaut
+            if (actCSV === "") {
+                return actionLabel === "manipuler";
+            }
+            
+            // Sinon, l'action du CSV (ex: "médical") doit correspondre à l'action sélectionnée
+            return actCSV === actionLabel;
+        });
 
-        if (matchAction) {
-            texteResultat = matchAction.texte;
+        if (matchSolution) {
+            texteResultat = matchSolution.texte;
         } else {
-            // Un résultat existe pour ce code mais pas pour cette action
+            // Un code existe pour ces objets, mais pas pour l'action tenteée
             texteResultat = "Action inadaptée.";
         }
     }
     
-    // Affichage du résultat final et des détails de debug
+    // Affichage du résultat avec le code et les infos de debug
     res.innerHTML = `${texteResultat}<br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
 }
         
