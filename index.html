@@ -356,7 +356,6 @@
     }
 
     function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
-
 function runActionPerso() {
     const pName = document.getElementById('sel-p').value;
     const cIdx = document.getElementById('sel-c-perso').value;
@@ -407,37 +406,39 @@ function runActionPerso() {
 
     // --- CORRESPONDANCE DANS SOLUTIONS.CSV ---
     
-    // 1. Filtrer par le code et l'expert (si spécifié dans le CSV)
-    const candidates = sols.filter(s => 
-        s.code === code && 
-        (s.expert === "" || s.expert === pName[0].toUpperCase())
-    );
+    // 1. Filtrer par le code et l'expert (si spécifié)
+    const candidates = sols.filter(s => {
+        if (s.code !== code) return false;
+        
+        const expCSV = s.expert ? s.expert.trim().toUpperCase() : "";
+        const pInitial = pName ? pName[0].toUpperCase() : "";
+        
+        return expCSV === "" || expCSV === pInitial;
+    });
 
     let texteResultat = "Aucun effet détecté.";
 
     if (candidates.length > 0) {
-        // 2. Chercher la bonne ligne d'action
+        // 2. Chercher la ligne d'action correspondante
         const matchSolution = candidates.find(s => {
             let actCSV = s.action ? s.action.trim().toLowerCase() : "";
             
-            // Si la case action du CSV est vide -> C'est la manipulation simple par défaut
+            // Si l'action dans le CSV est vide -> Pas de restriction, on affiche le résultat
             if (actCSV === "") {
-                return actionLabel === "manipuler";
+                return true;
             }
             
-            // Sinon, l'action du CSV (ex: "médical") doit correspondre à l'action sélectionnée
+            // Sinon, l'action spécifiée dans le CSV doit correspondre à l'action sélectionnée
             return actCSV === actionLabel;
         });
 
         if (matchSolution) {
             texteResultat = matchSolution.texte;
         } else {
-            // Un code existe pour ces objets, mais pas pour l'action tenteée
             texteResultat = "Action inadaptée.";
         }
     }
     
-    // Affichage du résultat avec le code et les infos de debug
     res.innerHTML = `${texteResultat}<br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
 }
         
