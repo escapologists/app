@@ -218,6 +218,17 @@
             box-shadow: 1px 1px 0px var(--comic-yellow);
         }
 
+        /* --- COULEURS DES CASES DE LA GRILLE --- */
+        .tile-btn.tile-number {
+            background-color: #e0e0e0;
+        }
+        .tile-btn.tile-door {
+            background-color: #fff9c4;
+        }
+        .tile-btn.tile-token {
+            background-color: #ffeb3b;
+        }
+
         /* --- ENIGMA COLORS RESTORED --- */
         .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
         #eni-1 { background-color: #f1c40f !important; }
@@ -430,7 +441,6 @@
         sp.innerHTML = '<option value="">-- AGENT --</option>'; 
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
 
-        // Réinitialiser les sélections Cible et Objet
         selectedCibleIndex = null;
         selectedCibleName = "";
         selectedItemIndex = 0;
@@ -456,6 +466,25 @@
         btnI.querySelector('span').innerText = `OBJET : ${selectedItemName}`;
     }
 
+    function getTileColorClass(text) {
+        if (!text) return "";
+        const str = text.trim().toUpperCase();
+        
+        // Portes (P01 à P99...)
+        if (/^P\d+$/.test(str)) return "tile-door";
+        
+        // Tokens (T01 à T99...)
+        if (/^T\d+$/.test(str)) return "tile-token";
+        
+        // Nombres de 01 à 35 (ou 1 à 35)
+        if (/^\d+$/.test(str)) {
+            const num = parseInt(str, 10);
+            if (num >= 1 && num <= 35) return "tile-number";
+        }
+        
+        return "";
+    }
+
     function openGrid(type) {
         const modal = document.getElementById('grid-modal');
         const title = document.getElementById('modal-title');
@@ -467,7 +496,8 @@
             grille.forEach((l, i) => { 
                 if(i >= 2 && l[0]) {
                     const btn = document.createElement('div');
-                    btn.className = 'tile-btn';
+                    const colorClass = getTileColorClass(l[0]);
+                    btn.className = `tile-btn ${colorClass}`.trim();
                     btn.innerText = l[0];
                     btn.onclick = () => selectCible(i, l[0]);
                     grid.appendChild(btn);
@@ -486,7 +516,8 @@
             grilleAC.forEach((l, i) => { 
                 if(i > 0 && l[0]) {
                     const btn = document.createElement('div');
-                    btn.className = 'tile-btn';
+                    const colorClass = getTileColorClass(l[0]);
+                    btn.className = `tile-btn ${colorClass}`.trim();
                     btn.innerText = l[0];
                     btn.onclick = () => selectItem(i, l[0]);
                     grid.appendChild(btn);
@@ -504,7 +535,6 @@
     function selectCible(idx, name) {
         selectedCibleIndex = idx;
         selectedCibleName = name;
-        // Remise à zéro automatique de l'objet lors du changement de cible
         selectedItemIndex = 0;
         selectedItemName = "AUCUN";
         updatePickerButtons();
@@ -567,7 +597,6 @@
         };
         
         if(isObjectCombination) {
-            // --- Combinaison de deux objets (Grille AC) ---
             const nomC = normalize(grille[cIdx]?.[0]);
             const nomO = normalize(grilleAC[iIdx]?.[0]);
             
@@ -585,12 +614,10 @@
                 code = "";
             }
         } else {
-            // --- Action simple sur un seul objet (Grille Standard) ---
             const colIdx = 1 + (persos.indexOf(pName) * 4) + parseInt(sa.value);
             code = grille[cIdx][colIdx]?.trim();
         }
 
-        // --- CORRESPONDANCE DANS SOLUTIONS.CSV ---
         const getProp = (obj, keyName) => {
             if (!obj) return "";
             const foundKey = Object.keys(obj).find(k => k.trim().toLowerCase() === keyName.toLowerCase());
