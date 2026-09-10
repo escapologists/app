@@ -356,6 +356,7 @@
     }
 
     function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
+    
 function runActionPerso() {
     const pName = document.getElementById('sel-p').value;
     const cIdx = document.getElementById('sel-c-perso').value;
@@ -365,7 +366,16 @@ function runActionPerso() {
     
     if(!pName || !cIdx) return;
     
-    let actionLabel = sa.options[sa.selectedIndex].text.trim().toLowerCase();
+    // Fonction utilitaire pour nettoyer et comparer les textes (accents + minuscules)
+    const clean = str => {
+        if (!str) return "";
+        return str.trim()
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "");
+    };
+    
+    let actionLabel = clean(sa.options[sa.selectedIndex].text);
     let code = "";
     let debugInfo = "";
     let isObjectCombination = (iIdx !== "0" && iIdx !== "");
@@ -406,34 +416,43 @@ function runActionPerso() {
 
     // --- CORRESPONDANCE DANS SOLUTIONS.CSV ---
     
-    // 1. Filtrer par le code et l'expert (si spécifié)
+    const getProp = (obj, keyName) => {
+        if (!obj) return "";
+        const foundKey = Object.keys(obj).find(k => k.trim().toLowerCase() === keyName.toLowerCase());
+        return foundKey ? (obj[foundKey] || "").trim() : "";
+    };
+
+    // 1. Filtrer par le code et l'expert
     const candidates = sols.filter(s => {
-        if (s.code !== code) return false;
+        const sCode = getProp(s, "code");
+        if (sCode !== code) return false;
         
-        const expCSV = s.expert ? s.expert.trim().toUpperCase() : "";
+        const expCSV = getProp(s, "expert").toUpperCase();
         const pInitial = pName ? pName[0].toUpperCase() : "";
         
         return expCSV === "" || expCSV === pInitial;
     });
+
+    console.log(`Code cherché : ${code} | Action nettoyée : "${actionLabel}" | Candidats :`, candidates);
 
     let texteResultat = "Aucun effet détecté.";
 
     if (candidates.length > 0) {
         // 2. Chercher la ligne d'action correspondante
         const matchSolution = candidates.find(s => {
-            let actCSV = s.action ? s.action.trim().toLowerCase() : "";
+            let actCSV = clean(getProp(s, "action"));
             
-            // Si l'action dans le CSV est vide -> Pas de restriction, on affiche le résultat
+            // Si l'action dans le CSV est vide -> Pas de restriction
             if (actCSV === "") {
                 return true;
             }
             
-            // Sinon, l'action spécifiée dans le CSV doit correspondre à l'action sélectionnée
+            // Comparaison souple
             return actCSV === actionLabel;
         });
 
         if (matchSolution) {
-            texteResultat = matchSolution.texte;
+            texteResultat = getProp(matchSolution, "texte") || matchSolution.texte;
         } else {
             texteResultat = "Action inadaptée.";
         }
