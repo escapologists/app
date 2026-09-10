@@ -36,7 +36,8 @@
             align-items: center;
         }
 
-        /* --- SPLASH SCREEN --- */
+      
+/* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100dvh; 
@@ -48,7 +49,13 @@
             transition: opacity 0.8s ease-out;
             pointer-events: none;
         }
-        #splash-screen img { width: 100%; height: 100%; object-fit: cover; }
+        
+        #splash-screen img { 
+            width: 90%; 
+            max-width: 360px; 
+            height: 92%; 
+            object-fit: contain; 
+        }
 
         .app-container { 
             width: 90%; 
