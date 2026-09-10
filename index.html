@@ -153,13 +153,13 @@
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
         select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
-        /* --- GRILLES DE BOUTONS POUR CIBLES ET OBJETS --- */
+        /* --- GRILLES DE BOUTONS --- */
         .selection-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 6px;
             margin-bottom: 12px;
-            max-height: 140px;
+            max-height: 130px;
             overflow-y: auto;
             padding: 2px;
         }
@@ -180,7 +180,7 @@
             background-color: #ffffff;
             border: 2px solid var(--ink-black);
             font-family: 'Bangers', cursive;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-align: center;
             text-transform: uppercase;
             cursor: pointer;
@@ -387,11 +387,15 @@
     }
 
     function initMenus() {
-        const sp = document.getElementById('sel-p'), gridC = document.getElementById('grid-cibles'), gridI = document.getElementById('grid-items'), se = document.getElementById('sel-eni');
+        const sp = document.getElementById('sel-p');
+        const gridC = document.getElementById('grid-cibles');
+        const gridI = document.getElementById('grid-items');
+        const se = document.getElementById('sel-eni');
         
-        sp.innerHTML = '<option value="">-- AGENT --</option>'; persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+        sp.innerHTML = '<option value="">-- AGENT --</option>'; 
+        persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
         
-        // Génération de la grille des Cibles
+        // --- GÉNÉRATION DE LA GRILLE DES CIBLES (BOUTONS) ---
         gridC.innerHTML = '';
         grille.forEach((l, i) => { 
             if(i >= 2 && l[0]) {
@@ -404,7 +408,7 @@
             }
         });
 
-        // Génération de la grille des Objets
+        // --- GÉNÉRATION DE LA GRILLE DES OBJETS (BOUTONS) ---
         gridI.innerHTML = `
             <label class="grid-btn">
                 <input type="radio" name="rad-item" value="0" checked>
@@ -422,7 +426,9 @@
             }
         });
 
-        se.innerHTML = '<option value="">-- ENIGME --</option>'; grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
+        se.innerHTML = '<option value="">-- ENIGME --</option>'; 
+        grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
+        
         ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
             let e = document.getElementById(id); e.innerHTML = "";
             for(let i=0; i<=9; i++) e.innerHTML += `<option value="${i}">${i}</option>`;
@@ -459,7 +465,10 @@
         const sa = document.getElementById('sel-a');
         const res = document.getElementById('res-perso');
         
-        if(!pName || !radC || !sa.value) return;
+        if(!pName || !radC || !sa.value) {
+            res.innerHTML = "Veuillez sélectionner un agent, une action et une cible.";
+            return;
+        }
 
         const cIdx = radC.value;
         const iIdx = radI ? radI.value : "0";
@@ -474,7 +483,6 @@
         
         let actionLabel = clean(sa.options[sa.selectedIndex].text);
         let code = "";
-        let debugInfo = "";
         let isObjectCombination = (iIdx !== "0" && iIdx !== "");
         
         const normalize = val => {
@@ -496,30 +504,24 @@
             
             if (r1 !== -1 && c1 !== -1 && grilleAC[r1]?.[c1]?.trim()) {
                 code = grilleAC[r1][c1].trim();
-                debugInfo = `Grille AC [L${r1} (${nomC}), C${c1} (${nomO})]`;
             } else if (r2 !== -1 && c2 !== -1 && grilleAC[r2]?.[c2]?.trim()) {
                 code = grilleAC[r2][c2].trim();
-                debugInfo = `Grille AC inversée [L${r2} (${nomO}), C${c2} (${nomC})]`;
             } else {
                 code = "";
-                debugInfo = `Introuvable AC pour (${nomC} / ${nomO})`;
             }
         } else {
             // --- Action simple sur un seul objet (Grille Standard) ---
             const colIdx = 1 + (persos.indexOf(pName) * 4) + parseInt(sa.value);
             code = grille[cIdx][colIdx]?.trim();
-            debugInfo = `Grille Standard [Ligne ${cIdx}, Col ${colIdx}]`;
         }
 
         // --- CORRESPONDANCE DANS SOLUTIONS.CSV ---
-        
         const getProp = (obj, keyName) => {
             if (!obj) return "";
             const foundKey = Object.keys(obj).find(k => k.trim().toLowerCase() === keyName.toLowerCase());
             return foundKey ? (obj[foundKey] || "").trim() : "";
         };
 
-        // 1. Filtrer par le code et l'expert
         const candidates = sols.filter(s => {
             const sCode = getProp(s, "code");
             if (sCode !== code) return false;
@@ -533,10 +535,8 @@
         let texteResultat = "Aucun effet détecté.";
 
         if (candidates.length > 0) {
-            // 2. Chercher en priorité l'action spécifique
             let matchSolution = candidates.find(s => clean(getProp(s, "action")) === actionLabel);
 
-            // 3. Sinon, se rabattre sur l'action générique (case vide)
             if (!matchSolution) {
                 matchSolution = candidates.find(s => clean(getProp(s, "action")) === "");
             }
