@@ -370,14 +370,14 @@ function runActionPerso() {
     let code = "";
     let debugInfo = "";
     
+    // Fonction utilitaire pour ajouter un zéro initial aux chiffres uniques (ex: "9" -> "09")
+    const normalize = val => {
+        if (!val) return "";
+        let s = val.trim();
+        return (s.length === 1 && !isNaN(s)) ? "0" + s : s;
+    };
+    
     if(iIdx !== "0" && iIdx !== "") {
-        // Nettoyage et normalisation des chaînes (ex: "9" devient "09")
-        const normalize = val => {
-            if (!val) return "";
-            let s = val.trim();
-            return (s.length === 1 && !isNaN(s)) ? "0" + s : s;
-        };
-
         const nomC = normalize(grille[cIdx]?.[0]);
         const nomO = normalize(grilleAC[iIdx]?.[0]);
         
@@ -400,14 +400,35 @@ function runActionPerso() {
             debugInfo = `Introuvable AC : Ligne/Col pour (${nomC} / ${nomO})`;
         }
     } else {
+        // Calcul pour la grille standard
         const colIdx = 1 + (persos.indexOf(pName) * 4) + parseInt(sa.value);
         code = grille[cIdx][colIdx]?.trim();
         debugInfo = `Grille [Ligne ${cIdx}, Col ${colIdx}]`;
     }
 
-    const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
-    let texteResultat = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
+    // 1. Récupération de tous les candidats ayant le bon code et le bon expert (ou universel "")
+    const candidates = sols.filter(s => 
+        s.code === code && 
+        (s.expert === "" || s.expert === pName[0].toUpperCase())
+    );
+
+    let texteResultat = "Aucun effet détecté.";
+
+    if (candidates.length > 0) {
+        // 2. Recherche parmi les candidats de la ligne correspondant exactement à l'action choisie
+        const matchAction = candidates.find(s => 
+            s.action && s.action.trim().toLowerCase() === actionLabel.trim().toLowerCase()
+        );
+
+        if (matchAction) {
+            texteResultat = matchAction.texte;
+        } else {
+            // Un résultat existe pour ce code mais pas pour cette action
+            texteResultat = "Action inadaptée.";
+        }
+    }
     
+    // Affichage du résultat final et des détails de debug
     res.innerHTML = `${texteResultat}<br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
 }
         
