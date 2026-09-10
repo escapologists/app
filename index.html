@@ -228,6 +228,9 @@
         .tile-btn.tile-token {
             background-color: #ffeb3b;
         }
+        .tile-btn.tile-character {
+            background-color: #e1f5fe;
+        }
 
         /* --- ENIGMA COLORS RESTORED --- */
         .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
@@ -468,17 +471,23 @@
 
     function getTileColorClass(text) {
         if (!text) return "";
-        const str = text.trim().toUpperCase();
+        const str = text.trim();
+        const upperStr = str.toUpperCase();
+        
+        // Personnages (Banks, Julia, Kim, Murphy, Stacy)
+        if (persos.some(p => p.toLowerCase() === str.toLowerCase())) {
+            return "tile-character";
+        }
         
         // Portes (P01 à P99...)
-        if (/^P\d+$/.test(str)) return "tile-door";
+        if (/^P\d+$/i.test(upperStr)) return "tile-door";
         
         // Tokens (T01 à T99...)
-        if (/^T\d+$/.test(str)) return "tile-token";
+        if (/^T\d+$/i.test(upperStr)) return "tile-token";
         
         // Nombres de 01 à 35 (ou 1 à 35)
-        if (/^\d+$/.test(str)) {
-            const num = parseInt(str, 10);
+        if (/^\d+$/.test(upperStr)) {
+            const num = parseInt(upperStr, 10);
             if (num >= 1 && num <= 35) return "tile-number";
         }
         
