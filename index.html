@@ -153,40 +153,46 @@
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
         select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
-        /* --- GRILLE D'ACTIONS INTÉGRÉE --- */
-        .action-grid {
+        /* --- GRILLES DE BOUTONS POUR CIBLES ET OBJETS --- */
+        .selection-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-bottom: 10px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+            max-height: 140px;
+            overflow-y: auto;
+            padding: 2px;
         }
 
-        .action-btn input[type="radio"] {
+        .grid-btn input[type="radio"] {
             position: absolute;
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-        .action-btn span {
-            display: block;
-            padding: 8px 4px;
+        .grid-btn span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 4px;
             background-color: #ffffff;
-            border: 3px solid var(--ink-black);
+            border: 2px solid var(--ink-black);
             font-family: 'Bangers', cursive;
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-align: center;
             text-transform: uppercase;
             cursor: pointer;
             user-select: none;
-            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
-            transition: background-color 0.1s ease;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.15);
+            word-break: break-word;
         }
 
-        .action-btn input[type="radio"]:checked + span {
+        .grid-btn input[type="radio"]:checked + span {
             background-color: var(--primary);
             color: #ffffff;
-            box-shadow: 2px 2px 0px var(--ink-black);
+            box-shadow: 1px 1px 0px var(--ink-black);
             transform: translate(1px, 1px);
         }
 
@@ -270,16 +276,14 @@
         <select id="sel-p" onchange="updateAgentVisuals()"></select>
         
         <label>Action</label>
-        <div class="action-grid" id="grid-a">
-            <!-- Boutons générés dynamiquement selon l'agent -->
-        </div>
-
+        <select id="sel-a" onchange="toggleItemSelect()"></select>
+        
         <label>Cible</label>
-        <select id="sel-c-perso" onchange="resetItemUsed()"></select>
+        <div id="grid-cibles" class="selection-grid"></div>
         
         <div id="container-item" style="display:none;">
             <label>Objet</label>
-            <select id="sel-item-used"></select>
+            <div id="grid-items" class="selection-grid"></div>
         </div>
         
         <div id="res-perso" class="result-box">En attente...</div>
@@ -383,10 +387,41 @@
     }
 
     function initMenus() {
-        const sp = document.getElementById('sel-p'), sc = document.getElementById('sel-c-perso'), siu = document.getElementById('sel-item-used'), se = document.getElementById('sel-eni');
+        const sp = document.getElementById('sel-p'), gridC = document.getElementById('grid-cibles'), gridI = document.getElementById('grid-items'), se = document.getElementById('sel-eni');
+        
         sp.innerHTML = '<option value="">-- AGENT --</option>'; persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
-        sc.innerHTML = '<option value="">-- CIBLE --</option>'; grille.forEach((l, i) => { if(i >= 2 && l[0]) sc.innerHTML += `<option value="${i}">${l[0]}</option>`; });
-        siu.innerHTML = '<option value="0">-- AUCUN OBJET --</option>'; grilleAC.forEach((l, i) => { if(i > 0 && l[0]) siu.innerHTML += `<option value="${i}">${l[0]}</option>`; });
+        
+        // Génération de la grille des Cibles
+        gridC.innerHTML = '';
+        grille.forEach((l, i) => { 
+            if(i >= 2 && l[0]) {
+                gridC.innerHTML += `
+                    <label class="grid-btn">
+                        <input type="radio" name="rad-cible" value="${i}" onchange="resetItemUsed()">
+                        <span>${l[0]}</span>
+                    </label>
+                `;
+            }
+        });
+
+        // Génération de la grille des Objets
+        gridI.innerHTML = `
+            <label class="grid-btn">
+                <input type="radio" name="rad-item" value="0" checked>
+                <span>AUCUN</span>
+            </label>
+        `;
+        grilleAC.forEach((l, i) => { 
+            if(i > 0 && l[0]) {
+                gridI.innerHTML += `
+                    <label class="grid-btn">
+                        <input type="radio" name="rad-item" value="${i}">
+                        <span>${l[0]}</span>
+                    </label>
+                `;
+            }
+        });
+
         se.innerHTML = '<option value="">-- ENIGME --</option>'; grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
         ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
             let e = document.getElementById(id); e.innerHTML = "";
@@ -396,46 +431,39 @@
     }
 
     function updateAgentVisuals() {
-        const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), gridA = document.getElementById('grid-a');
+        const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
         if (p) { 
             img.src = `${p}.png`; 
             img.style.display = 'block'; 
-            gridA.innerHTML = ''; 
-            mapping[p].forEach((act, i) => {
-                const checked = i === 0 ? 'checked' : '';
-                gridA.innerHTML += `
-                    <label class="action-btn">
-                        <input type="radio" name="action-choice" value="${i}" data-text="${act}" ${checked} onchange="toggleItemSelect()">
-                        <span>${act}</span>
-                    </label>
-                `;
-            }); 
+            sa.innerHTML = ''; 
+            mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); 
             toggleItemSelect(); 
-        } else {
-            gridA.innerHTML = '';
         }
     }
 
     function toggleItemSelect() { 
-        const selectedRadio = document.querySelector('input[name="action-choice"]:checked');
-        const aLabel = selectedRadio ? selectedRadio.getAttribute('data-text') : "";
+        const sa = document.getElementById('sel-a');
+        const aLabel = sa.options[sa.selectedIndex]?.text;
         document.getElementById('container-item').style.display = (aLabel && !["regarder", "Manipuler"].includes(aLabel)) ? "block" : (aLabel === "Manipuler" ? "block" : "none");
     }
 
-    function resetItemUsed() { document.getElementById('sel-item-used').selectedIndex = 0; }
+    function resetItemUsed() {
+        const defaultItem = document.querySelector('input[name="rad-item"][value="0"]');
+        if(defaultItem) defaultItem.checked = true;
+    }
     
     function runActionPerso() {
         const pName = document.getElementById('sel-p').value;
-        const cIdx = document.getElementById('sel-c-perso').value;
-        const iIdx = document.getElementById('sel-item-used').value;
-        const selectedRadio = document.querySelector('input[name="action-choice"]:checked');
+        const radC = document.querySelector('input[name="rad-cible"]:checked');
+        const radI = document.querySelector('input[name="rad-item"]:checked');
+        const sa = document.getElementById('sel-a');
         const res = document.getElementById('res-perso');
         
-        if(!pName || !cIdx || !selectedRadio) return;
-        
-        const actionValue = parseInt(selectedRadio.value);
-        const actionRawText = selectedRadio.getAttribute('data-text');
+        if(!pName || !radC || !sa.value) return;
 
+        const cIdx = radC.value;
+        const iIdx = radI ? radI.value : "0";
+        
         const clean = str => {
             if (!str) return "";
             return str.trim()
@@ -444,7 +472,7 @@
                       .replace(/[\u0300-\u036f]/g, "");
         };
         
-        let actionLabel = clean(actionRawText);
+        let actionLabel = clean(sa.options[sa.selectedIndex].text);
         let code = "";
         let debugInfo = "";
         let isObjectCombination = (iIdx !== "0" && iIdx !== "");
@@ -478,7 +506,7 @@
             }
         } else {
             // --- Action simple sur un seul objet (Grille Standard) ---
-            const colIdx = 1 + (persos.indexOf(pName) * 4) + actionValue;
+            const colIdx = 1 + (persos.indexOf(pName) * 4) + parseInt(sa.value);
             code = grille[cIdx][colIdx]?.trim();
             debugInfo = `Grille Standard [Ligne ${cIdx}, Col ${colIdx}]`;
         }
