@@ -153,47 +153,69 @@
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
         select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
-        /* --- GRILLES DE BOUTONS --- */
-        .selection-grid {
+        /* --- BOUTONS DE SÉLECTION CIBLE / OBJET --- */
+        .picker-btn {
+            background: #ffffff;
+            color: var(--ink-black);
+            border: 3px solid var(--ink-black);
+            text-align: left;
+            margin-bottom: 10px;
+            box-shadow: 3px 3px 0px var(--ink-black);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- MODALE SELECTION EN PLEIN ÉCRAN --- */
+        .selection-modal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            z-index: 200;
+            flex-direction: column;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .selection-modal.active { display: flex; }
+
+        .modal-title {
+            font-family: 'Bangers', cursive;
+            color: var(--comic-yellow);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .full-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin-bottom: 12px;
-            max-height: 130px;
+            gap: 8px;
+            flex: 1;
             overflow-y: auto;
-            padding: 2px;
+            padding: 5px;
         }
 
-        .grid-btn input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .grid-btn span {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 38px;
-            padding: 4px;
-            background-color: #ffffff;
-            border: 2px solid var(--ink-black);
+        .tile-btn {
+            background: #ffffff;
+            border: 3px solid var(--ink-black);
             font-family: 'Bangers', cursive;
-            font-size: 0.85rem;
+            font-size: 1rem;
             text-align: center;
             text-transform: uppercase;
             cursor: pointer;
-            user-select: none;
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.15);
+            padding: 10px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 0px var(--comic-yellow);
             word-break: break-word;
+            color: var(--ink-black);
         }
-
-        .grid-btn input[type="radio"]:checked + span {
-            background-color: var(--primary);
-            color: #ffffff;
-            box-shadow: 1px 1px 0px var(--ink-black);
-            transform: translate(1px, 1px);
+        .tile-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px var(--comic-yellow);
         }
 
         /* --- ENIGMA COLORS RESTORED --- */
@@ -204,10 +226,10 @@
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
         /* --- AGENT PHOTO --- */
-        .agent-avatar-container { width: 110px; height: 180px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 15px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
+        .agent-avatar-container { width: 110px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 10px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
         #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
-        .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 50px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
+        .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 40px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
     </style>
 </head>
 <body>
@@ -219,6 +241,13 @@
         <h2 style="font-family:'Bangers'; font-size:2.5rem; color:var(--alert-red);">TEMPS ÉCOULÉ !</h2>
         <button onclick="addExtraTime()">CONTINUER (+10 MN)</button>
         <button class="secondary" onclick="quitToHome()">ABANDONNER</button>
+    </div>
+
+    <!-- MODALE GRILLE PLEIN ÉCRAN -->
+    <div id="grid-modal" class="selection-modal">
+        <div id="modal-title" class="modal-title">CHOIX</div>
+        <div id="modal-grid" class="full-grid"></div>
+        <button class="secondary" style="margin-top:10px;" onclick="closeModal()">ANNULER</button>
     </div>
 
     <div id="mission-timer" class="timer-bar">
@@ -278,12 +307,14 @@
         <label>Action</label>
         <select id="sel-a" onchange="toggleItemSelect()"></select>
         
-        <label>Cible</label>
-        <div id="grid-cibles" class="selection-grid"></div>
+        <button id="btn-select-cible" class="picker-btn" onclick="openGrid('cible')">
+            <span>CIBLE : NON SÉLECTIONNÉE</span> <span>▼</span>
+        </button>
         
         <div id="container-item" style="display:none;">
-            <label>Objet</label>
-            <div id="grid-items" class="selection-grid"></div>
+            <button id="btn-select-item" class="picker-btn" onclick="openGrid('item')">
+                <span>OBJET : AUCUN</span> <span>▼</span>
+            </button>
         </div>
         
         <div id="res-perso" class="result-box">En attente...</div>
@@ -316,6 +347,12 @@
     let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
     let currentMissionId = "", currentMissionName = "", indiceLevel = 0;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], indicesCSV = [];
+    
+    let selectedCibleIndex = null;
+    let selectedCibleName = "";
+    let selectedItemIndex = 0;
+    let selectedItemName = "AUCUN";
+
     const alarmSound = document.getElementById('alarm-sound');
     const persos = ["Banks", "Julia", "Kim", "Murphy", "Stacy"];
     const mapping = {
@@ -388,43 +425,18 @@
 
     function initMenus() {
         const sp = document.getElementById('sel-p');
-        const gridC = document.getElementById('grid-cibles');
-        const gridI = document.getElementById('grid-items');
         const se = document.getElementById('sel-eni');
         
         sp.innerHTML = '<option value="">-- AGENT --</option>'; 
         persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
-        
-        // --- GÉNÉRATION DE LA GRILLE DES CIBLES (BOUTONS) ---
-        gridC.innerHTML = '';
-        grille.forEach((l, i) => { 
-            if(i >= 2 && l[0]) {
-                gridC.innerHTML += `
-                    <label class="grid-btn">
-                        <input type="radio" name="rad-cible" value="${i}" onchange="resetItemUsed()">
-                        <span>${l[0]}</span>
-                    </label>
-                `;
-            }
-        });
 
-        // --- GÉNÉRATION DE LA GRILLE DES OBJETS (BOUTONS) ---
-        gridI.innerHTML = `
-            <label class="grid-btn">
-                <input type="radio" name="rad-item" value="0" checked>
-                <span>AUCUN</span>
-            </label>
-        `;
-        grilleAC.forEach((l, i) => { 
-            if(i > 0 && l[0]) {
-                gridI.innerHTML += `
-                    <label class="grid-btn">
-                        <input type="radio" name="rad-item" value="${i}">
-                        <span>${l[0]}</span>
-                    </label>
-                `;
-            }
-        });
+        // Réinitialiser les sélections Cible et Objet
+        selectedCibleIndex = null;
+        selectedCibleName = "";
+        selectedItemIndex = 0;
+        selectedItemName = "AUCUN";
+        
+        updatePickerButtons();
 
         se.innerHTML = '<option value="">-- ENIGME --</option>'; 
         grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
@@ -434,6 +446,76 @@
             for(let i=0; i<=9; i++) e.innerHTML += `<option value="${i}">${i}</option>`;
         });
         updateHintButton();
+    }
+
+    function updatePickerButtons() {
+        const btnC = document.getElementById('btn-select-cible');
+        const btnI = document.getElementById('btn-select-item');
+        
+        btnC.querySelector('span').innerText = selectedCibleName ? `CIBLE : ${selectedCibleName}` : "SÉLECTIONNER UNE CIBLE";
+        btnI.querySelector('span').innerText = `OBJET : ${selectedItemName}`;
+    }
+
+    function openGrid(type) {
+        const modal = document.getElementById('grid-modal');
+        const title = document.getElementById('modal-title');
+        const grid = document.getElementById('modal-grid');
+        grid.innerHTML = '';
+
+        if (type === 'cible') {
+            title.innerText = "CHOISIR UNE CIBLE";
+            grille.forEach((l, i) => { 
+                if(i >= 2 && l[0]) {
+                    const btn = document.createElement('div');
+                    btn.className = 'tile-btn';
+                    btn.innerText = l[0];
+                    btn.onclick = () => selectCible(i, l[0]);
+                    grid.appendChild(btn);
+                }
+            });
+        } else if (type === 'item') {
+            title.innerText = "CHOISIR UN OBJET";
+            
+            // Option AUCUN
+            const btnNone = document.createElement('div');
+            btnNone.className = 'tile-btn';
+            btnNone.innerText = "AUCUN";
+            btnNone.onclick = () => selectItem(0, "AUCUN");
+            grid.appendChild(btnNone);
+
+            grilleAC.forEach((l, i) => { 
+                if(i > 0 && l[0]) {
+                    const btn = document.createElement('div');
+                    btn.className = 'tile-btn';
+                    btn.innerText = l[0];
+                    btn.onclick = () => selectItem(i, l[0]);
+                    grid.appendChild(btn);
+                }
+            });
+        }
+
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('grid-modal').classList.remove('active');
+    }
+
+    function selectCible(idx, name) {
+        selectedCibleIndex = idx;
+        selectedCibleName = name;
+        // Remise à zéro automatique de l'objet lors du changement de cible
+        selectedItemIndex = 0;
+        selectedItemName = "AUCUN";
+        updatePickerButtons();
+        closeModal();
+    }
+
+    function selectItem(idx, name) {
+        selectedItemIndex = idx;
+        selectedItemName = name;
+        updatePickerButtons();
+        closeModal();
     }
 
     function updateAgentVisuals() {
@@ -452,26 +534,19 @@
         const aLabel = sa.options[sa.selectedIndex]?.text;
         document.getElementById('container-item').style.display = (aLabel && !["regarder", "Manipuler"].includes(aLabel)) ? "block" : (aLabel === "Manipuler" ? "block" : "none");
     }
-
-    function resetItemUsed() {
-        const defaultItem = document.querySelector('input[name="rad-item"][value="0"]');
-        if(defaultItem) defaultItem.checked = true;
-    }
     
     function runActionPerso() {
         const pName = document.getElementById('sel-p').value;
-        const radC = document.querySelector('input[name="rad-cible"]:checked');
-        const radI = document.querySelector('input[name="rad-item"]:checked');
         const sa = document.getElementById('sel-a');
         const res = document.getElementById('res-perso');
         
-        if(!pName || !radC || !sa.value) {
-            res.innerHTML = "Veuillez sélectionner un agent, une action et une cible.";
+        if(!pName || selectedCibleIndex === null || !sa.value) {
+            res.innerHTML = "Veuillez choisir un Agent, une Action et une Cible.";
             return;
         }
 
-        const cIdx = radC.value;
-        const iIdx = radI ? radI.value : "0";
+        const cIdx = selectedCibleIndex;
+        const iIdx = selectedItemIndex;
         
         const clean = str => {
             if (!str) return "";
@@ -483,7 +558,7 @@
         
         let actionLabel = clean(sa.options[sa.selectedIndex].text);
         let code = "";
-        let isObjectCombination = (iIdx !== "0" && iIdx !== "");
+        let isObjectCombination = (iIdx !== 0);
         
         const normalize = val => {
             if (!val) return "";
