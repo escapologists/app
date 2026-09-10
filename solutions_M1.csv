@@ -284,7 +284,8 @@
 5290;;;Carrement inutile
 5291;;;N'importe quoi
 5297;;;C'est improductif
-5301;S;;Jeter les cartes 10 et 14. Prenez la carte 17
+5301;;;Il faut des compétences d'artificier !
+5301;S;Manipuler;Jeter les cartes 10 et 14. Prenez la carte 17
 5302;;;inefficace
 5304;;;Aucun effet
 5307;;;Aucun interêt
