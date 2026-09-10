@@ -450,7 +450,8 @@ function runActionPerso() {
         }
     }
     
-    res.innerHTML = `${texteResultat}<br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
+    //fonction debug : res.innerHTML = `${texteResultat}<br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
+    res.innerHTML = texteResultat;
 }       
     function updateHintButton(e) {
         const idEni = document.getElementById('sel-eni').value;
