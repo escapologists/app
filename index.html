@@ -153,7 +153,7 @@
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
         select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
-        /* --- BOUTONS DE SÉLECTION CIBLE / OBJET --- */
+        /* --- BOUTONS DE SÉLECTION OBJET 1 / OBJET 2 --- */
         .picker-btn {
             background: #ffffff;
             color: var(--ink-black);
@@ -322,12 +322,12 @@
         <select id="sel-a" onchange="toggleItemSelect()"></select>
         
         <button id="btn-select-cible" class="picker-btn" onclick="openGrid('cible')">
-            <span>CIBLE : NON SÉLECTIONNÉE</span> <span>▼</span>
+            <span>OBJET 1 : NON SÉLECTIONNÉ</span> <span>▼</span>
         </button>
         
         <div id="container-item" style="display:none;">
             <button id="btn-select-item" class="picker-btn" onclick="openGrid('item')">
-                <span>OBJET : AUCUN</span> <span>▼</span>
+                <span>OBJET 2 : AUCUN</span> <span>▼</span>
             </button>
         </div>
         
@@ -465,8 +465,8 @@
         const btnC = document.getElementById('btn-select-cible');
         const btnI = document.getElementById('btn-select-item');
         
-        btnC.querySelector('span').innerText = selectedCibleName ? `CIBLE : ${selectedCibleName}` : "SÉLECTIONNER UNE CIBLE";
-        btnI.querySelector('span').innerText = `OBJET : ${selectedItemName}`;
+        btnC.querySelector('span').innerText = selectedCibleName ? `OBJET 1 : ${selectedCibleName}` : "CHOISIR UN OBJET 1";
+        btnI.querySelector('span').innerText = `OBJET 2 : ${selectedItemName}`;
     }
 
     function getTileColorClass(text) {
@@ -501,7 +501,7 @@
         grid.innerHTML = '';
 
         if (type === 'cible') {
-            title.innerText = "CHOISIR UNE CIBLE";
+            title.innerText = "CHOISIR UN OBJET 1";
             grille.forEach((l, i) => { 
                 if(i >= 2 && l[0]) {
                     const btn = document.createElement('div');
@@ -513,7 +513,7 @@
                 }
             });
         } else if (type === 'item') {
-            title.innerText = "CHOISIR UN OBJET";
+            title.innerText = "CHOISIR UN OBJET 2";
             
             // Option AUCUN
             const btnNone = document.createElement('div');
@@ -580,7 +580,7 @@
         const res = document.getElementById('res-perso');
         
         if(!pName || selectedCibleIndex === null || !sa.value) {
-            res.innerHTML = "Veuillez choisir un Agent, une Action et une Cible.";
+            res.innerHTML = "Veuillez choisir un Agent, une Action et un Objet 1.";
             return;
         }
 
