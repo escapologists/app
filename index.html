@@ -366,7 +366,6 @@ function runActionPerso() {
     
     if(!pName || !cIdx) return;
     
-    // Fonction utilitaire pour nettoyer et comparer les textes (accents + minuscules)
     const clean = str => {
         if (!str) return "";
         return str.trim()
@@ -433,23 +432,16 @@ function runActionPerso() {
         return expCSV === "" || expCSV === pInitial;
     });
 
-    console.log(`Code cherché : ${code} | Action nettoyée : "${actionLabel}" | Candidats :`, candidates);
-
     let texteResultat = "Aucun effet détecté.";
 
     if (candidates.length > 0) {
-        // 2. Chercher la ligne d'action correspondante
-        const matchSolution = candidates.find(s => {
-            let actCSV = clean(getProp(s, "action"));
-            
-            // Si l'action dans le CSV est vide -> Pas de restriction
-            if (actCSV === "") {
-                return true;
-            }
-            
-            // Comparaison souple
-            return actCSV === actionLabel;
-        });
+        // 2. Chercher en priorité l'action spécifique
+        let matchSolution = candidates.find(s => clean(getProp(s, "action")) === actionLabel);
+
+        // 3. Sinon, se rabattre sur l'action générique (case vide)
+        if (!matchSolution) {
+            matchSolution = candidates.find(s => clean(getProp(s, "action")) === "");
+        }
 
         if (matchSolution) {
             texteResultat = getProp(matchSolution, "texte") || matchSolution.texte;
@@ -459,8 +451,7 @@ function runActionPerso() {
     }
     
     res.innerHTML = `${texteResultat}<br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
-}
-        
+}       
     function updateHintButton(e) {
         const idEni = document.getElementById('sel-eni').value;
         const btn = document.getElementById('btn-get-hint');
