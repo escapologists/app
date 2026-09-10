@@ -368,6 +368,7 @@
         
         let actionLabel = sa.options[sa.selectedIndex].text;
         let code = "";
+        let debugInfo = ""; // <-- Initialisation de la variable
         
         if(iIdx !== "0" && iIdx !== "") {
             const nomC = grille[cIdx][0].trim();
@@ -381,20 +382,25 @@
             
             if (r1 !== -1 && c1 !== -1 && grilleAC[r1][c1]?.trim()) {
                 code = grilleAC[r1][c1].trim();
+                debugInfo = `Tableau AC [L${r1}, C${c1}]`;
             } else if (r2 !== -1 && c2 !== -1 && grilleAC[r2][c2]?.trim()) {
                 code = grilleAC[r2][c2].trim();
+                debugInfo = `Tableau AC inversé [L${r2}, C${c2}]`;
             } else {
                 code = "";
+                debugInfo = "Combinaison introuvable dans grilleAC";
             }
         } else {
-            code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
+            const colIdx = 1 + (persos.indexOf(pName) * 4) + parseInt(sa.value);
+            code = grille[cIdx][colIdx]?.trim();
+            debugInfo = `Grille [Ligne ${cIdx}, Col ${colIdx}]`;
         }
 
         const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
         let texteResultat = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
-        res.innerText = texteResultat;
-        // Affichage dans le résultat (Texte + Code + Coordonnées Debug)
-    res.innerHTML = `${texteResultat} <br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
+        
+        // Affichage propre du résultat avec debugInfo défini
+        res.innerHTML = `${texteResultat}<br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
     }
         
     function updateHintButton(e) {
