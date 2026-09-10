@@ -393,6 +393,8 @@
         const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
         let texteResultat = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
         res.innerText = texteResultat;
+        // Affichage dans le résultat (Texte + Code + Coordonnées Debug)
+    res.innerHTML = `${texteResultat} <br><small style="color: #666;">Code : <b>${code || "Aucun"}</b> — Debug : ${debugInfo}</small>`;
     }
         
     function updateHintButton(e) {
