@@ -364,31 +364,38 @@ function runActionPerso() {
     let code = "";
     
     // Si un objet est sélectionné (différent de "0" ou vide)
-    if(iIdx !== "0" && iIdx !== "") {
+if(iIdx !== "0" && iIdx !== "") {
+        // Correction : On récupère le nom de l'objet dans "grille" via son index
         const nomC = grille[cIdx][0].trim();
-        const nomO = grilleAC[iIdx][0].trim();
+        const nomO = grille[iIdx][0].trim();
         
         // Tentative 1 : Cible en ligne, Objet en colonne (A + B)
         let r1 = grilleAC.findIndex(r => r[0]?.trim() === nomC);
-        let c1 = grilleAC[0].findIndex(c => c?.trim() === nomO);
+        let c1 = grilleAC[0]?.findIndex(c => c?.trim() === nomO);
         
-        if (r1 !== -1 && c1 !== -1 && grilleAC[r1][c1]?.trim() !== "") {
+        // Tentative 2 : Objet en ligne, Cible en colonne (B + A)
+        let r2 = grilleAC.findIndex(r => r[0]?.trim() === nomO);
+        let c2 = grilleAC[0]?.findIndex(c => c?.trim() === nomC);
+        
+        if (r1 !== -1 && c1 !== -1 && grilleAC[r1][c1]?.trim()) {
             code = grilleAC[r1][c1].trim();
+            debugInfo = `[Mode A+B | r1:${r1}, c1:${c1}]`;
+        } else if (r2 !== -1 && c2 !== -1 && grilleAC[r2][c2]?.trim()) {
+            code = grilleAC[r2][c2].trim();
+            debugInfo = `[Mode B+A | r2:${r2}, c2:${c2}]`;
         } else {
-            // Tentative 2 : Objet en ligne, Cible en colonne (B + A)
-            let r2 = grilleAC.findIndex(r => r[0]?.trim() === nomO);
-            let c2 = grilleAC[0].findIndex(c => c?.trim() === nomC);
-            
-            code = (r2 !== -1 && c2 !== -1) ? grilleAC[r2][c2]?.trim() : "";
+            code = "";
+            debugInfo = `[Échec | r1:${r1}, c1:${c1} | r2:${r2}, c2:${c2}]`;
         }
     } else {
-        // Si aucun objet, action classique sur la grille personnage
+        // Action seule sans objet
         code = grille[cIdx][1 + (persos.indexOf(pName) * 4) + parseInt(sa.value)]?.trim();
+        debugInfo = `[Action seule]`;
     }
-    
-    // Recherche du résultat dans le fichier des solutions
+
+    // Recherche dans les solutions
     const match = sols.find(s => s.code === code && (s.expert === "" || s.expert === pName[0].toUpperCase()));
-    res.innerHTML = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
+    let texteResultat = match ? (match.action && match.action.toLowerCase() !== actionLabel.toLowerCase() ? "Action inadaptée." : match.texte) : "Aucun effet détecté.";
 }
     
     function updateHintButton(e) {
