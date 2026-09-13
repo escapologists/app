@@ -36,8 +36,7 @@
             align-items: center;
         }
 
-      
-/* --- SPLASH SCREEN --- */
+        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100dvh; 
@@ -49,7 +48,6 @@
             transition: opacity 0.8s ease-out;
             pointer-events: none;
         }
-        
         #splash-screen img { 
             width: 90%; 
             max-width: 360px; 
@@ -160,17 +158,39 @@
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
         select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
-        /* --- BOUTONS DE SÉLECTION OBJET 1 / OBJET 2 --- */
+        /* --- ALIGNEMENT DES SELECTIONS OBJET 1 / OBJET 2 --- */
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .field-label-box {
+            background: var(--comic-yellow);
+            border: 3px solid var(--ink-black);
+            font-family: 'Bangers', cursive;
+            font-size: 1rem;
+            color: var(--ink-black);
+            padding: 10px 8px;
+            white-space: nowrap;
+            box-shadow: 3px 3px 0px var(--ink-black);
+            text-transform: uppercase;
+        }
+
         .picker-btn {
+            flex: 1;
             background: #ffffff;
             color: var(--ink-black);
             border: 3px solid var(--ink-black);
             text-align: left;
-            margin-bottom: 10px;
+            margin-bottom: 0;
+            padding: 10px 12px;
             box-shadow: 3px 3px 0px var(--ink-black);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 1rem;
         }
 
         /* --- MODALE SELECTION EN PLEIN ÉCRAN --- */
@@ -239,7 +259,7 @@
             background-color: #e1f5fe;
         }
 
-        /* --- ENIGMA COLORS RESTORED --- */
+        /* --- ENIGMA COLORS --- */
         .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
         #eni-1 { background-color: #f1c40f !important; }
         #eni-2 { background-color: #3498db !important; color: white !important; }
@@ -328,13 +348,19 @@
         <label>Action</label>
         <select id="sel-a" onchange="toggleItemSelect()"></select>
         
-        <button id="btn-select-cible" class="picker-btn" onclick="openGrid('cible')">
-            <span>OBJET 1 : NON SÉLECTIONNÉ</span> <span>▼</span>
-        </button>
+        <!-- Ligne OBJET 1 -->
+        <div class="field-row">
+            <div class="field-label-box">OBJET 1</div>
+            <button id="btn-select-cible" class="picker-btn" onclick="openGrid('cible')">
+                <span>NON SÉLECTIONNÉ</span> <span>▼</span>
+            </button>
+        </div>
         
-        <div id="container-item" style="display:none;">
+        <!-- Ligne OBJET 2 -->
+        <div id="container-item" class="field-row" style="display:none;">
+            <div class="field-label-box">OBJET 2</div>
             <button id="btn-select-item" class="picker-btn" onclick="openGrid('item')">
-                <span>OBJET 2 : AUCUN</span> <span>▼</span>
+                <span>AUCUN</span> <span>▼</span>
             </button>
         </div>
         
@@ -472,8 +498,8 @@
         const btnC = document.getElementById('btn-select-cible');
         const btnI = document.getElementById('btn-select-item');
         
-        btnC.querySelector('span').innerText = selectedCibleName ? `OBJET 1 : ${selectedCibleName}` : "CHOISIR UN OBJET 1";
-        btnI.querySelector('span').innerText = `OBJET 2 : ${selectedItemName}`;
+        btnC.querySelector('span').innerText = selectedCibleName ? selectedCibleName : "NON SÉLECTIONNÉ";
+        btnI.querySelector('span').innerText = selectedItemName;
     }
 
     function getTileColorClass(text) {
@@ -578,7 +604,14 @@
     function toggleItemSelect() { 
         const sa = document.getElementById('sel-a');
         const aLabel = sa.options[sa.selectedIndex]?.text;
-        document.getElementById('container-item').style.display = (aLabel && !["regarder", "Manipuler"].includes(aLabel)) ? "block" : (aLabel === "Manipuler" ? "block" : "none");
+        const container = document.getElementById('container-item');
+        if (aLabel && !["regarder", "Manipuler"].includes(aLabel)) {
+            container.style.display = "flex";
+        } else if (aLabel === "Manipuler") {
+            container.style.display = "flex";
+        } else {
+            container.style.display = "none";
+        }
     }
     
     function runActionPerso() {
