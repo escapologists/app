@@ -8,8 +8,8 @@ const ASSETS = [
   './papaparse.min.js',
 
   // Polices hébergées localement
-  './Bangers.woff2',
-  './Kalam-Bold.woff2',
+'./Bangers.ttf',
+  './Kalam-Bold.ttf',
 
   // Images d'ambiance et boutons
   './splash.jpg',
