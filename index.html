@@ -457,8 +457,9 @@
         currentMissionId = id;
         currentMissionName = nom;
         document.getElementById('active-mission-name').innerText = `OBJECTIF : ${nom}`;
-        const v = "?v=" + Date.now();
-        const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
+        
+        // Suppression du paramètre dynamique v=?Date.now() pour la compatibilité PWA offline
+        const fetchCSV = url => new Promise(r => Papa.parse(url, { download: true, complete: res => r(res.data), error: () => r([]) }));
         const d = await Promise.all([
             fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
             fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)
