@@ -14,7 +14,22 @@
     <script src="papaparse.min.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Kalam:wght@700&display=swap');
+        /* --- DÉCLARATION DES POLICES LOCALES --- */
+        @font-face {
+            font-family: 'Bangers';
+            src: url('Bangers.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Kalam';
+            src: url('Kalam-Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
 
         :root { 
             --primary: #C93110; 
@@ -458,7 +473,6 @@
         currentMissionName = nom;
         document.getElementById('active-mission-name').innerText = `OBJECTIF : ${nom}`;
         
-        // Suppression du paramètre dynamique v=?Date.now() pour la compatibilité PWA offline
         const fetchCSV = url => new Promise(r => Papa.parse(url, { download: true, complete: res => r(res.data), error: () => r([]) }));
         const d = await Promise.all([
             fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
@@ -508,18 +522,13 @@
         const str = text.trim();
         const upperStr = str.toUpperCase();
         
-        // Personnages (Banks, Julia, Kim, Murphy, Stacy)
         if (persos.some(p => p.toLowerCase() === str.toLowerCase())) {
             return "tile-character";
         }
         
-        // Portes (P01 à P99...)
         if (/^P\d+$/i.test(upperStr)) return "tile-door";
-        
-        // Tokens (T01 à T99...)
         if (/^T\d+$/i.test(upperStr)) return "tile-token";
         
-        // Nombres de 01 à 35 (ou 1 à 35)
         if (/^\d+$/.test(upperStr)) {
             const num = parseInt(upperStr, 10);
             if (num >= 1 && num <= 35) return "tile-number";
@@ -549,7 +558,6 @@
         } else if (type === 'item') {
             title.innerText = "CHOISIR UN OBJET 2";
             
-            // Option AUCUN
             const btnNone = document.createElement('div');
             btnNone.className = 'tile-btn';
             btnNone.innerText = "AUCUN";
