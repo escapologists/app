@@ -6,31 +6,37 @@ const ASSETS = [
   './index.html',
   './manifest.json',
   './papaparse.min.js',
-  'https://fonts.googleapis.com/css2?family=Bangers&family=Kalam:wght@700&display=swap',
-  'https://fonts.gstatic.com/s/bangers/v20/FeVQS0BTqb0h60ACH55uhQI.woff2',
-  
+
+  // Polices hébergées localement
+  './Bangers.woff2',
+  './Kalam-Bold.woff2',
+
   // Images d'ambiance et boutons
   './splash.jpg',
   './fond_comic.jpg',
   './bouton_action.jpg',
   './bouton_enigma.jpg',
-  
+
   // Visuels des missions
   './but_mission_1.jpg',
   './but_mission_2.jpg',
   './but_mission_3.jpg',
   './but_mission_4.jpg',
   './but_mission_5.jpg',
-  
+
   // Avatars des personnages
   './Banks.png',
   './Julia.png',
   './Kim.png',
   './Murphy.png',
   './Stacy.png',
-  
+
   // Sons
   './alarm.wav',
+
+  // --- Fichiers de données CSV généraux ---
+  './grille.csv',
+  './grille_ac.csv',
 
   // --- Fichiers de données CSV par mission ---
   // Mission 1
@@ -48,40 +54,71 @@ const ASSETS = [
   './indice_M3.csv',
   './solutions_M3.csv',
 
+  // Mission 4
+  './grille_eni_M4.csv',
+  './indice_M4.csv',
+  './solutions_M4.csv',
+
+  // Mission 5
+  './grille_eni_M5.csv',
+  './indice_M5.csv',
+  './solutions_M5.csv'
 ];
 
-// 1. Installation : Mise en cache initiale de l'ensemble des ressources
+// 1. Installation : Mise en cache tolérante aux erreurs de fichiers manquants
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    }).then(() => self.skipWaiting())
+      return Promise.allSettled(
+        ASSETS.map((url) =>
+          fetch(url)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`Erreur ${response.status} sur ${url}`);
+              }
+              return cache.put(url, response);
+            })
+            .catch((err) =>
+              console.warn(`Impossible de mettre en cache : ${url}`, err)
+            )
+        )
+      );
+    })
   );
 });
 
 // 2. Activation : Nettoyage des anciens caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cache) => {
+            if (cache !== CACHE_NAME) {
+              return caches.delete(cache);
+            }
+          })
+        );
+      })
+      .then(() => self.clients.claim())
   );
 });
 
 // 3. Interception des requêtes : Servir le cache en priorité
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(event.request);
+      return fetch(event.request).catch(() => {
+        // En cas de panne réseau globale, renvoyer l'index
+        return caches.match('./index.html') || caches.match('./');
+      });
     })
   );
 });
