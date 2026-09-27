@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Escapologists - Règles du Jeu & Aventure coopérative</title>
+    
+    <!-- Polices Google Fonts (ou vos polices locales Bangers.ttf / Kalam-Bold.ttf) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Kalam:wght@400;700&family=Permanent+Marker&family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #C93110;
+            --ink-black: #1a1a1a;
+            --comic-yellow: #EBF099;
+            --bright-yellow: #f1c40f;
+            --mission-green: #27ae60;
+            --sky-blue: #3498db;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('fond_comic.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-color: #1a1a1a;
+            color: var(--ink-black);
+            line-height: 1.6;
+        }
+
+        /* --- CONTENEUR PRINCIPAL --- */
+        .wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- EN-TÊTE / HERO SECTION --- */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .hero-banner {
+            background: var(--primary);
+            border: 5px solid var(--ink-black);
+            padding: 30px 20px;
+            box-shadow: 10px 10px 0px var(--ink-black);
+            transform: rotate(-1deg);
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-family: 'Bangers', cursive;
+            font-size: 3.8rem;
+            color: #ffffff;
+            text-shadow: 4px 4px 0px var(--ink-black);
+            letter-spacing: 2px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .hero-subtitle {
+            font-family: 'Kalam', cursive;
+            background: var(--comic-yellow);
+            border: 3px solid var(--ink-black);
+            display: inline-block;
+            padding: 8px 24px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            transform: rotate(1.5deg);
+            box-shadow: 5px 5px 0px var(--ink-black);
+            margin-top: 10px;
+        }
+
+        /* --- BLOC CARTON BD (COMIC PANELS) --- */
+        .comic-panel {
+            background: var(--card-bg);
+            border: 4px solid var(--ink-black);
+            box-shadow: 8px 8px 0px var(--ink-black);
+            padding: 25px;
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .panel-tag {
+            position: absolute;
+            top: -18px;
+            left: 20px;
+            background: var(--bright-yellow);
+            border: 3px solid var(--ink-black);
+            font-family: 'Bangers', cursive;
+            font-size: 1.3rem;
+            padding: 2px 14px;
+            text-transform: uppercase;
+            box-shadow: 3px 3px 0px var(--ink-black);
+        }
+
+        h2 {
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 0px var(--ink-black);
+        }
+
+        /* --- GRILLE DES AGENTS --- */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .agent-card {
+            border: 3px solid var(--ink-black);
+            background: #e1f5fe;
+            text-align: center;
+            padding: 15px 10px;
+            box-shadow: 4px 4px 0px var(--ink-black);
+            transition: transform 0.2s ease;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .agent-avatar {
+            width: 90px;
+            height: 120px;
+            object-fit: contain;
+            border: 2px solid var(--ink-black);
+            background: #fff;
+            margin: 0 auto 10px auto;
+            display: block;
+        }
+
+        .agent-name {
+            font-family: 'Bangers', cursive;
+            font-size: 1.4rem;
+            color: var(--ink-black);
+        }
+
+        .agent-skills {
+            font-family: 'Kalam', cursive;
+            font-size: 0.85rem;
+            color: #444;
+            margin-top: 5px;
+        }
+
+        /* --- MATÉRIEL DE JEU --- */
+        .material-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            font-family: 'Kalam', cursive;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-top: 15px;
+        }
+
+        .material-item {
+            background: #f9f9f9;
+            border: 2px solid var(--ink-black);
+            padding: 8px 12px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+
+        /* --- CALL TO ACTION (CTA) --- */
+        .cta-section {
+            text-align: center;
+            background: var(--comic-yellow);
+            border: 5px solid var(--ink-black);
+            padding: 35px 20px;
+            box-shadow: 10px 10px 0px var(--ink-black);
+            transform: rotate(0.5deg);
+            margin-top: 40px;
+        }
+
+        .btn-play {
+            display: inline-block;
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+            color: #ffffff;
+            background: var(--primary);
+            border: 4px solid var(--ink-black);
+            padding: 12px 35px;
+            text-decoration: none;
+            text-transform: uppercase;
+            box-shadow: 6px 6px 0px var(--ink-black);
+            margin-top: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-play:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 9px 9px 0px var(--ink-black);
+            background: #d63031;
+        }
+
+        .btn-play:active {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0px var(--ink-black);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            color: white;
+            font-family: 'Bangers', cursive;
+            margin-top: 40px;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px var(--ink-black);
+        }
+
+        /* --- ADAPTATION MOBILE --- */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.6rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .btn-play { font-size: 1.5rem; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <!-- HERO SECTION -->
+    <header>
+        <div class="hero-banner">
+            <h1>The Escapologists</h1>
+        </div>
+        <div class="hero-subtitle">Règles du jeu & Hub d'Aventure Coopératif</div>
+    </header>
+
+    <!-- PITCH DU JEU -->
+    <div class="comic-panel">
+        <div class="panel-tag">L'AVENTURE VOUS ATTEND</div>
+        <h2>01. Le Concept</h2>
+        <p>[cite: 1.2] <strong>The Escapologists</strong> est un jeu d’aventure coopératif et de résolution d’énigmes qui se joue seul ou à plusieurs.[cite: 1.2][cite: 1.3] Vous incarnez une équipe d'agents d'élite évoluant sur un plateau modulable qui se dévoile au fur et à mesure de votre progression[cite: 1.2].</p>
+        <p style="margin-top: 10px;">[cite: 1.2] Guidés par un <em>Livre des Missions</em>[cite: 1.2] et appuyés par une **Application Web Tactique**, vous devrez combiner vos compétences d'agents, manipuler des objets et décrypter les codes secrets pour réussir vos objectifs avant la fin du compte à rebours[cite: 1.2].</p>
+    </div>
+
+    <!-- LES AGENTS -->
+    <div class="comic-panel">
+        <div class="panel-tag">L'ÉQUIPE TACTIQUE</div>
+        <h2>02. Choisissez vos Agents</h2>
+        <p>Chaque membre de l'équipe possède des compétences uniques essentielles pour surmonter les pièges :</p>
+        
+        <div class="agents-grid">
+            <div class="agent-card">
+                <img src="Banks.png" alt="Banks" class="agent-avatar" onerror="this.style.display='none'">
+                <div class="agent-name">BANKS</div>
+                <div class="agent-skills">Assommer • Forcer</div>
+            </div>
+            <div class="agent-card">
+                <img src="Julia.png" alt="Julia" class="agent-avatar" onerror="this.style.display='none'">
+                <div class="agent-name">JULIA</div>
+                <div class="agent-skills">Faufiler • Déverrouiller</div>
+            </div>
+            <div class="agent-card">
+                <img src="Kim.png" alt="Kim" class="agent-avatar" onerror="this.style.display='none'">
+                <div class="agent-name">KIM</div>
+                <div class="agent-skills">Acrobatie • Lancer</div>
+            </div>
+            <div class="agent-card">
+                <img src="Murphy.png" alt="Murphy" class="agent-avatar" onerror="this.style.display='none'">
+                <div class="agent-name">MURPHY</div>
+                <div class="agent-skills">Soigner • Médical</div>
+            </div>
+            <div class="agent-card">
+                <img src="Stacy.png" alt="Stacy" class="agent-avatar" onerror="this.style.display='none'">
+                <div class="agent-name">STACY</div>
+                <div class="agent-skills">Pirater • Dynamiter</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DÉROULEMENT ET MATÉRIEL -->
+    <div class="comic-panel">
+        <div class="panel-tag">ÉQUIPEMENT</div>
+        <h2>03. Matériel de Jeu</h2>
+        <div class="material-list">
+            <div class="material-item">📖 1 Livre des Missions[cite: 1.2]</div>
+            <div class="material-item">🗺️ 14 Plaques de sol modulables[cite: 1.2]</div>
+            <div class="material-item">🎴 35 Cartes Objets[cite: 1.2]</div>
+            <div class="material-item">🧩 15 Cartes Énigmes[cite: 1.2]</div>
+            <div class="material-item">👤 5 Fiches Personnages & Figurines[cite: 1.2]</div>
+            <div class="material-item">🚪 11 Portes & Connecteurs[cite: 1.2]</div>
+            <div class="material-item">📲 Application Web Tactique[cite: 1.2]</div>
+        </div>
+    </div>
+
+    <!-- CALL TO ACTION -->
+    <div class="cta-section">
+        <h2 style="color: var(--ink-black); font-size: 2.8rem; margin-bottom: 0;">PRÊTS POUR LA MISSION ?</h2>
+        <p style="font-family: 'Kalam', cursive; font-size: 1.2rem; font-weight: bold;">[cite: 1.2] Lancez l'application web pour démarrer le chrono et transmettre vos ordres d'agents ![cite: 1.2]</p>
+        <a href="index.html" class="btn-play">LANCER L'APPLICATION TACTIQUE</a>
+    </div>
+
+    <footer>
+        <p>THE ESCAPOLOGISTS © 2026 - TOUS DROITS RÉSERVÉS</p>
+    </footer>
+
+</div>
+
+</body>
+</html>
