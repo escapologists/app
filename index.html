@@ -270,18 +270,10 @@
         }
 
         /* --- COULEURS DES CASES DE LA GRILLE --- */
-        .tile-btn.tile-number {
-            background-color: #e0e0e0;
-        }
-        .tile-btn.tile-door {
-            background-color: #fff9c4;
-        }
-        .tile-btn.tile-token {
-            background-color: #ffeb3b;
-        }
-        .tile-btn.tile-character {
-            background-color: #e1f5fe;
-        }
+        .tile-btn.tile-number { background-color: #e0e0e0; }
+        .tile-btn.tile-door { background-color: #fff9c4; }
+        .tile-btn.tile-token { background-color: #ffeb3b; }
+        .tile-btn.tile-character { background-color: #e1f5fe; }
 
         /* --- ENIGMA COLORS --- */
         .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
@@ -294,31 +286,29 @@
         .agent-avatar-container { width: 110px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 10px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
         #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
-        /* --- CORRECTION BLOCAGE DÉBORDEMENT SAFARI (IOS) --- */
+        /* --- SOLUTION DEFINITIVE POUR SAFARI IOS (SCROLL DANS BOITE DE RÉSULTAT) --- */
         .result-box { 
+            display: block !important;
             background: rgba(255, 255, 255, 0.95); 
             border: 3px solid var(--ink-black); 
             margin: 10px 0; 
-            height: 110px !important;
-            max-height: 110px !important;
-            box-sizing: border-box;
-            flex-shrink: 0; 
-            overflow: hidden !important;
-        }
-
-        .result-content {
-            width: 100%;
-            height: 100% !important;
-            max-height: 110px !important;
             padding: 10px;
             font-family: 'Kalam', cursive;
             font-size: 0.95rem;
             text-align: center;
             white-space: pre-wrap;
             word-break: break-word;
-            box-sizing: border-box;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
+            
+            /* Hauteur stricte forcée sans Flexbox */
+            height: 110px !important;
+            max-height: 110px !important;
+            box-sizing: border-box !important;
+            flex-shrink: 0 !important;
+            
+            /* Scroll tactile iOS Safari */
+            overflow-y: scroll !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
         }
     </style>
 </head>
@@ -413,9 +403,7 @@
             </button>
         </div>
         
-        <div class="result-box">
-            <div id="res-perso" class="result-content">En attente...</div>
-        </div>
+        <div id="res-perso" class="result-box">En attente...</div>
         
         <div style="display:flex; gap:10px;">
             <button style="flex:1" onclick="runActionPerso()">TRANSMETTRE</button>
@@ -435,9 +423,7 @@
         <button onclick="runEnigme()">DECODER</button>
         <button id="btn-get-hint" onclick="getHint()" style="background:#f39c12; font-size:0.9rem;">BESOIN D'UN INDICE ?</button>
         
-        <div class="result-box">
-            <div id="res-code-final" class="result-content">SCANNER PRET</div>
-        </div>
+        <div id="res-code-final" class="result-box">SCANNER PRET</div>
         
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
@@ -540,7 +526,7 @@
         updatePickerButtons();
 
         se.innerHTML = '<option value="">-- ENIGME --</option>'; 
-        grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}`; });
+        grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
         
         ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
             let e = document.getElementById(id); e.innerHTML = "";
