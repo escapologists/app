@@ -286,23 +286,27 @@
         .agent-avatar-container { width: 110px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 10px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
         #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
-.result-box { 
+        .result-box { 
     background: rgba(255, 255, 255, 0.9); 
     border: 3px solid var(--ink-black); 
-    padding: 12px; 
+    padding: 10px; 
     margin: 10px 0; 
     font-family: 'Kalam', cursive; 
     
-    /* Configuration de la hauteur fixe avec défilement */
-    height: 120px; 
-    max-height: 120px; 
-    overflow-y: auto; 
-    -webkit-overflow-scrolling: touch; /* Défilement fluide sur iOS */
+    /* Blocage strict de la hauteur et activation du défilement iOS */
+    height: 110px;
+    min-height: 110px;
+    max-height: 110px;
+    overflow-y: scroll; /* Force le mode scroll */
+    -webkit-overflow-scrolling: touch; /* Scroll fluide sur iPhone */
     
-    /* Centrage du texte */
-    text-align: center; 
-    white-space: pre-line; 
+    /* Empêche le texte de déborder du cadre */
     box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap; 
+    text-align: center;
+    flex-shrink: 0; /* Empêche Flexbox de compresser/déformer la boîte */
 }
 </head>
 <body>
