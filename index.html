@@ -152,7 +152,7 @@
         .screen { 
             display: none; 
             flex-direction: column; 
-            justify-content: flex-start; /* Correctif iOS Safari */
+            justify-content: flex-start;
             height: 100%; 
             padding: 15px; 
             box-sizing: border-box; 
@@ -294,32 +294,31 @@
         .agent-avatar-container { width: 110px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 10px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
         #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
-        /* --- CORRECTION BLOCAGE STRICT RÉSULTATS SCROLLABLE (iOS) --- */
+        /* --- CORRECTION BLOCAGE DÉBORDEMENT SAFARI (IOS) --- */
         .result-box { 
             background: rgba(255, 255, 255, 0.95); 
             border: 3px solid var(--ink-black); 
             margin: 10px 0; 
-            height: 110px;
-            min-height: 110px;
-            max-height: 110px;
-            position: relative; 
+            height: 110px !important;
+            max-height: 110px !important;
             box-sizing: border-box;
             flex-shrink: 0; 
-            overflow: hidden; /* Découpe strictement le cadre extérieur */
+            overflow: hidden !important;
         }
 
         .result-content {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%;
+            height: 100% !important;
+            max-height: 110px !important;
             padding: 10px;
             font-family: 'Kalam', cursive;
             font-size: 0.95rem;
             text-align: center;
             white-space: pre-wrap;
             word-break: break-word;
-            overflow-y: scroll; /* Force le scroll interne */
-            -webkit-overflow-scrolling: touch; /* Fluidité tactile iPhone */
             box-sizing: border-box;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
