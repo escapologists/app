@@ -32,7 +32,7 @@
 2136;;;Julia déverrouille la porte 32. Retirer la porte du jeu.
 2137;;;La porte est verrouillée par un code. Trouver le code.
 2138;;;Seule Stacy peut manipuler un truc comme ça.
-2139;;;La porte est fermée à clé mais par une petite ouverture, on voit Julia à l'interieur (prendre la carte personnage Julia et placer le personnage dans la petite pièce 8). La petite ouverture permet d'échanger un objet d'un personnage dans une pièce à un autre personnage de l'autre coté.
+2139;;;La porte est verrouillée mais par une petite ouverture, Kim voit Julia (prendre la carte Julia et placer la figurine dans la petite pièce 8). L'interstice permet d'échanger un objet entre les personnages, d'une pièce l'autre.
 2312;;;De l'essence.
 2315;;;Le manche peut se démonter, mais Kim n'a pas assez de force.
 2316;;;C'est de l'engrais.
@@ -44,84 +44,84 @@
 2416;;;Il n'y a ni poignet ni point d'appui.
 2417;;;"Banks a récupéré une barre en fer solide; un bon outil"
 2419;;;ça ressemble à un détonateur, il ne manque plus q'un explosif
-2531;;;Rien de particulier
-2532;;;Rien de particulier
+2531;;;Rien de particulier.
+2532;;;Rien de particulier.
 2534;;;Marcher dans un conduit étroit n'est pas possible mais avec des talents d'acrobate…
-2536;;;Il n'y a rien à manipuler sur ce conduit
-2537;;;Kim se faufile dans le conduit. jeter la carte 19. Aller au chapitre 1.2
+2536;;;Il n'y a rien à manipuler sur ce conduit.
+2537;;;Kim se faufile dans le conduit. jeter la carte 19. Aller au chapitre 1.2.
 2538;;;De l'essence ?
-2612;;;C'est un bricolage qui ressemble à un détonateur
-2613;;;Ce chariot contient des médicaments
+2612;;;C'est un bricolage qui ressemble à un détonateur.
+2613;;;Ce chariot contient des médicaments.
 2614;;;Un joli transplantoir pour planter des plantes.
 2614;;;C'est un médecin qui devrait manipuler ça....
 2617;;;Seule Stacy peut manipuler un truc comme ça
 2713;;;C'est un médecin qui devrait manipuler ça....
-2714;;;Ce chariot contient des médicaments
-2816;;;C'est un mélange eplosif
-2912;;;Rien de particulier
-2913;;;Rien de particulier
+2714;;;Ce chariot contient des médicaments.
+2816;;;C'est un mélange explosif.
+2912;;;Rien de particulier.
+2913;;;Rien de particulier.
 2914;;;Le manche du balai à l'air bien solide. On doit pouvoir faire quelque chose avec.
-2915;;;Seule Stacy peut manipuler un truc comme ça
-2916;;;La porte est verrouillée par un code. Prendre la carte Enigme 1
-2918;;;La porte est verrouillée par un code. Prendre la carte Enigme 1
+2915;;;Seule Stacy peut manipuler un truc comme ça.
+2916;;;La porte est verrouillée par un code. Prendre la carte Enigme 1.
+2918;;;La porte est verrouillée par un code. Prendre la carte Enigme 1.
 3124;;;Il y a des produits interessants dedans.
 3127;;;Une injection prête. Murphy doit savoir quoi faire avec
 3128;;;La grille ne tient pas bien mais il faudrait un outil et un peu de force.
-3215;;;Peut-être mais il faut le préparer et seul Murphy sait le faire
-3216;;;Ce chariot contient des médicaments
-3218;;;Peut-être mais il faut le préparer et seul Murphy sait le faire
-3219;;;Rien de particulier
-3412;;;Murphy peut injecter ce traitement à quelqu'un dans le coma
-3415;;;Seule Stacy peut manipuler un truc comme ça
+3215;;;Peut-être mais il faut le préparer et seul Murphy sait le faire.
+3216;;;Ce chariot contient des médicaments.
+3218;;;Peut-être mais il faut le préparer et seul Murphy sait le faire.
+3219;;;Rien de particulier.
+3412;;;Murphy peut injecter ce traitement à quelqu'un dans le coma.
+3415;;;Seule Stacy peut manipuler un truc comme ça.
 3416;;;L'adrénaline doit être injecté pour agir...
-3417;;;C'est un bricolage qui ressemble à un détonateur
-3418;;;elle peut bricoler un truc avec un autre objet
-3419;;;Seule Stacy peut manipuler un truc comme ça
+3417;;;C'est un bricolage qui ressemble à un détonateur.
+3418;;;elle peut bricoler un truc avec un autre objet.
+3419;;;Seule Stacy peut manipuler un truc comme ça.
 3501;;;Retirer la porte 17 du jeu. Aller au chapitre 1.3.
-3512;;;ça ressemble à un détonateur, il ne manque plus q'un explosif
-3513;;;C'est un mélange explosif, il ne manque plus qu'un détonateur
+3512;;;ça ressemble à un détonateur, il ne manque plus q'un explosif.
+3513;;;C'est un mélange explosif, il ne manque plus qu'un détonateur.
 3514;;;La porte est verrouillée par un code. Prendre la carte Enigme 3
-3516;;;Il n'y a rien à manipuler sur ce conduit
-3517;;;Seule Stacy peut manipuler un truc comme ça
-3518;;;Une injection prête. Murphy doit savoir quoi faire avec
+3516;;;Il n'y a rien à manipuler sur ce conduit.
+3517;;;Seule Stacy peut manipuler un truc comme ça.
+3518;;;Une injection prête. Murphy doit savoir quoi faire avec.
 3519;;;Un outil spécifique pour Julia.
 3621;;;Julia ne sait pas quoi faire de cet engrais.
-3623;;;Il n'en a pas besoin
+3623;;;Il n'en a pas besoin.
 3624;;;Hum, cela ressemble à un bidon d'essence, non ?
-3625;;;Une injection prête. Murphy doit savoir quoi faire avec
-3627;;;Une ampoule d'adrénaline
-3628;;;Stacy doit pouvoir bricoler un truc avec ça
+3625;;;Une injection prête. Murphy doit savoir quoi faire avec.
+3627;;;Une ampoule d'adrénaline.
+3628;;;Stacy doit pouvoir bricoler un truc avec ça.
 3642;;;C'est de l'engrais.
 3645;;;C'est de l'engrais.
 3647;;;La grille ne tient pas bien mais il faudrait un outil et un peu de force.
-3649;;;Rien de particulier
+3649;;;Rien de particulier.
 3712;;;Du nitrate ? Stacy sait que l'on peut l'utiliser pour faire des bombes...
 3714;;;Du nitrate ? Stacy sait que l'on peut l'utiliser pour faire des bombes...
-3715;;;Cette porte est verrouillée électroniquement
-3716;;;La porte est verrouillée par un code. Prendre la carte Enigme 1
-3718;;;Une ampoule d'adrénaline
-3719;;;Une injection prête. Murphy doit savoir quoi faire avec
-3812;;;Il ne manque qu'un détonateur pour faire une bombe
-3815;;;Il faut l'associer à l'objet ciblé
-3819;;;C'est un mélange eplosif
-4120;;;Une injection prête. Murphy doit savoir quoi faire avec
-4123;;;C'est un bricolage qui ressemble à un détonateur
-4126;;;Seule Stacy peut manipuler un truc comme ça
-4127;;;L'injection d'antidote reveille Stacy. Enlevez-lui le statut COMA et jeter la carte 18
+3715;;;Cette porte est verrouillée électroniquement.
+3716;;;La porte est verrouillée par un code. Prendre la carte Enigme 1.
+3718;;;Une ampoule d'adrénaline.
+3719;;;Une injection prête. Murphy doit savoir quoi faire avec.
+3812;;;Il ne manque qu'un détonateur pour faire une bombe.
+3815;;;Il faut l'associer à l'objet ciblé.
+3819;;;C'est un mélange explosif.
+4120;;;Une injection prête. Murphy doit savoir quoi faire avec.
+4123;;;C'est un bricolage qui ressemble à un détonateur.
+4126;;;Seule Stacy peut manipuler un truc comme ça.
+4127;;;L'injection d'antidote reveille Stacy. Enlevez-lui le statut COMA et jeter la carte 18.
 4128;;;Il peut préparer un traitement mais avec quelle produit ?
 4132;;;Comment le préparer ?
-4136;;;Il faut l'associer à l'objet ciblé
-4138;;;Cette porte est verrouillée électroniquement
+4136;;;Il faut l'associer à l'objet ciblé.
+4138;;;Cette porte est verrouillée électroniquement.
 4153;;;Le conduit semble accessible à une personne fine et souple...
-4156;;;Seule Stacy peut manipuler un truc comme ça
+4156;;;Seule Stacy peut manipuler un truc comme ça.
 4157;;;La grille ne tient pas bien mais il faudrait un outil et un peu de force.
 4158;;;Une plante...verte !
 4159;;;C'est de l'essence.
-4162;;;Seule Stacy peut manipuler un truc comme ça
+4162;;;Seule Stacy peut manipuler un truc comme ça.
 4163;;;C'est une jolie plante verte.
-4165;;;Peut-être mais il faut le préparer et seul Murphy sait le faire
+4165;;;Peut-être mais il faut le préparer et seul Murphy sait le faire.
 4167;;;Un joli transplantoir pour planter des plantes.
-4169;;;Peut-être mais il faut le préparer et seul Murphy sait le faire
+4169;;;Peut-être mais il faut le préparer et seul Murphy sait le faire.
 4170;;;Un minuteur. Stacy doit pouvoir bricoler un truc avec ça...
 4173;;;Elle pourrait passer mais la grille gène.
 4175;;;Peut-être mais il faut le préparer et seul Murphy sait le faire.
@@ -142,7 +142,7 @@
 4209;;;Rien de particulier.
 4215;;;Une ampoule d'adrénaline.
 4216;;;Seule Stacy peut manipuler un truc comme ça
-4230;;;Cette porte n'est pas crochetable. Prendre la carte Enigme 3
+4230;;;Cette porte n'est pas crochetable. Prendre la carte Enigme 3.
 4231;;;C'est un médicament de type antidote.
 4235;;;Peut-être mais il faut le préparer et seul Murphy sait le faire.
 4238;;;Un minuteur. Stacy doit pouvoir bricoler un truc avec ça...
@@ -153,13 +153,13 @@
 4257;;;C'est un bricolage qui ressemble à un détonateur.
 4258;;;Une très belle tondeuse à gazon !
 4259;;;La grille de ce conduit n'a pas l'air bien fixée.
-4260;;;C'est un mélange explosif
+4260;;;C'est un mélange explosif.
 4263;;;Le conduit semble accessible à une personne fine et souple...
-4265;;;Rien de particulier
-4267;;;Aucun interêt
+4265;;;Rien de particulier.
+4267;;;Aucun interêt.
 4269;;;Un minuteur. Stacy doit pouvoir bricoler un truc avec ça...
 4302;;;Prenez les cartes 9, 11 et 21. Jetez la carte 16.
-4305;;;Rien de particulier
+4305;;;Rien de particulier.
 4306;;;La porte est verrouillée par un code. Prendre la carte Enigme 1
 4307;;;C'est un médicament.
 4309;;;il n'y a rien à manipuler.
