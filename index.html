@@ -177,12 +177,34 @@
             font-family: 'Bangers', cursive; padding: 12px; border: 3px solid var(--ink-black); background: var(--primary); 
             color: white; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px;
             box-shadow: 4px 4px 0px var(--ink-black);
+            flex-shrink: 0;
         }
         button.secondary { background: #3498db; }
-        label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
-        select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
+        label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; flex-shrink: 0; }
+        
+        /* --- CORRECTION SELECTEUR CHROME & SAFARI --- */
+        select { 
+            font-family: 'Kalam', cursive; 
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 8px 12px; 
+            border: 3px solid var(--ink-black); 
+            width: 100%; 
+            margin-bottom: 10px; 
+            background: white; 
+            height: 48px !important; /* Force la hauteur sous Chrome */
+            min-height: 48px !important;
+            box-sizing: border-box !important;
+            flex-shrink: 0 !important; /* Empêche Flexbox d'écraser le menu */
+            box-shadow: 3px 3px 0px var(--ink-black);
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
 
-        /* --- LIGNES DE SÉLECTION CORRIGÉES (AGENT / OBJETS) --- */
+        /* --- LIGNES DE SÉLECTION (AGENT / OBJETS) --- */
         .field-row {
             display: flex;
             align-items: stretch;
@@ -197,13 +219,15 @@
             font-family: 'Bangers', cursive;
             font-size: 1rem;
             color: var(--ink-black);
-            padding: 10px 10px;
+            padding: 0 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             white-space: nowrap;
             box-shadow: 3px 3px 0px var(--ink-black);
             text-transform: uppercase;
+            height: 48px;
+            box-sizing: border-box;
         }
 
         .picker-btn {
@@ -221,7 +245,9 @@
             font-family: 'Kalam', cursive;
             font-weight: bold;
             font-size: 1rem;
-            min-height: 48px;
+            height: 48px !important;
+            min-height: 48px !important;
+            box-sizing: border-box !important;
             word-break: break-word;
         }
 
@@ -290,7 +316,7 @@
         .tile-btn.tile-character { background-color: #e1f5fe; }
 
         /* --- ENIGMA COLORS --- */
-        .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
+        .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px !important; }
         #eni-1 { background-color: #f1c40f !important; }
         #eni-2 { background-color: #3498db !important; color: white !important; }
         #eni-3 { background-color: #2ecc71 !important; }
