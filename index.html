@@ -82,7 +82,7 @@
             padding-top: env(safe-area-inset-top);
         }
 
-        /* --- BARRE DE MINUTEUR NETTEMENT AGRANDIE --- */
+        /* --- BARRE DE MINUTEUR ET BOUTONS COLORÉS --- */
         .timer-bar { 
             background: var(--comic-yellow);
             border: 3px solid var(--ink-black);
@@ -108,7 +108,7 @@
 
         .timer-controls { 
             display: flex; 
-            gap: 8px; /* Espacement tactile net */
+            gap: 8px;
             flex: 1;
             justify-content: flex-end;
         }
@@ -126,9 +126,9 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 0 !important; /* Annule la marge globale des boutons */
+            margin-bottom: 0 !important;
             flex: 1;
-            max-width: 70px;
+            max-width: 75px;
             box-sizing: border-box;
         }
 
@@ -138,8 +138,18 @@
         }
 
         .timer-btn.btn-alert {
-            background: #ff4d4d;
-            color: white;
+            background: #ff4d4d !important;
+            color: white !important;
+        }
+
+        .timer-btn.btn-reset {
+            background: #3498db !important;
+            color: white !important;
+        }
+
+        #btn-pause {
+            background: #f39c12 !important;
+            color: white !important;
         }
 
         #finish-overlay {
@@ -227,7 +237,7 @@
         button.secondary { background: #3498db; }
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; flex-shrink: 0; }
         
-        /* --- SELECTEUR CORRIGÉ (CHROME & SAFARI) --- */
+        /* --- SÉLECTEUR CALIBRÉ (CHROME & SAFARI) --- */
         select { 
             font-family: 'Kalam', cursive; 
             font-weight: bold;
@@ -367,7 +377,7 @@
         #eni-3 { background-color: #2ecc71 !important; }
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
-        /* --- AGENT PHOTO CORRIGÉ (PROPORTIONS GARANTIES TOUS NAVIGATEURS) --- */
+        /* --- AGENT PHOTO CORRIGÉ (PROPORTIONS GARANTIES CHROME / SAFARI) --- */
         .agent-avatar-container { 
             width: 110px; 
             height: 160px; 
@@ -406,13 +416,11 @@
             white-space: pre-wrap;
             word-break: break-word;
             
-            /* Hauteur élargie à 160px */
             height: 160px !important;
             max-height: 160px !important;
             box-sizing: border-box !important;
             flex-shrink: 0 !important;
             
-            /* Scroll tactile iOS Safari & Chrome */
             overflow-y: scroll !important;
             -webkit-overflow-scrolling: touch !important;
             touch-action: pan-y !important;
@@ -735,7 +743,7 @@
     function updateAgentVisuals() {
         const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
         if (p) { 
-            img.src = `${p}.png`; 
+            img.src = `${p.toLowerCase()}.png`; 
             img.style.display = 'block'; 
             sa.innerHTML = ''; 
             mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); 
