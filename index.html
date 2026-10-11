@@ -182,12 +182,13 @@
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
         select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
-        /* --- ALIGNEMENT DES SELECTIONS OBJET 1 / OBJET 2 --- */
+        /* --- LIGNES DE SÉLECTION CORRIGÉES (AGENT / OBJETS) --- */
         .field-row {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             gap: 8px;
             margin-bottom: 10px;
+            flex-shrink: 0;
         }
 
         .field-label-box {
@@ -196,7 +197,10 @@
             font-family: 'Bangers', cursive;
             font-size: 1rem;
             color: var(--ink-black);
-            padding: 10px 8px;
+            padding: 10px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             white-space: nowrap;
             box-shadow: 3px 3px 0px var(--ink-black);
             text-transform: uppercase;
@@ -209,12 +213,22 @@
             border: 3px solid var(--ink-black);
             text-align: left;
             margin-bottom: 0;
-            padding: 10px 12px;
+            padding: 8px 12px;
             box-shadow: 3px 3px 0px var(--ink-black);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-family: 'Kalam', cursive;
+            font-weight: bold;
             font-size: 1rem;
+            min-height: 48px;
+            word-break: break-word;
+        }
+
+        .picker-btn span {
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* --- MODALE SELECTION EN PLEIN ÉCRAN --- */
@@ -282,53 +296,48 @@
         #eni-3 { background-color: #2ecc71 !important; }
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
-        /* --- AGENT PHOTO --- */
-.agent-avatar-container { 
-    width: 110px; 
-    height: 160px; 
-    min-height: 160px; /* Empêche le conteneur de rétrécir */
-    max-height: 160px;
-    border: 4px solid var(--ink-black); 
-    background: #fff; 
-    margin: 0 auto 10px auto; 
-    overflow: hidden; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
-    flex-shrink: 0; /* INTERDIT à Chrome/Edge d'écraser la boîte */
-}
+        /* --- AGENT PHOTO CORRIGÉ TOUS NAVIGATEURS --- */
+        .agent-avatar-container { 
+            width: 110px; 
+            height: 160px; 
+            min-height: 160px;
+            max-height: 160px;
+            border: 4px solid var(--ink-black); 
+            background: #fff; 
+            margin: 0 auto 10px auto; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
+            flex-shrink: 0;
+        }
+        #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
-#agent-avatar { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain; 
-    display: none; 
-}
-        /* --- (SCROLL DANS BOITE DE RÉSULTAT) --- */
-.result-box { 
-    display: block !important;
-    background: rgba(255, 255, 255, 0.95); 
-    border: 3px solid var(--ink-black); 
-    margin: 10px 0; 
-    padding: 12px;
-    font-family: 'Kalam', cursive;
-    font-size: 1rem; /* Légèrement ajusté pour une meilleure lisibilité */
-    text-align: center;
-    white-space: pre-wrap;
-    word-break: break-word;
-    
-    /* Passage de 110px à 160px */
-    height: 160px !important;
-    max-height: 160px !important;
-    box-sizing: border-box !important;
-    flex-shrink: 0 !important;
-    
-    /* Scroll tactile iOS Safari */
-    overflow-y: scroll !important;
-    -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-y !important;
-}
+        /* --- BOITE DE RÉSULTAT AGRANDIE (160px) & DÉFILABLE --- */
+        .result-box { 
+            display: block !important;
+            background: rgba(255, 255, 255, 0.95); 
+            border: 3px solid var(--ink-black); 
+            margin: 10px 0; 
+            padding: 12px;
+            font-family: 'Kalam', cursive;
+            font-size: 1rem;
+            text-align: center;
+            white-space: pre-wrap;
+            word-break: break-word;
+            
+            /* Hauteur élargie à 160px */
+            height: 160px !important;
+            max-height: 160px !important;
+            box-sizing: border-box !important;
+            flex-shrink: 0 !important;
+            
+            /* Scroll tactile iOS Safari & Chrome */
+            overflow-y: scroll !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
+        }
     </style>
 </head>
 <body>
