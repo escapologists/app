@@ -82,7 +82,7 @@
             padding-top: env(safe-area-inset-top);
         }
 
-        /* --- BARRE DE MINUTEUR ET BOUTONS COLORÉS --- */
+        /* --- BARRE DE MINUTEUR ET COULEURS FORCÉES --- */
         .timer-bar { 
             background: var(--comic-yellow);
             border: 3px solid var(--ink-black);
@@ -113,43 +113,42 @@
             justify-content: flex-end;
         }
 
-        .timer-btn { 
+        .timer-bar .timer-controls button.timer-btn { 
             padding: 8px 10px !important; 
-            font-family: 'Bangers', cursive; 
+            font-family: 'Bangers', cursive !important; 
             font-size: 0.95rem !important; 
             border: 3px solid var(--ink-black) !important; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            background: white;
+            cursor: pointer !important; 
+            text-transform: uppercase !important; 
             box-shadow: 3px 3px 0px var(--ink-black) !important;
             min-height: 42px !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
             margin-bottom: 0 !important;
-            flex: 1;
-            max-width: 75px;
-            box-sizing: border-box;
+            flex: 1 !important;
+            max-width: 75px !important;
+            box-sizing: border-box !important;
         }
 
-        .timer-btn:active {
-            transform: translate(2px, 2px);
+        .timer-bar .timer-controls button.timer-btn.btn-alert {
+            background-color: #ff4d4d !important;
+            color: #ffffff !important;
+        }
+
+        .timer-bar .timer-controls button.timer-btn.btn-reset {
+            background-color: #3498db !important;
+            color: #ffffff !important;
+        }
+
+        .timer-bar .timer-controls button#btn-pause {
+            background-color: #f39c12 !important;
+            color: #ffffff !important;
+        }
+
+        .timer-bar .timer-controls button.timer-btn:active {
+            transform: translate(2px, 2px) !important;
             box-shadow: 1px 1px 0px var(--ink-black) !important;
-        }
-
-        .timer-btn.btn-alert {
-            background: #ff4d4d !important;
-            color: white !important;
-        }
-
-        .timer-btn.btn-reset {
-            background: #3498db !important;
-            color: white !important;
-        }
-
-        #btn-pause {
-            background: #f39c12 !important;
-            color: white !important;
         }
 
         #finish-overlay {
@@ -237,7 +236,6 @@
         button.secondary { background: #3498db; }
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; flex-shrink: 0; }
         
-        /* --- SÉLECTEUR CALIBRÉ (CHROME & SAFARI) --- */
         select { 
             font-family: 'Kalam', cursive; 
             font-weight: bold;
@@ -259,7 +257,6 @@
             background-position: right 10px center;
         }
 
-        /* --- LIGNES DE SÉLECTION (AGENT / OBJETS) --- */
         .field-row {
             display: flex;
             align-items: stretch;
@@ -312,7 +309,6 @@
             text-overflow: ellipsis;
         }
 
-        /* --- MODALE SELECTION EN PLEIN ÉCRAN --- */
         .selection-modal {
             display: none;
             position: absolute;
@@ -364,20 +360,17 @@
             box-shadow: 1px 1px 0px var(--comic-yellow);
         }
 
-        /* --- COULEURS DES CASES DE LA GRILLE --- */
         .tile-btn.tile-number { background-color: #e0e0e0; }
         .tile-btn.tile-door { background-color: #fff9c4; }
         .tile-btn.tile-token { background-color: #ffeb3b; }
         .tile-btn.tile-character { background-color: #e1f5fe; }
 
-        /* --- ENIGMA COLORS --- */
         .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px !important; }
         #eni-1 { background-color: #f1c40f !important; }
         #eni-2 { background-color: #3498db !important; color: white !important; }
         #eni-3 { background-color: #2ecc71 !important; }
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
-        /* --- AGENT PHOTO CORRIGÉ (PROPORTIONS GARANTIES CHROME / SAFARI) --- */
         .agent-avatar-container { 
             width: 110px; 
             height: 160px; 
@@ -403,7 +396,6 @@
             flex-shrink: 0;
         }
 
-        /* --- BOITE DE RÉSULTAT AGRANDIE (160px) & DÉFILABLE --- */
         .result-box { 
             display: block !important;
             background: rgba(255, 255, 255, 0.95); 
