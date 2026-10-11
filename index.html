@@ -735,7 +735,7 @@
     function updateAgentVisuals() {
         const p = document.getElementById('sel-p').value, img = document.getElementById('agent-avatar'), sa = document.getElementById('sel-a');
         if (p) { 
-            img.src = `${p.toLowerCase()}.png`; 
+            img.src = `${p}.png`; /* Rétabli avec la majuscule d'origine (ex: Banks.png) */
             img.style.display = 'block'; 
             sa.innerHTML = ''; 
             mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); 
