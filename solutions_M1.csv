@@ -210,10 +210,10 @@
 5084;;;Inutile.
 5085;;;Inefficace.
 5086;;;Stacy doit pouvoir faire quelque chose avec ces objets...
-5086;S;Manipuler;Jeter le cartes 8 et 5. Prenez la carte 14.
+5086;S;Manipuler;Jetez le cartes 8 et 5. Prenez la carte 14.
 5092;;;Carrément inutile.
 5094;M;;il faut utiliser des compétences particulières...
-5094;M;medical;Jeter le cartes 9 et 21. Prenez la carte 18.
+5094;M;medical;Jetez le cartes 9 et 21. Prenez la carte 18.
 5096;;;Pas de franc succès.
 5097;;;Carrément inutile.
 5102;;;Nul.
@@ -230,7 +230,7 @@
 5138;;;Pas efficace.
 5142;;;Non.
 5143;;;Inutile.
-5146;J;Déverrouiller;Julia utilise son rossignol. Enlever la porte 32.
+5146;J;Déverrouiller;Julia utilise son rossignol. Enlevez la porte 32.
 5160;;;Inutile.
 5162;;;Cette porte s'ouvre avec un code pas une clé.
 5163;;;Aucune efficacité dans ce choix.
@@ -244,10 +244,10 @@
 5184;;;ça ne fait rien. Et ce n'est pas étonnant...
 5186;;;C'est improductif.
 5192;;;Il faut de la force pour réaliser cela.
-5192;B;Forcer;Banks arrive à faire sauter la grille. Jeter la carte 2 et prenait la carte 19.
+5192;B;Forcer;Banks arrive à faire sauter la grille. Jetez la carte 2 et prenez la carte 19.
 5193;;;Pas possible.
 5194;;;Rien de rien.
-5196;S;;Jeter les cartes 3 et 7. Prenez la carte 10.
+5196;S;;Jetez les cartes 3 et 7. Prenez la carte 10.
 5197;;;ça ne donne rien.
 5198;;;Inutile.
 5201;;;Inefficace.
@@ -289,7 +289,7 @@
 5291;;;N'importe quoi.
 5297;;;C'est improductif.
 5301;;;Il faut des compétences d'artificier !
-5301;S;Manipuler;Jeter les cartes 10 et 14. Prenez la carte 17.
+5301;S;Manipuler;Jetez les cartes 10 et 14. Prenez la carte 17.
 5302;;;inefficace.
 5304;;;Aucun effet.
 5307;;;Aucun interêt.
@@ -356,17 +356,17 @@
 5613;;;Aucun effet.
 5623;;;Aucun effet.
 5629;;;Banks assomme le garde. Retirez le garde, la carte 24 et le token T02.
-5631;S;;Jeter les cartes 3 et 7. Prenez la carte 10.
+5631;S;;Jetez les cartes 3 et 7. Prenez la carte 10.
 5632;;;Malheureusement la barre est inefficace sur cette porte...
 5637;;;Aucun effet.
 5639;;;Aucun effet.
 5640;;;Une porte métallique fermée à clé.
 5641;;;La porte est verrouillée par un code. Prendre la carte Enigme 3.
 5642;;;Inefficace.
-5647;;;La porte est verrouillée par un code. Trouver le code.
+5647;;;La porte est verrouillée par un code. Trouvez le code.
 5648;;;La porte est verrouillée par un code. Prendre la carte Enigme 3.
 5649;;;Aucun interêt.
-5670;;;Personne ne peut rentrer dans cette pièce à cause du garde,à part si on est discret…
+5670;;;Personne ne peut rentrer dans cette pièce à cause du garde qui est dos à la porte 33. A part si on est discret…
 5671;;;Peut-être mais il faut le préparer et seul Murphy sait le faire.
 5672;;;Elle n'en a pas besoin.
 5674;;;La porte est verrouillée par un code. Prendre la carte Enigme 3.
@@ -391,18 +391,18 @@
 5706;;;Il s'agit d'un terminal dont seule Stacy est capable d'utiliser.
 5708;;;La porte est verrouillée par un code. Prendre la carte Enigme 5.
 5709;;;Une porte…fermée.
-5710;;;Personne ne peut rentrer dans cette pièce à cause du garde,à part si on est discret…
+5710;;;Personne ne peut rentrer dans cette pièce à cause du garde qui est dos à la porte 33. A part si on est discret…
 5712;;;Une porte…fermée.
 5713;;;Une porte…fermée.
 5716;;;La porte est verrouillée par un code. Prendre la carte Enigme 5.
 5718;;;La porte est verrouillée par un code. Prendre la carte Enigme 5.
 5728;;;Un garde est présent, dos à la porte 33, bloquant le passage.
 5729;;;L'interrupteur deverrouille la porte 33. Vous pouvez la retirer.
-5730;;;Personne ne peut rentrer dans cette pièce à cause du garde,à part si on est discret…
+5730;;;Personne ne peut rentrer dans cette pièce à cause du garde qui est dos à la porte 33. A part si on est discret…
 5731;;;Association inefficace.
 5738;;;Un garde est présent, dos à la porte 33, bloquant le passage.
 5739;;;Une porte…fermée.
-5740;;;Personne ne peut rentrer dans cette pièce à cause du garde,à part si on est discret…
+5740;;;Personne ne peut rentrer dans cette pièce à cause du garde qui est dos à la porte 33. A part si on est discret…
 5741;;;La porte est verrouillée par un code. Prendre la carte Enigme 5.
 5742;;;La porte semble lourdement verrouillée.
 5743;;;La porte est verrouillée par un code. Prendre la carte Enigme 2.
@@ -451,7 +451,7 @@
 5861;;;Aucun interêt.
 5862;;;Non, pas possible.
 5863;S;;Stacy doit pouvoir le faire.
-5867;S;Dynamiter;La bombe fait sauter la porte 15 (Jeter P15) qui s'ouvre sur un couloir (sol 4) et une porte (20).
+5867;S;Dynamiter;La bombe fait sauter la porte 15 (Jetez P15) qui s'ouvre sur un couloir (sol 4) et une porte (20).
 5869;;;Non, rien.
 5870;;;La porte semble lourdement verrouillée.
 5871;;;Pas d'observation possible à travers la porte.
@@ -459,6 +459,7 @@
 5876;;;Pas possible.
 5879;;;Un interrupteur à bascule qui doit faire quelque chose…
 5890;;;Non, elle est prête.
+6691;;;Kim donne l'objet 12 à Julia.
 6712;;;Enlever la porte 31. Allez au chapitre 1.6.
-8532;;;Les personnages peuvent sortir. Aller à l'épilogue de la mission 1.
+8532;;;Les personnages peuvent sortir. Allez à l'épilogue de la mission 1.
 9861;;;Enlever la porte 14. Dans la cellule se trouve Murphy et l'objet 8.
