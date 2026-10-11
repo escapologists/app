@@ -322,23 +322,32 @@
         #eni-3 { background-color: #2ecc71 !important; }
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
-        /* --- AGENT PHOTO CORRIGÉ TOUS NAVIGATEURS --- */
-        .agent-avatar-container { 
-            width: 110px; 
-            height: 160px; 
-            min-height: 160px;
-            max-height: 160px;
-            border: 4px solid var(--ink-black); 
-            background: #fff; 
-            margin: 0 auto 10px auto; 
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
-            flex-shrink: 0;
-        }
-        #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
+/* --- AGENT PHOTO CORRIGÉ (PROPORTIONS GARANTIES) --- */
+.agent-avatar-container { 
+    width: 110px; 
+    height: 160px; 
+    min-height: 160px;
+    max-height: 160px;
+    border: 4px solid var(--ink-black); 
+    background: #fff; 
+    margin: 0 auto 10px auto; 
+    overflow: hidden; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+#agent-avatar { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; /* Empêche l'image d'être déformée */
+    object-position: center;
+    display: none; 
+    flex-shrink: 0;
+}
 
         /* --- BOITE DE RÉSULTAT AGRANDIE (160px) & DÉFILABLE --- */
         .result-box { 
