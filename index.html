@@ -283,9 +283,28 @@
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
         /* --- AGENT PHOTO --- */
-        .agent-avatar-container { width: 110px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 10px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
-        #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
+.agent-avatar-container { 
+    width: 110px; 
+    height: 160px; 
+    min-height: 160px; /* Empêche le conteneur de rétrécir */
+    max-height: 160px;
+    border: 4px solid var(--ink-black); 
+    background: #fff; 
+    margin: 0 auto 10px auto; 
+    overflow: hidden; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
+    flex-shrink: 0; /* INTERDIT à Chrome/Edge d'écraser la boîte */
+}
 
+#agent-avatar { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    display: none; 
+}
         /* --- (SCROLL DANS BOITE DE RÉSULTAT) --- */
 .result-box { 
     display: block !important;
