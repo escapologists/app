@@ -492,8 +492,7 @@
         <select id="sel-p" onchange="updateAgentVisuals()"></select>
         
         <label>Action</label>
-        <!-- CHANGEMENT : onchange appelle uniquement toggleItemSelect, plus de risque d'exécution automatique -->
-        <select id="sel-a" onchange="toggleItemSelect()"></select>
+        <select id="sel-a" onchange="onActionChange()"></select>
         
         <!-- Ligne OBJET 1 -->
         <div class="field-row">
@@ -740,14 +739,18 @@
             img.style.display = 'block'; 
             sa.innerHTML = ''; 
             mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); 
-            toggleItemSelect(); 
+            onActionChange(); 
         }
     }
 
-    function toggleItemSelect() { 
+    function onActionChange() { 
+        // Efface systématiquement le texte dans la case de résultat à chaque changement d'action
+        document.getElementById('res-perso').innerHTML = "En attente...";
+
         const sa = document.getElementById('sel-a');
         const aLabel = sa.options[sa.selectedIndex]?.text;
         const container = document.getElementById('container-item');
+        
         if (aLabel && !["regarder", "Manipuler"].includes(aLabel)) {
             container.style.display = "flex";
         } else if (aLabel === "Manipuler") {
