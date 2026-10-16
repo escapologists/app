@@ -52,73 +52,24 @@
         }
 
         /* --- SPLASH SCREEN --- */
-/* --- SPLASH SCREEN AVEC LUMIÈRE COURANTE SUR LE CADRE --- */
-/* --- SPLASH SCREEN AVEC FILET LUMINEUX SUR LE CADRE --- */
-#splash-screen {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100dvh; 
-    background: var(--ink-black);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.8s ease-out;
-    pointer-events: none;
-}
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100dvh; 
+            background: var(--ink-black);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-out;
+            pointer-events: none;
+        }
+        #splash-screen img { 
+            width: 90%; 
+            max-width: 360px; 
+            height: 92%; 
+            object-fit: contain; 
+        }
 
-.splash-wrapper {
-    position: relative;
-    width: 90%; 
-    max-width: 360px; 
-    height: 92%; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-}
-
-/* Le conteneur du filet lumineux ajusté aux dimensions exactes de l'image */
-.splash-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: -2px; /* Ajuste pour coller pile sur le bord de l'image */
-    border: 3px solid transparent;
-    border-radius: 12px;
-    background: linear-gradient(90deg, #00f0ff, #ffffff, transparent, transparent) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: borderBeam 1.8s linear infinite;
-    z-index: 3;
-    pointer-events: none;
-}
-
-@keyframes borderBeam {
-    0% {
-        clip-path: inset(0 100% 0 0); /* Commence en haut à droite */
-    }
-    25% {
-        clip-path: inset(0 0 100% 0); /* Descend à droite */
-    }
-    50% {
-        clip-path: inset(100% 0 0 0); /* Va vers la gauche en bas */
-    }
-    75% {
-        clip-path: inset(0 0 0 100%); /* Remonte à gauche */
-    }
-    100% {
-        clip-path: inset(0 100% 0 0); /* Boucle */
-    }
-}
-
-#splash-screen img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain; 
-    position: relative;
-    z-index: 2;
-}
-        /* ----------------------- */
         .app-container { 
             width: 90%; 
             max-width: 360px; 
@@ -470,11 +421,7 @@
 </head>
 <body>
 
-<div id="splash-screen">
-    <div class="splash-wrapper">
-        <img src="splash.jpg" alt="Splash Screen">
-    </div>
-</div>
+<div id="splash-screen"><img src="splash.jpg" alt="Splash Screen"></div>
 
 <div class="app-container">
     <div id="finish-overlay">
