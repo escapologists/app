@@ -52,23 +52,55 @@
         }
 
         /* --- SPLASH SCREEN --- */
-        #splash-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100dvh; 
-            background: var(--ink-black);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.8s ease-out;
-            pointer-events: none;
-        }
-        #splash-screen img { 
-            width: 90%; 
-            max-width: 360px; 
-            height: 92%; 
-            object-fit: contain; 
-        }
+/* --- SPLASH SCREEN ANIMÉ AVEC CADRE LUMINEUX BLEU --- */
+#splash-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100dvh; 
+    background: var(--ink-black);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease-out;
+    pointer-events: none;
+}
+
+.splash-wrapper {
+    position: relative;
+    width: 90%; 
+    max-width: 360px; 
+    height: 92%; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 6px;
+}
+
+.splash-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 4px solid transparent;
+    border-top-color: #00f0ff;
+    border-right-color: #0088ff;
+    border-radius: 8px;
+    animation: rotateGlow 1.2s linear infinite;
+    box-shadow: 0 0 15px #00f0ff;
+}
+
+@keyframes rotateGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#splash-screen img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    position: relative;
+    z-index: 2;
+}
 
         .app-container { 
             width: 90%; 
@@ -421,7 +453,11 @@
 </head>
 <body>
 
-<div id="splash-screen"><img src="splash.jpg" alt="Splash Screen"></div>
+<div id="splash-screen">
+    <div class="splash-wrapper">
+        <img src="splash.jpg" alt="Splash Screen">
+    </div>
+</div>
 
 <div class="app-container">
     <div id="finish-overlay">
@@ -594,7 +630,7 @@
     function updateDisplay() {
         const d = document.getElementById('timer-display');
         let t = isAlert ? alertLeft : timeLeft;
-        d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
+        d.innerText = `Math.floor(t/60).toString().padStart(2,'0'):{(t%60).toString().padStart(2,'0')}`;
         d.style.color = isAlert ? 'var(--alert-red)' : 'black';
     }
     function endMission() { pauseTimer(); alarmSound.currentTime = 0; alarmSound.play(); document.getElementById('finish-overlay').style.display = 'flex'; }
@@ -623,7 +659,7 @@
         const se = document.getElementById('sel-eni');
         
         sp.innerHTML = '<option value="">-- AGENT --</option>'; 
-        persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
+        persos.forEach(p => sp.innerHTML += `<option value="p">{p}</option>`);
 
         selectedCibleIndex = null;
         selectedCibleName = "";
@@ -633,11 +669,11 @@
         updatePickerButtons();
 
         se.innerHTML = '<option value="">-- ENIGME --</option>'; 
-        grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
+        grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="l[0]">{l[0]}</option>`; });
         
         ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
             let e = document.getElementById(id); e.innerHTML = "";
-            for(let i=0; i<=9; i++) e.innerHTML += `<option value="${i}">${i}</option>`;
+            for(let i=0; i<=9; i++) e.innerHTML += `<option value="i">{i}</option>`;
         });
         updateHintButton();
     }
@@ -738,7 +774,7 @@
             img.src = `${p}.png`; 
             img.style.display = 'block'; 
             sa.innerHTML = ''; 
-            mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); 
+            mapping[p].forEach((act, i) => sa.innerHTML += `<option value="i">{act}</option>`); 
             onActionChange(); 
         }
     }
@@ -887,3 +923,5 @@
 </script>
 </body>
 </html>
+
+
