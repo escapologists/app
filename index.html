@@ -52,7 +52,7 @@
         }
 
         /* --- SPLASH SCREEN --- */
-/* --- SPLASH SCREEN ANIMÉ AVEC CADRE LUMINEUX BLEU --- */
+/* --- SPLASH SCREEN AVEC LUMIÈRE COURANTE SUR LE CADRE --- */
 #splash-screen {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100dvh; 
@@ -74,24 +74,40 @@
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    padding: 6px;
+    overflow: hidden; /* Contient la lueur qui dépasse */
+    border-radius: 8px; /* Ajuste si ton logo a des coins arrondis */
 }
 
+/* Le filet de lumière qui suit le périmètre du cadre */
 .splash-wrapper::before {
     content: '';
     position: absolute;
-    inset: 0;
-    border: 4px solid transparent;
-    border-top-color: #00f0ff;
-    border-right-color: #0088ff;
-    border-radius: 8px;
-    animation: rotateGlow 1.2s linear infinite;
-    box-shadow: 0 0 15px #00f0ff;
+    /* On crée une piste rectangulaire plus grande que l'image pour la faire tourner sur le bord */
+    top: -50%; left: -50%; right: -50%; bottom: -50%;
+    background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        transparent 310deg,
+        #00f0ff 350deg,
+        #ffffff 360deg
+    );
+    animation: borderLight 2s linear infinite;
 }
 
-@keyframes rotateGlow {
+@keyframes borderLight {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Un masque intérieur pour garder le fond noir et ne laisser 
+   que le filet lumineux sur le contour précis du logo */
+.splash-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 3px; /* Épaisseur du cadre où passe la lumière */
+    background: var(--ink-black);
+    border-radius: 6px;
+    z-index: 1;
 }
 
 #splash-screen img { 
@@ -99,9 +115,8 @@
     height: 100%; 
     object-fit: contain; 
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Ton image reste parfaitement nette au premier plan */
 }
-
         .app-container { 
             width: 90%; 
             max-width: 360px; 
