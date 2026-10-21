@@ -539,7 +539,7 @@
 <audio id="alarm-sound" src="alarm.wav"></audio>
 
 <script>
-    let timeLeft = 3600, alertLeft = 60, timerId = null, isPaused = true, isAlert = false;
+    let timeLeft = 3600, alertLeft = 180, timerId = null, isPaused = true, isAlert = false;
     let currentMissionId = "", currentMissionName = "", indiceLevel = 0;
     let grille = [], grilleAC = [], grilleENI = [], sols = [], indicesCSV = [];
     
@@ -589,8 +589,8 @@
         } else { pauseTimer(); }
     }
     function pauseTimer() { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
-    function resetTimer() { pauseTimer(); timeLeft = 3600; alertLeft = 60; isAlert = false; updateDisplay(); }
-    function triggerAlert() { isAlert = !isAlert; if(isAlert) alertLeft = 60; updateDisplay(); }
+    function resetTimer() { pauseTimer(); timeLeft = 3600; alertLeft = 180; isAlert = false; updateDisplay(); }
+    function triggerAlert() { isAlert = !isAlert; if(isAlert) alertLeft = 180; updateDisplay(); }
 function updateDisplay() {
         const d = document.getElementById('timer-display');
         let t = isAlert ? alertLeft : timeLeft;
