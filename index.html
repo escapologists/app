@@ -428,7 +428,17 @@
         <button onclick="addExtraTime()">CONTINUER (+10 MN)</button>
         <button class="secondary" onclick="quitToHome()">ABANDONNER</button>
     </div>
-
+<!-- MODALE DE CONFIRMATION DE QUITTER -->
+<div id="quit-confirm-modal" class="selection-modal">
+    <div class="modal-title" style="color:var(--alert-red); margin-bottom:15px;">ATTENTION !</div>
+    <div style="font-family:'Kalam', cursive; font-size:1.2rem; color:white; text-align:center; margin-bottom:20px;">
+        Êtes-vous sûr ? <br>Le chrono sera remis à zéro.
+    </div>
+    <div style="display:flex; gap:10px; width:100%;">
+        <button style="flex:1; background:#27ae60;" onclick="confirmQuit(true)">OUI</button>
+        <button style="flex:1;" class="secondary" onclick="confirmQuit(false)">NON</button>
+    </div>
+</div>
     <!-- MODALE GRILLE PLEIN ÉCRAN -->
     <div id="grid-modal" class="selection-modal">
         <div id="modal-title" class="modal-title">CHOIX</div>
@@ -480,7 +490,7 @@
                 <div class="btn-label">MACHINE CRYPTO</div>
             </div>
         </div>
-        <button class="secondary" style="margin-top:auto;" onclick="quitToHome()">QUITTER</button>
+<button class="secondary" style="margin-top:auto;" onclick="openQuitModal()">QUITTER</button>
     </div>
 
     <div id="screen-action-perso" class="screen">
@@ -874,7 +884,16 @@ function updateDisplay() {
             updateHintButton(); 
         }
     }
+function openQuitModal() {
+        document.getElementById('quit-confirm-modal').classList.add('active');
+    }
 
+    function confirmQuit(isConfirmed) {
+        document.getElementById('quit-confirm-modal').classList.remove('active');
+        if (isConfirmed) {
+            quitToHome(); // Exécute la réinitialisation et le retour au menu des missions
+        }
+    }
     function runEnigme() {
         const id = document.getElementById('sel-eni').value, res = document.getElementById('res-code-final'), saisi = ['eni-1','eni-2','eni-3','eni-4'].map(i => document.getElementById(i).value).join('');
         const row = grilleENI.find(r => r[0] == id);
