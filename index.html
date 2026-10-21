@@ -591,10 +591,10 @@
     function pauseTimer() { isPaused = true; document.getElementById('btn-pause').innerText = "PLAY"; clearInterval(timerId); }
     function resetTimer() { pauseTimer(); timeLeft = 3600; alertLeft = 60; isAlert = false; updateDisplay(); }
     function triggerAlert() { isAlert = !isAlert; if(isAlert) alertLeft = 60; updateDisplay(); }
-    function updateDisplay() {
+function updateDisplay() {
         const d = document.getElementById('timer-display');
         let t = isAlert ? alertLeft : timeLeft;
-        d.innerText = `Math.floor(t/60).toString().padStart(2,'0'):{(t%60).toString().padStart(2,'0')}`;
+        d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
         d.style.color = isAlert ? 'var(--alert-red)' : 'black';
     }
     function endMission() { pauseTimer(); alarmSound.currentTime = 0; alarmSound.play(); document.getElementById('finish-overlay').style.display = 'flex'; }
