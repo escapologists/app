@@ -627,17 +627,32 @@ function updateDisplay() {
         show('screen-menu');
     }
 
-    function initMenus() {
+function initMenus() {
         const sp = document.getElementById('sel-p');
         const se = document.getElementById('sel-eni');
         
         sp.innerHTML = '<option value="">-- AGENT --</option>'; 
-        persos.forEach(p => sp.innerHTML += `<option value="p">{p}</option>`);
+        persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
 
         selectedCibleIndex = null;
         selectedCibleName = "";
         selectedItemIndex = 0;
         selectedItemName = "AUCUN";
+        
+        updatePickerButtons();
+
+        se.innerHTML = '<option value="">-- ENIGME --</option>'; 
+        grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
+        
+        ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
+            let e = document.getElementById(id); 
+            e.innerHTML = "";
+            for(let i=0; i<=9; i++) {
+                e.innerHTML += `<option value="${i}">${i}</option>`;
+            }
+        });
+        updateHintButton();
+    }
         
         updatePickerButtons();
 
