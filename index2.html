@@ -14,22 +14,7 @@
     <script src="papaparse.min.js"></script>
     
     <style>
-        /* --- DÉCLARATION DES POLICES LOCALES --- */
-        @font-face {
-            font-family: 'Bangers';
-            src: url('Bangers.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'Kalam';
-            src: url('Kalam-Bold.ttf') format('truetype');
-            font-weight: 700;
-            font-style: normal;
-            font-display: swap;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Kalam:wght@700&display=swap');
 
         :root { 
             --primary: #C93110; 
@@ -51,7 +36,8 @@
             align-items: center;
         }
 
-        /* --- SPLASH SCREEN --- */
+      
+/* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100dvh; 
@@ -63,6 +49,7 @@
             transition: opacity 0.8s ease-out;
             pointer-events: none;
         }
+        
         #splash-screen img { 
             width: 90%; 
             max-width: 360px; 
@@ -149,16 +136,7 @@
             box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
         }
 
-        .screen { 
-            display: none; 
-            flex-direction: column; 
-            justify-content: flex-start;
-            height: 100%; 
-            padding: 15px; 
-            box-sizing: border-box; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch;
-        }
+        .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
 
         .btn-comic-tile {
@@ -182,39 +160,17 @@
         label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
         select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
-        /* --- ALIGNEMENT DES SELECTIONS OBJET 1 / OBJET 2 --- */
-        .field-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .field-label-box {
-            background: var(--comic-yellow);
-            border: 3px solid var(--ink-black);
-            font-family: 'Bangers', cursive;
-            font-size: 1rem;
-            color: var(--ink-black);
-            padding: 10px 8px;
-            white-space: nowrap;
-            box-shadow: 3px 3px 0px var(--ink-black);
-            text-transform: uppercase;
-        }
-
+        /* --- BOUTONS DE SÉLECTION OBJET 1 / OBJET 2 --- */
         .picker-btn {
-            flex: 1;
             background: #ffffff;
             color: var(--ink-black);
             border: 3px solid var(--ink-black);
             text-align: left;
-            margin-bottom: 0;
-            padding: 10px 12px;
+            margin-bottom: 10px;
             box-shadow: 3px 3px 0px var(--ink-black);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1rem;
         }
 
         /* --- MODALE SELECTION EN PLEIN ÉCRAN --- */
@@ -270,12 +226,20 @@
         }
 
         /* --- COULEURS DES CASES DE LA GRILLE --- */
-        .tile-btn.tile-number { background-color: #e0e0e0; }
-        .tile-btn.tile-door { background-color: #fff9c4; }
-        .tile-btn.tile-token { background-color: #ffeb3b; }
-        .tile-btn.tile-character { background-color: #e1f5fe; }
+        .tile-btn.tile-number {
+            background-color: #e0e0e0;
+        }
+        .tile-btn.tile-door {
+            background-color: #fff9c4;
+        }
+        .tile-btn.tile-token {
+            background-color: #ffeb3b;
+        }
+        .tile-btn.tile-character {
+            background-color: #e1f5fe;
+        }
 
-        /* --- ENIGMA COLORS --- */
+        /* --- ENIGMA COLORS RESTORED --- */
         .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
         #eni-1 { background-color: #f1c40f !important; }
         #eni-2 { background-color: #3498db !important; color: white !important; }
@@ -283,52 +247,10 @@
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
         /* --- AGENT PHOTO --- */
-.agent-avatar-container { 
-    width: 110px; 
-    height: 160px; 
-    min-height: 160px; /* Empêche le conteneur de rétrécir */
-    max-height: 160px;
-    border: 4px solid var(--ink-black); 
-    background: #fff; 
-    margin: 0 auto 10px auto; 
-    overflow: hidden; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
-    flex-shrink: 0; /* INTERDIT à Chrome/Edge d'écraser la boîte */
-}
+        .agent-avatar-container { width: 110px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 10px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
+        #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
-#agent-avatar { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain; 
-    display: none; 
-}
-        /* --- (SCROLL DANS BOITE DE RÉSULTAT) --- */
-.result-box { 
-    display: block !important;
-    background: rgba(255, 255, 255, 0.95); 
-    border: 3px solid var(--ink-black); 
-    margin: 10px 0; 
-    padding: 12px;
-    font-family: 'Kalam', cursive;
-    font-size: 1rem; /* Légèrement ajusté pour une meilleure lisibilité */
-    text-align: center;
-    white-space: pre-wrap;
-    word-break: break-word;
-    
-    /* Passage de 110px à 160px */
-    height: 160px !important;
-    max-height: 160px !important;
-    box-sizing: border-box !important;
-    flex-shrink: 0 !important;
-    
-    /* Scroll tactile iOS Safari */
-    overflow-y: scroll !important;
-    -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-y !important;
-}
+        .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 40px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
     </style>
 </head>
 <body>
@@ -406,19 +328,13 @@
         <label>Action</label>
         <select id="sel-a" onchange="toggleItemSelect()"></select>
         
-        <!-- Ligne OBJET 1 -->
-        <div class="field-row">
-            <div class="field-label-box">OBJET 1</div>
-            <button id="btn-select-cible" class="picker-btn" onclick="openGrid('cible')">
-                <span>NON SÉLECTIONNÉ</span> <span>▼</span>
-            </button>
-        </div>
+        <button id="btn-select-cible" class="picker-btn" onclick="openGrid('cible')">
+            <span>OBJET 1 : NON SÉLECTIONNÉ</span> <span>▼</span>
+        </button>
         
-        <!-- Ligne OBJET 2 -->
-        <div id="container-item" class="field-row" style="display:none;">
-            <div class="field-label-box">OBJET 2</div>
+        <div id="container-item" style="display:none;">
             <button id="btn-select-item" class="picker-btn" onclick="openGrid('item')">
-                <span>AUCUN</span> <span>▼</span>
+                <span>OBJET 2 : AUCUN</span> <span>▼</span>
             </button>
         </div>
         
@@ -441,9 +357,7 @@
         </div>
         <button onclick="runEnigme()">DECODER</button>
         <button id="btn-get-hint" onclick="getHint()" style="background:#f39c12; font-size:0.9rem;">BESOIN D'UN INDICE ?</button>
-        
         <div id="res-code-final" class="result-box">SCANNER PRET</div>
-        
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
 </div>
@@ -506,7 +420,7 @@
     function updateDisplay() {
         const d = document.getElementById('timer-display');
         let t = isAlert ? alertLeft : timeLeft;
-        d.innerText = `Math.floor(t/60).toString().padStart(2,'0'):{(t%60).toString().padStart(2,'0')}`;
+        d.innerText = `${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toString().padStart(2,'0')}`;
         d.style.color = isAlert ? 'var(--alert-red)' : 'black';
     }
     function endMission() { pauseTimer(); alarmSound.currentTime = 0; alarmSound.play(); document.getElementById('finish-overlay').style.display = 'flex'; }
@@ -517,8 +431,8 @@
         currentMissionId = id;
         currentMissionName = nom;
         document.getElementById('active-mission-name').innerText = `OBJECTIF : ${nom}`;
-        
-        const fetchCSV = url => new Promise(r => Papa.parse(url, { download: true, complete: res => r(res.data), error: () => r([]) }));
+        const v = "?v=" + Date.now();
+        const fetchCSV = url => new Promise(r => Papa.parse(url + v, { download: true, complete: res => r(res.data), error: () => r([]) }));
         const d = await Promise.all([
             fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
             fetchCSV(`grille_eni_${id}.csv`), fetchCSV(`solutions_${id}.csv`), fetchCSV(`indice_${id}.csv`)
@@ -535,7 +449,7 @@
         const se = document.getElementById('sel-eni');
         
         sp.innerHTML = '<option value="">-- AGENT --</option>'; 
-        persos.forEach(p => sp.innerHTML += `<option value="p">{p}</option>`);
+        persos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`);
 
         selectedCibleIndex = null;
         selectedCibleName = "";
@@ -545,11 +459,11 @@
         updatePickerButtons();
 
         se.innerHTML = '<option value="">-- ENIGME --</option>'; 
-        grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="l[0]">{l[0]}</option>`; });
+        grilleENI.forEach(l => { if(l[0]) se.innerHTML += `<option value="${l[0]}">${l[0]}</option>`; });
         
         ['eni-1','eni-2','eni-3','eni-4'].forEach(id => { 
             let e = document.getElementById(id); e.innerHTML = "";
-            for(let i=0; i<=9; i++) e.innerHTML += `<option value="i">{i}</option>`;
+            for(let i=0; i<=9; i++) e.innerHTML += `<option value="${i}">${i}</option>`;
         });
         updateHintButton();
     }
@@ -558,8 +472,8 @@
         const btnC = document.getElementById('btn-select-cible');
         const btnI = document.getElementById('btn-select-item');
         
-        btnC.querySelector('span').innerText = selectedCibleName ? selectedCibleName : "NON SÉLECTIONNÉ";
-        btnI.querySelector('span').innerText = selectedItemName;
+        btnC.querySelector('span').innerText = selectedCibleName ? `OBJET 1 : ${selectedCibleName}` : "CHOISIR UN OBJET 1";
+        btnI.querySelector('span').innerText = `OBJET 2 : ${selectedItemName}`;
     }
 
     function getTileColorClass(text) {
@@ -567,13 +481,18 @@
         const str = text.trim();
         const upperStr = str.toUpperCase();
         
+        // Personnages (Banks, Julia, Kim, Murphy, Stacy)
         if (persos.some(p => p.toLowerCase() === str.toLowerCase())) {
             return "tile-character";
         }
         
+        // Portes (P01 à P99...)
         if (/^P\d+$/i.test(upperStr)) return "tile-door";
+        
+        // Tokens (T01 à T99...)
         if (/^T\d+$/i.test(upperStr)) return "tile-token";
         
+        // Nombres de 01 à 35 (ou 1 à 35)
         if (/^\d+$/.test(upperStr)) {
             const num = parseInt(upperStr, 10);
             if (num >= 1 && num <= 35) return "tile-number";
@@ -603,6 +522,7 @@
         } else if (type === 'item') {
             title.innerText = "CHOISIR UN OBJET 2";
             
+            // Option AUCUN
             const btnNone = document.createElement('div');
             btnNone.className = 'tile-btn';
             btnNone.innerText = "AUCUN";
@@ -650,7 +570,7 @@
             img.src = `${p}.png`; 
             img.style.display = 'block'; 
             sa.innerHTML = ''; 
-            mapping[p].forEach((act, i) => sa.innerHTML += `<option value="i">{act}</option>`); 
+            mapping[p].forEach((act, i) => sa.innerHTML += `<option value="${i}">${act}</option>`); 
             toggleItemSelect(); 
         }
     }
@@ -658,14 +578,7 @@
     function toggleItemSelect() { 
         const sa = document.getElementById('sel-a');
         const aLabel = sa.options[sa.selectedIndex]?.text;
-        const container = document.getElementById('container-item');
-        if (aLabel && !["regarder", "Manipuler"].includes(aLabel)) {
-            container.style.display = "flex";
-        } else if (aLabel === "Manipuler") {
-            container.style.display = "flex";
-        } else {
-            container.style.display = "none";
-        }
+        document.getElementById('container-item').style.display = (aLabel && !["regarder", "Manipuler"].includes(aLabel)) ? "block" : (aLabel === "Manipuler" ? "block" : "none");
     }
     
     function runActionPerso() {
