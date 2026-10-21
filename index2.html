@@ -15,22 +15,21 @@
     
     <style>
         /* --- DÉCLARATION DES POLICES LOCALES --- */
+        @font-face {
+            font-family: 'Bangers';
+            src: url('Bangers.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
 
-@font-face {
-    font-family: 'Bangers';
-    src: url('Bangers.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Kalam';
-    src: url('Kalam-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
+        @font-face {
+            font-family: 'Kalam';
+            src: url('Kalam-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
 
         :root { 
             --primary: #C93110; 
@@ -150,7 +149,16 @@
             box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
         }
 
-        .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
+        .screen { 
+            display: none; 
+            flex-direction: column; 
+            justify-content: flex-start;
+            height: 100%; 
+            padding: 15px; 
+            box-sizing: border-box; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
         .screen.active { display: flex; }
 
         .btn-comic-tile {
@@ -262,18 +270,10 @@
         }
 
         /* --- COULEURS DES CASES DE LA GRILLE --- */
-        .tile-btn.tile-number {
-            background-color: #e0e0e0;
-        }
-        .tile-btn.tile-door {
-            background-color: #fff9c4;
-        }
-        .tile-btn.tile-token {
-            background-color: #ffeb3b;
-        }
-        .tile-btn.tile-character {
-            background-color: #e1f5fe;
-        }
+        .tile-btn.tile-number { background-color: #e0e0e0; }
+        .tile-btn.tile-door { background-color: #fff9c4; }
+        .tile-btn.tile-token { background-color: #ffeb3b; }
+        .tile-btn.tile-character { background-color: #e1f5fe; }
 
         /* --- ENIGMA COLORS --- */
         .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
@@ -283,10 +283,52 @@
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
         /* --- AGENT PHOTO --- */
-        .agent-avatar-container { width: 110px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 10px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
-        #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
+.agent-avatar-container { 
+    width: 110px; 
+    height: 160px; 
+    min-height: 160px; /* Empêche le conteneur de rétrécir */
+    max-height: 160px;
+    border: 4px solid var(--ink-black); 
+    background: #fff; 
+    margin: 0 auto 10px auto; 
+    overflow: hidden; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
+    flex-shrink: 0; /* INTERDIT à Chrome/Edge d'écraser la boîte */
+}
 
-        .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 40px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
+#agent-avatar { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    display: none; 
+}
+        /* --- (SCROLL DANS BOITE DE RÉSULTAT) --- */
+.result-box { 
+    display: block !important;
+    background: rgba(255, 255, 255, 0.95); 
+    border: 3px solid var(--ink-black); 
+    margin: 10px 0; 
+    padding: 12px;
+    font-family: 'Kalam', cursive;
+    font-size: 1rem; /* Légèrement ajusté pour une meilleure lisibilité */
+    text-align: center;
+    white-space: pre-wrap;
+    word-break: break-word;
+    
+    /* Passage de 110px à 160px */
+    height: 160px !important;
+    max-height: 160px !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    
+    /* Scroll tactile iOS Safari */
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+}
     </style>
 </head>
 <body>
@@ -399,7 +441,9 @@
         </div>
         <button onclick="runEnigme()">DECODER</button>
         <button id="btn-get-hint" onclick="getHint()" style="background:#f39c12; font-size:0.9rem;">BESOIN D'UN INDICE ?</button>
+        
         <div id="res-code-final" class="result-box">SCANNER PRET</div>
+        
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
 </div>
