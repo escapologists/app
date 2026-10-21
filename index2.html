@@ -15,21 +15,22 @@
     
     <style>
         /* --- DÉCLARATION DES POLICES LOCALES --- */
-        @font-face {
-            font-family: 'Bangers';
-            src: url('Bangers.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
 
-        @font-face {
-            font-family: 'Kalam';
-            src: url('Kalam-Bold.ttf') format('truetype');
-            font-weight: 700;
-            font-style: normal;
-            font-display: swap;
-        }
+@font-face {
+    font-family: 'Bangers';
+    src: url('Bangers.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Kalam';
+    src: url('Kalam-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
 
         :root { 
             --primary: #C93110; 
@@ -82,74 +83,20 @@
             padding-top: env(safe-area-inset-top);
         }
 
-        /* --- BARRE DE MINUTEUR ET COULEURS FORCÉES --- */
+        /* --- UI ELEMENTS --- */
         .timer-bar { 
             background: var(--comic-yellow);
             border: 3px solid var(--ink-black);
-            padding: 8px 10px;
-            margin: 0 10px 10px 10px;
+            padding: 5px 12px;
+            margin: 0 10px;
             display: none;
             justify-content: space-between;
             align-items: center;
             z-index: 20;
-            box-sizing: border-box;
-            flex-shrink: 0;
-            box-shadow: 4px 4px 0px var(--ink-black);
-            gap: 10px;
         }
-
-        #timer-display { 
-            font-family: 'Bangers', cursive; 
-            font-size: 2rem; 
-            min-width: 75px; 
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .timer-controls { 
-            display: flex; 
-            gap: 8px;
-            flex: 1;
-            justify-content: flex-end;
-        }
-
-        .timer-bar .timer-controls button.timer-btn { 
-            padding: 8px 10px !important; 
-            font-family: 'Bangers', cursive !important; 
-            font-size: 0.95rem !important; 
-            border: 3px solid var(--ink-black) !important; 
-            cursor: pointer !important; 
-            text-transform: uppercase !important; 
-            box-shadow: 3px 3px 0px var(--ink-black) !important;
-            min-height: 42px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            margin-bottom: 0 !important;
-            flex: 1 !important;
-            max-width: 75px !important;
-            box-sizing: border-box !important;
-        }
-
-        .timer-bar .timer-controls button.timer-btn.btn-alert {
-            background-color: #ff4d4d !important;
-            color: #ffffff !important;
-        }
-
-        .timer-bar .timer-controls button.timer-btn.btn-reset {
-            background-color: #3498db !important;
-            color: #ffffff !important;
-        }
-
-        .timer-bar .timer-controls button#btn-pause {
-            background-color: #f39c12 !important;
-            color: #ffffff !important;
-        }
-
-        .timer-bar .timer-controls button.timer-btn:active {
-            transform: translate(2px, 2px) !important;
-            box-shadow: 1px 1px 0px var(--ink-black) !important;
-        }
+        #timer-display { font-family: 'Bangers', cursive; font-size: 1.8rem; min-width: 80px; }
+        .timer-controls { display: flex; gap: 4px; }
+        .timer-btn { padding: 3px 6px; font-family: 'Bangers'; font-size: 0.65rem; border: 2px solid var(--ink-black); cursor: pointer; text-transform: uppercase; }
 
         #finish-overlay {
             display: none;
@@ -203,16 +150,7 @@
             box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
         }
 
-        .screen { 
-            display: none; 
-            flex-direction: column; 
-            justify-content: flex-start;
-            height: 100%; 
-            padding: 15px; 
-            box-sizing: border-box; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch;
-        }
+        .screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
         .screen.active { display: flex; }
 
         .btn-comic-tile {
@@ -231,38 +169,17 @@
             font-family: 'Bangers', cursive; padding: 12px; border: 3px solid var(--ink-black); background: var(--primary); 
             color: white; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px;
             box-shadow: 4px 4px 0px var(--ink-black);
-            flex-shrink: 0;
         }
         button.secondary { background: #3498db; }
-        label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; flex-shrink: 0; }
-        
-        select { 
-            font-family: 'Kalam', cursive; 
-            font-weight: bold;
-            font-size: 1rem;
-            padding: 8px 12px; 
-            border: 3px solid var(--ink-black); 
-            width: 100%; 
-            margin-bottom: 10px; 
-            background: white; 
-            height: 48px !important;
-            min-height: 48px !important;
-            box-sizing: border-box !important;
-            flex-shrink: 0 !important;
-            box-shadow: 3px 3px 0px var(--ink-black);
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-        }
+        label { font-family: 'Kalam', cursive; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; }
+        select { font-family: 'Kalam', cursive; padding: 8px; border: 3px solid var(--ink-black); width: 100%; margin-bottom: 10px; background: white; }
 
+        /* --- ALIGNEMENT DES SELECTIONS OBJET 1 / OBJET 2 --- */
         .field-row {
             display: flex;
-            align-items: stretch;
+            align-items: center;
             gap: 8px;
             margin-bottom: 10px;
-            flex-shrink: 0;
         }
 
         .field-label-box {
@@ -271,15 +188,10 @@
             font-family: 'Bangers', cursive;
             font-size: 1rem;
             color: var(--ink-black);
-            padding: 0 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 10px 8px;
             white-space: nowrap;
             box-shadow: 3px 3px 0px var(--ink-black);
             text-transform: uppercase;
-            height: 48px;
-            box-sizing: border-box;
         }
 
         .picker-btn {
@@ -289,26 +201,15 @@
             border: 3px solid var(--ink-black);
             text-align: left;
             margin-bottom: 0;
-            padding: 8px 12px;
+            padding: 10px 12px;
             box-shadow: 3px 3px 0px var(--ink-black);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-family: 'Kalam', cursive;
-            font-weight: bold;
             font-size: 1rem;
-            height: 48px !important;
-            min-height: 48px !important;
-            box-sizing: border-box !important;
-            word-break: break-word;
         }
 
-        .picker-btn span {
-            display: inline-block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
+        /* --- MODALE SELECTION EN PLEIN ÉCRAN --- */
         .selection-modal {
             display: none;
             position: absolute;
@@ -360,63 +261,32 @@
             box-shadow: 1px 1px 0px var(--comic-yellow);
         }
 
-        .tile-btn.tile-number { background-color: #e0e0e0; }
-        .tile-btn.tile-door { background-color: #fff9c4; }
-        .tile-btn.tile-token { background-color: #ffeb3b; }
-        .tile-btn.tile-character { background-color: #e1f5fe; }
+        /* --- COULEURS DES CASES DE LA GRILLE --- */
+        .tile-btn.tile-number {
+            background-color: #e0e0e0;
+        }
+        .tile-btn.tile-door {
+            background-color: #fff9c4;
+        }
+        .tile-btn.tile-token {
+            background-color: #ffeb3b;
+        }
+        .tile-btn.tile-character {
+            background-color: #e1f5fe;
+        }
 
-        .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px !important; }
+        /* --- ENIGMA COLORS --- */
+        .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px; }
         #eni-1 { background-color: #f1c40f !important; }
         #eni-2 { background-color: #3498db !important; color: white !important; }
         #eni-3 { background-color: #2ecc71 !important; }
         #eni-4 { background-color: #e74c3c !important; color: white !important; }
 
-        .agent-avatar-container { 
-            width: 110px; 
-            height: 160px; 
-            min-height: 160px;
-            max-height: 160px;
-            border: 4px solid var(--ink-black); 
-            background: #fff; 
-            margin: 0 auto 10px auto; 
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.15); 
-            flex-shrink: 0;
-            box-sizing: border-box;
-        }
-        #agent-avatar { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: contain; 
-            object-position: center;
-            display: none; 
-            flex-shrink: 0;
-        }
+        /* --- AGENT PHOTO --- */
+        .agent-avatar-container { width: 110px; height: 160px; border: 4px solid var(--ink-black); background: #fff; margin: 0 auto 10px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0px rgba(0,0,0,0.15); }
+        #agent-avatar { width: 100%; height: 100%; object-fit: contain; display: none; }
 
-        .result-box { 
-            display: block !important;
-            background: rgba(255, 255, 255, 0.95); 
-            border: 3px solid var(--ink-black); 
-            margin: 10px 0; 
-            padding: 12px;
-            font-family: 'Kalam', cursive;
-            font-size: 1rem;
-            text-align: center;
-            white-space: pre-wrap;
-            word-break: break-word;
-            
-            height: 160px !important;
-            max-height: 160px !important;
-            box-sizing: border-box !important;
-            flex-shrink: 0 !important;
-            
-            overflow-y: scroll !important;
-            -webkit-overflow-scrolling: touch !important;
-            touch-action: pan-y !important;
-        }
+        .result-box { background: rgba(255, 255, 255, 0.9); border: 3px solid var(--ink-black); padding: 12px; margin: 10px 0; font-family: 'Kalam', cursive; min-height: 40px; text-align: center; display: flex; align-items: center; justify-content: center; white-space: pre-line; }
     </style>
 </head>
 <body>
@@ -492,7 +362,7 @@
         <select id="sel-p" onchange="updateAgentVisuals()"></select>
         
         <label>Action</label>
-        <select id="sel-a" onchange="onActionChange()"></select>
+        <select id="sel-a" onchange="toggleItemSelect()"></select>
         
         <!-- Ligne OBJET 1 -->
         <div class="field-row">
@@ -529,9 +399,7 @@
         </div>
         <button onclick="runEnigme()">DECODER</button>
         <button id="btn-get-hint" onclick="getHint()" style="background:#f39c12; font-size:0.9rem;">BESOIN D'UN INDICE ?</button>
-        
         <div id="res-code-final" class="result-box">SCANNER PRET</div>
-        
         <button class="secondary" onclick="show('screen-menu')">RETOUR</button>
     </div>
 </div>
@@ -739,18 +607,14 @@
             img.style.display = 'block'; 
             sa.innerHTML = ''; 
             mapping[p].forEach((act, i) => sa.innerHTML += `<option value="i">{act}</option>`); 
-            onActionChange(); 
+            toggleItemSelect(); 
         }
     }
 
-    function onActionChange() { 
-        // Efface systématiquement le texte dans la case de résultat à chaque changement d'action
-        document.getElementById('res-perso').innerHTML = "En attente...";
-
+    function toggleItemSelect() { 
         const sa = document.getElementById('sel-a');
         const aLabel = sa.options[sa.selectedIndex]?.text;
         const container = document.getElementById('container-item');
-        
         if (aLabel && !["regarder", "Manipuler"].includes(aLabel)) {
             container.style.display = "flex";
         } else if (aLabel === "Manipuler") {
