@@ -608,7 +608,7 @@ function updateDisplay() {
     }
     function endMission() { pauseTimer(); alarmSound.currentTime = 0; alarmSound.play(); document.getElementById('finish-overlay').style.display = 'flex'; }
     function addExtraTime() { alarmSound.pause(); timeLeft += 600; isAlert = false; document.getElementById('finish-overlay').style.display = 'none'; toggleTimer(); }
-    function quitToHome() { alarmSound.pause(); document.getElementById('finish-overlay').style.display = 'none'; resetTimer(); show('screen-missions'); }
+    function quitToHome() { alarmSound.pause(); document.getElementById('finish-overlay').style.display = 'none'; resetTimer(); show('screen-missions');releaseWakeLock(); }
 
     async function chargerMission(id, nom) {
         currentMissionId = id;
@@ -625,6 +625,7 @@ function updateDisplay() {
         indicesCSV = d[4];
         initMenus();
         show('screen-menu');
+        requestWakeLock();
     }
 
 function initMenus() {
