@@ -580,7 +580,37 @@
                 .catch(err => console.error('Erreur Service Worker :', err));
         }
     });
+async function displaySWVersion() {
+    if ('caches' in window) {
+        try {
+            const keys = await caches.keys();
+            // On cherche le cache de ton application
+            const cacheName = keys.find(name => name.startsWith('escapologists-'));
+            
+            const el = document.getElementById('sw-version');
+            if (el) {
+                if (cacheName) {
+                    // Si tu veux afficher tout le nom (ex: "escapologists-v24")
+                    el.innerText = `SW : ${cacheName}`;
+                    
+                    // OU si tu préfères afficher uniquement la version (ex: "v24") :
+                    // const version = cacheName.split('-')[1];
+                    // el.innerText = `SW : ${version}`;
+                } else {
+                    // Fallback si le cache n'est pas encore actif au premier chargement
+                    el.innerText = "SW : v24";
+                }
+            }
+        } catch (err) {
+            console.error("Impossible de lire le cache :", err);
+        }
+    }
+}
 
+// Appel au chargement de la page
+window.addEventListener('load', () => {
+    displaySWVersion();
+});
     function show(id) { 
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
         document.getElementById(id).classList.add('active'); 
