@@ -907,6 +907,39 @@ function openQuitModal() {
             res.innerHTML = s ? s.texte : "ACCÈS AUTORISÉ";
         } else res.innerHTML = "CODE INCORRECT";
     }
+    let wakeLock = null;
+
+// Demander à garder l'écran allumé
+async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Wake Lock actif : l\'écran ne s\'éteindra pas.');
+            
+            // Si l'utilisateur quitte l'onglet ou minimise l'app, le verrou est libéré automatiquement
+            wakeLock.addEventListener('release', () => {
+                wakeLock = null;
+            });
+        } catch (err) {
+            console.error(`Erreur Wake Lock : ${err.name}, ${err.message}`);
+        }
+    }
+}
+
+// Libérer l'écran (pour qu'il puisse se mettre en veille normalement)
+async function releaseWakeLock() {
+    if (wakeLock !== null) {
+        await wakeLock.release();
+        wakeLock = null;
+    }
+}
+
+// Optionnel : Réactiver automatiquement le Wake Lock si l'utilisateur revient sur l'onglet
+document.addEventListener('visibilitychange', async () => {
+    if (wakeLock !== null && document.visibilityState === 'visible') {
+        await requestWakeLock();
+    }
+});
 </script>
 </body>
 </html>
