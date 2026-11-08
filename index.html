@@ -647,10 +647,10 @@ function updateDisplay() {
 async function chargerMission(id, nom) {
         currentMissionId = id;
         currentMissionName = nom;
-        
-        // On formate l'affichage avec le numéro (id) et le nom
-        document.getElementById('active-mission-name').innerText = `MISSION ${id} : ${nom}`;
-        
+        // On extrait uniquement les chiffres de l'ID (ex: "M1" -> "1")
+        const numeroMission = id.replace(/\D/g, '');
+        document.getElementById('active-mission-name').innerText = `MISSION ${numeroMission} : ${nom}`;
+ 
         const fetchCSV = url => new Promise(r => Papa.parse(url, { download: true, complete: res => r(res.data), error: () => r([]) }));
         const d = await Promise.all([
             fetchCSV("grille.csv"), fetchCSV("grille_ac.csv"), 
