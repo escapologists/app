@@ -526,8 +526,11 @@
         <div id="res-perso" class="result-box">En attente...</div>
         
         <div style="display:flex; gap:10px;">
-            <button style="flex:1" onclick="runActionPerso()">TRANSMETTRE</button>
-            <button style="flex:1" class="secondary" onclick="show('screen-menu')">RETOUR</button>
+            <div style="display:flex; gap:10px;">
+                <button style="flex:1" class="secondary" onclick="show('screen-menu')">RETOUR</button>
+                <button style="flex:1; background:#f39c12;" onclick="runActionPerso()">TRANSMETTRE</button>
+            </div>
+            <button style="background:#27ae60;" onclick="show('screen-enigme')">MACHINE À DÉCODER</button>
         </div>
     </div>
 
