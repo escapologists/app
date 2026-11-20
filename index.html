@@ -747,14 +747,14 @@ function initMenus() {
         
         return "";
     }
-
+    
 function openGrid(type) {
         const modal = document.getElementById('grid-modal');
         const title = document.getElementById('modal-title');
         const grid = document.getElementById('modal-grid');
         grid.innerHTML = '';
 
-        // Tableaux pour stocker les éléments par catégorie
+        // Tableaux par catégorie
         const categories = {
             numbers: { label: "OBJETS (1 - 40)", items: [] },
             doors: { label: "PORTES", items: [] },
@@ -763,7 +763,6 @@ function openGrid(type) {
             others: { label: "AUTRES", items: [] }
         };
 
-        // Fonction pour trier un élément dans la bonne catégorie
         const categorizeItem = (itemText, originalIndex, clickHandlerType) => {
             if (!itemText) return;
             const val = itemText.trim();
@@ -784,50 +783,40 @@ function openGrid(type) {
             categories[catKey].items.push({ text: val, index: originalIndex, type: clickHandlerType });
         };
 
-        // 1. Remplir selon le type (cible ou item)
         if (type === 'cible') {
             title.innerText = "CHOISIR UN OBJET 1";
             grille.forEach((l, i) => { 
-                if (i >= 2 && l[0]) {
-                    categorizeItem(l[0], i, 'cible');
-                }
+                if (i >= 2 && l[0]) categorizeItem(l[0], i, 'cible');
             });
         } else if (type === 'item') {
             title.innerText = "CHOISIR UN OBJET 2";
             
-            // Bouton "AUCUN" géré à part (on peut le mettre tout en haut)
-            const noneContainer = document.createElement('div');
-            noneContainer.style.width = '100%';
-            noneContainer.style.marginBottom = '10px';
+            // Bouton "AUCUN" qui s'étale sur toute la largeur (3 colonnes)
             const btnNone = document.createElement('div');
-            btnNone.className = 'tile-btn';
+            btnNone.className = 'tile-btn grid-section-spacer';
+            btnNone.style.gridColumn = '1 / -1';
             btnNone.innerText = "AUCUN";
             btnNone.onclick = () => selectItem(0, "AUCUN");
-            noneContainer.appendChild(btnNone);
-            grid.appendChild(noneContainer);
+            grid.appendChild(btnNone);
 
             grilleAC.forEach((l, i) => { 
-                if (i > 0 && l[0]) {
-                    categorizeItem(l[0], i, 'item');
-                }
+                if (i > 0 && l[0]) categorizeItem(l[0], i, 'item');
             });
         }
 
-        // 2. Générer les sections et les boutons dans la modale
+        // Injection des sections dans la grille principale
         Object.keys(categories).forEach(key => {
             const cat = categories[key];
             if (cat.items.length === 0) return;
 
-            // Création du titre de section
+            // 1. Le titre (s'étale sur les 3 colonnes grâce à .grid-section-title)
             const titleEl = document.createElement('div');
             titleEl.className = 'grid-section-title';
             titleEl.innerText = cat.label;
             grid.appendChild(titleEl);
 
-            // Conteneur en ligne pour les boutons de cette catégorie
-            const rowEl = document.createElement('div');
-            rowEl.className = 'grid-section-row';
-
+            // 2. Les boutons s'insèrent directement dans la grille principale 
+            // et se répartiront naturellement sur les 3 colonnes
             cat.items.forEach(itemData => {
                 const btn = document.createElement('div');
                 const colorClass = getTileColorClass(itemData.text);
@@ -840,15 +829,12 @@ function openGrid(type) {
                     btn.onclick = () => selectItem(itemData.index, itemData.text);
                 }
 
-                rowEl.appendChild(btn);
+                grid.appendChild(btn);
             });
-
-            grid.appendChild(rowEl);
         });
 
         modal.classList.add('active');
     }
-
     function closeModal() {
         document.getElementById('grid-modal').classList.remove('active');
     }
