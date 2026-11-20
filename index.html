@@ -361,7 +361,22 @@
         .tile-btn.tile-door { background-color: #fff9c4; }
         .tile-btn.tile-token { background-color: #ffeb3b; }
         .tile-btn.tile-character { background-color: #e1f5fe; }
+/* --- Ajout pour les titres de sections dans la modale --- */
+        .grid-section-title {
+            grid-column: 1 / -1; /* Force le titre à s'étaler sur toute la largeur de la grille (les 3 colonnes) */
+            font-family: 'Bangers', cursive;
+            font-size: 1.2rem;
+            color: var(--comic-yellow);
+            margin: 15px 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--comic-yellow);
+            padding-bottom: 2px;
+        }
 
+        .grid-section-spacer {
+            grid-column: 1 / -1; /* Pour le bouton "AUCUN" si besoin de toute la largeur */
+        }
         .digit-selector { flex: 1; text-align: center; font-size: 1.4rem; font-weight: bold; font-family: 'Bangers', cursive; height: 50px !important; }
         #eni-1 { background-color: #f1c40f !important; }
         #eni-2 { background-color: #3498db !important; color: white !important; }
@@ -733,44 +748,103 @@ function initMenus() {
         return "";
     }
 
-    function openGrid(type) {
+function openGrid(type) {
         const modal = document.getElementById('grid-modal');
         const title = document.getElementById('modal-title');
         const grid = document.getElementById('modal-grid');
         grid.innerHTML = '';
 
+        // Tableaux pour stocker les éléments par catégorie
+        const categories = {
+            numbers: { label: "OBJETS (1 - 40)", items: [] },
+            doors: { label: "PORTES", items: [] },
+            tokens: { label: "JETONS", items: [] },
+            characters: { label: "PERSONNAGES", items: [] },
+            others: { label: "AUTRES", items: [] }
+        };
+
+        // Fonction pour trier un élément dans la bonne catégorie
+        const categorizeItem = (itemText, originalIndex, clickHandlerType) => {
+            if (!itemText) return;
+            const val = itemText.trim();
+            const upper = val.toUpperCase();
+
+            let catKey = 'others';
+            if (persos.some(p => p.toLowerCase() === val.toLowerCase())) {
+                catKey = 'characters';
+            } else if (/^P\d+$/i.test(upper)) {
+                catKey = 'doors';
+            } else if (/^T\d+$/i.test(upper)) {
+                catKey = 'tokens';
+            } else if (/^\d+$/.test(upper)) {
+                const num = parseInt(upper, 10);
+                if (num >= 1 && num <= 40) catKey = 'numbers';
+            }
+
+            categories[catKey].items.push({ text: val, index: originalIndex, type: clickHandlerType });
+        };
+
+        // 1. Remplir selon le type (cible ou item)
         if (type === 'cible') {
             title.innerText = "CHOISIR UN OBJET 1";
             grille.forEach((l, i) => { 
-                if(i >= 2 && l[0]) {
-                    const btn = document.createElement('div');
-                    const colorClass = getTileColorClass(l[0]);
-                    btn.className = `tile-btn ${colorClass}`.trim();
-                    btn.innerText = l[0];
-                    btn.onclick = () => selectCible(i, l[0]);
-                    grid.appendChild(btn);
+                if (i >= 2 && l[0]) {
+                    categorizeItem(l[0], i, 'cible');
                 }
             });
         } else if (type === 'item') {
             title.innerText = "CHOISIR UN OBJET 2";
             
+            // Bouton "AUCUN" géré à part (on peut le mettre tout en haut)
+            const noneContainer = document.createElement('div');
+            noneContainer.style.width = '100%';
+            noneContainer.style.marginBottom = '10px';
             const btnNone = document.createElement('div');
             btnNone.className = 'tile-btn';
             btnNone.innerText = "AUCUN";
             btnNone.onclick = () => selectItem(0, "AUCUN");
-            grid.appendChild(btnNone);
+            noneContainer.appendChild(btnNone);
+            grid.appendChild(noneContainer);
 
             grilleAC.forEach((l, i) => { 
-                if(i > 0 && l[0]) {
-                    const btn = document.createElement('div');
-                    const colorClass = getTileColorClass(l[0]);
-                    btn.className = `tile-btn ${colorClass}`.trim();
-                    btn.innerText = l[0];
-                    btn.onclick = () => selectItem(i, l[0]);
-                    grid.appendChild(btn);
+                if (i > 0 && l[0]) {
+                    categorizeItem(l[0], i, 'item');
                 }
             });
         }
+
+        // 2. Générer les sections et les boutons dans la modale
+        Object.keys(categories).forEach(key => {
+            const cat = categories[key];
+            if (cat.items.length === 0) return;
+
+            // Création du titre de section
+            const titleEl = document.createElement('div');
+            titleEl.className = 'grid-section-title';
+            titleEl.innerText = cat.label;
+            grid.appendChild(titleEl);
+
+            // Conteneur en ligne pour les boutons de cette catégorie
+            const rowEl = document.createElement('div');
+            rowEl.className = 'grid-section-row';
+
+            cat.items.forEach(itemData => {
+                const btn = document.createElement('div');
+                const colorClass = getTileColorClass(itemData.text);
+                btn.className = `tile-btn ${colorClass}`.trim();
+                btn.innerText = itemData.text;
+
+                if (itemData.type === 'cible') {
+                    btn.onclick = () => selectCible(itemData.index, itemData.text);
+                } else {
+                    btn.onclick = () => selectItem(itemData.index, itemData.text);
+                }
+
+                rowEl.appendChild(btn);
+            });
+
+            grid.appendChild(rowEl);
+        });
 
         modal.classList.add('active');
     }
