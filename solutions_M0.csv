@@ -1,0 +1,31 @@
+﻿4325;;;Une tondeuse à gazon de marque célèbre.
+4139;;;Rien à manipuler.
+1726;;;De l'engrais.
+4190;;;On va laisser ça au jardinier…
+4163;;;Une belle plante verte…
+4251;;;On ne va pas jardiner ce soir…
+6453;;;Sur quoi ?
+5728;;;Un garde bien équipé.
+4532;;;Ce n'est pas possible.
+6441;;;Aucun intérêt.
+6198;;;Quoi ?
+5741;;;Une porte d'entrée fermée.
+5769;;;La porte est verouillée par un digicode.
+1309;;;N'importe quoi.
+6477;;;Pas possible.
+5768;;;L'accès à la porte est impossible tant que le garde est présent.
+4517;;;Non.
+1356;;;N'importe quoi.
+1294;;;Pas possible.
+5024;;;C'est une bonne idée mais on va laisser ça au jardinier…
+5163;;;Pour quoi faire ?
+5049;;;Pour quoi faire ?
+5610;;;Pas possible.
+5482;;;Pas possible.
+5173;;;Pas possible.
+7839;;;Pas possible.
+7840;;;Pas possible.
+7842;;;Ridicule.
+5482;;;Un cadeau ? A moins que…
+5482;K;Lancer;En lançant la plante sur le garde, celui-ci tombe, assommé. Enlevez le garde, la carte 24 et le Token 01. En le fouillant, Kim trouve un papier sur lui. Prenez l'énigme 0.
+9999;;;Enlevez la porte 31. Kim entre dans le hall, pendant qu'elle regarder tout autour d'elle, des vertiges lui viennent et brutalement elle perd conscience…Fin du tutoriel. Vous pouvez passer à la mission 1.
