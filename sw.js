@@ -18,6 +18,7 @@ const ASSETS = [
   './bouton_enigma.jpg',
 
   // Visuels des missions
+  './but_mission_0.jpg',
   './but_mission_1.jpg',
   './but_mission_2.jpg',
   './but_mission_3.jpg',
@@ -39,6 +40,12 @@ const ASSETS = [
   './grille_ac.csv',
 
   // --- Fichiers de données CSV par mission ---
+
+  // Mission 0
+  './grille_eni_M0.csv',
+  './indice_M0.csv',
+  './solutions_M0.csv',
+  
   // Mission 1
   './grille_eni_M1.csv',
   './indice_M1.csv',
